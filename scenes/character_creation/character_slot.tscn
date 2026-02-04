@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://by5ijd14vgmpy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vrjln"]
+bg_color = Color(0.6711447, 0.583947, 0.4895562, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6649935, 0.23841089, 0.06824615, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.7179772, 0.18638411, 0.14755273, 0.6)
+shadow_size = 5
+
+[node name="CharacterSlot" type="Control" unique_id=1676626075]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Button" type="Button" parent="." unique_id=191043415]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -50.0
+offset_right = 150.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_vrjln")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vrjln")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Button" unique_id=944403147]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="Button/HBoxContainer" unique_id=633043536]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Button/HBoxContainer" unique_id=1919482876]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=479491673]
+layout_mode = 2
+text = "Character Name"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=995262491]
+layout_mode = 2
+text = "Level 1 Class"

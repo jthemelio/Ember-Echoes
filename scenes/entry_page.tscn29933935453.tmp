@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://li0hft8r02xr"]
+
+[ext_resource type="Script" uid="uid://di416b4ootpku" path="res://scripts/entry_page.gd" id="1_e4i2w"]
+[ext_resource type="Texture2D" uid="uid://c0ehtjk8ldhmu" path="res://assets/MobileEntryBg.png" id="2_n83e7"]
+[ext_resource type="Texture2D" uid="uid://4y2h0afsrans" path="res://assets/MobileUserBg.png" id="3_n83e7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e4i2w"]
+bg_color = Color(0, 0, 0, 0.84313726)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95484513, 0.7828723, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="EntryPage" type="Control" unique_id=2044182461]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+script = ExtResource("1_e4i2w")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=630482835]
+layout_mode = 0
+offset_left = 191.0
+offset_top = 490.0
+offset_right = 259.0
+offset_bottom = 490.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_n83e7")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LoginPanel" type="Control" parent="." unique_id=435126814]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoginPanel" unique_id=387450917]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="CustomIDInput" type="LineEdit" parent="LoginPanel/VBoxContainer" unique_id=1434367088]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+placeholder_text = "Username"
+
+[node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer" unique_id=1545918363]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_e4i2w")
+
+[node name="SplashOverlay" type="TextureRect" parent="LoginPanel/VBoxContainer" unique_id=2110692922]
+layout_mode = 2
+texture = ExtResource("2_n83e7")
+expand_mode = 1
+stretch_mode = 6
