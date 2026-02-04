@@ -72,7 +72,7 @@ func _on_login_success(result):
 		show_link_account_reminder()
 	
 	# Proceed to character creation
-	get_tree().change_scene_to_file("res://scenes/character_creation.tscn")
+	get_tree().change_scene_to_file("res://scenes/character_creation/character_selection.tscn")
 
 func show_link_account_reminder():
 	# This would trigger a UI popup you've designed

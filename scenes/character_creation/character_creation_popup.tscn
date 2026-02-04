@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://cpxo1fqtoq535"]
+
+[node name="CharacterCreationPopup" type="Control" unique_id=944728642]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=354976352]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.5176471)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=681745285]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=1671213717]
+custom_minimum_size = Vector2(350, 400)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=1285658908]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=714639618]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=934613278]
+layout_mode = 2
+text = "Create new character"
+horizontal_alignment = 1
+
+[node name="InsertName" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=937870967]
+layout_mode = 2
+alignment = 1
+
+[node name="Marksman" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=726013934]
+layout_mode = 2
+
+[node name="Twin-Soul" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1081925869]
+layout_mode = 2
+
+[node name="Wuxia" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2101523104]
+layout_mode = 2
+
+[node name="Juggernaut" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1808440773]
+layout_mode = 2

@@ -1,5 +1,7 @@
 extends Control # Or Button, if your root is a Button
 
+signal slot_pressed(index: int, empty: bool)
+
 @onready var name_label = $Button/HBoxContainer/VBoxContainer/NameLabel
 @onready var class_label = $Button/HBoxContainer/VBoxContainer/ClassLabel
 
@@ -43,3 +45,9 @@ func _drop_data(_at_position, data):
 	# Swap them in the GridContainer
 	get_parent().move_child(data, target_index)
 	get_parent().move_child(self, origin_index)
+
+
+func _on_button_pressed() -> void:
+	# This 'emits' the signal so the parent (Selection Screen) can hear it
+	slot_pressed.emit(slot_index, is_empty)
+	print("Slot ", slot_index, " signaled the main screen.")
