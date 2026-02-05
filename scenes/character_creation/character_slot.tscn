@@ -61,11 +61,11 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="Label" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=479491673]
+[node name="NameLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=479491673]
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=995262491]
+[node name="ClassLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=995262491]
 layout_mode = 2
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

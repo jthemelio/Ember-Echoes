@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://cpxo1fqtoq535"]
 
+[ext_resource type="Script" uid="uid://ci6fl7vxmee0u" path="res://scenes/character_creation/character_creation_popup.gd" id="1_mhjcc"]
+
 [node name="CharacterCreationPopup" type="Control" unique_id=944728642]
 layout_mode = 3
 anchors_preset = 15
@@ -7,6 +9,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_mhjcc")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=354976352]
 layout_mode = 1
@@ -56,3 +59,8 @@ layout_mode = 2
 
 [node name="Juggernaut" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1808440773]
 layout_mode = 2
+
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman" to="." method="_on_marksman_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul" to="." method="_on_twin_soul_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia" to="." method="_on_wuxia_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Juggernaut" to="." method="_on_juggernaut_pressed"]

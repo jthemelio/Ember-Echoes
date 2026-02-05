@@ -1,18 +1,27 @@
 extends Control
 
-@onready var grid = $GridContainer # Adjust path if needed
+@onready var grid = %GridContainer
+
 var reorder_mode_enabled: bool = false
 
 func _ready() -> void:
-	var i = 0
-	for slot in grid.get_children():
-		slot.slot_index = i
-		# This 'connects' the slot's signal to the logic we wrote earlier
-		if not slot.slot_pressed.is_connected(_on_slot_pressed):
-			slot.slot_pressed.connect(_on_slot_pressed)
-		i += 1
+	print("--- DEBUG START ---")
+	if grid == null:
+		print("ERROR: Grid variable is NULL. The path is definitely wrong.")
+		# Try to find it manually as a last resort
+		grid = find_child("GridContainer", true, false)
+		if grid:
+			print("SUCCESS: Found GridContainer using find_child!")
 	
-	load_slots_from_playfab()
+	if grid:
+		var slots = grid.get_children()
+		print("SUCCESS: Found ", slots.size(), " slots.")
+		for i in range(slots.size()):
+			var slot = slots[i]
+			slot.slot_index = i
+			slot.slot_pressed.connect(_on_slot_pressed)
+			print("Connected Slot: ", i)
+	print("--- DEBUG END ---")
 
 func load_slots_from_playfab():
 	print("Fetching characters from PlayFab...")
@@ -68,22 +77,26 @@ func save_new_order_to_playfab():
 func _on_slot_pressed(slot_index: int, is_empty: bool):
 	if is_empty:
 		print("Opening character creation for slot: ", slot_index)
-		open_creation_popup(slot_index) # This is the missing link!
+		open_creation_popup(slot_index)
 	else:
 		print("Character selected at slot: ", slot_index)
 		# Future: Load into the game world with this character
 
 func open_creation_popup(slot_index: int):
-	# The path must include the sub-folder
-	var popup_scene = load("res://scenes/character_creation/character_creation.tscn")
-	var popup = popup_scene.instantiate()
-	add_child(popup)
+	var path = "res://scenes/character_creation/character_creation_popup.tscn"
+	var popup_scene = load(path)
 	
-	# Connect the signal so the popup can talk back to this script
-	popup.character_confirmed.connect(_on_character_data_received.bind(slot_index))
+	if popup_scene:
+		var popup = popup_scene.instantiate()
+		add_child(popup)
+		
+		# We pass slot_index here so the receiver knows which one to update
+		popup.character_confirmed.connect(_on_character_data_received.bind(slot_index))
+	else:
+		print("CRITICAL ERROR: Could not find popup scene at: ", path)
 
 func _on_character_data_received(data: Dictionary, slot_index: int):
-	# Update the UI slot immediately so the player sees their hero
+	# Update the UI slot immediately
 	var target_slot = grid.get_child(slot_index)
 	target_slot.update_slot_display(data)
 	
