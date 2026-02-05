@@ -24,22 +24,18 @@ func _ready() -> void:
 	print("--- DEBUG END ---")
 
 func load_slots_from_playfab():
-	print("Fetching characters from PlayFab...")
-	PlayFabManager.client.get_user_data([], func(result):
-		# Loop through all 6 possible slots
-		for i in range(6):
-			var key = "Slot_" + str(i)
-			var target_slot = grid.get_child(i)
-			
-			if result.data.has(key):
-				# Convert the saved text back into a Dictionary
-				var character_data = JSON.parse_string(result.data[key].value)
-				target_slot.update_slot_display(character_data)
-			else:
-				# No character found in this slot
-				target_slot.update_slot_display({})
-	, func(error):
-		print("Load Failed: ", error.message)
+	print("Fetching character entities from PlayFab...")
+	# Note: SDK uses snake_case 'get_all_users_characters'
+	PlayFabManager.client.get_all_users_characters({}, func(result):
+		var characters = result.data.Characters #
+		
+		# 1. Clear slots visually
+		for child in grid.get_children():
+			child.update_slot_display({})
+		
+		# 2. For each character found, fetch its specific SlotIndex
+		for char_entity in characters:
+			_fetch_character_slot_and_display(char_entity)
 	)
 
 # Called by your Toggle Button
@@ -75,12 +71,20 @@ func save_new_order_to_playfab():
 	)
 	
 func _on_slot_pressed(slot_index: int, is_empty: bool):
+	var target_slot = grid.get_child(slot_index)
+	
 	if is_empty:
 		print("Opening character creation for slot: ", slot_index)
 		open_creation_popup(slot_index)
 	else:
-		print("Character selected at slot: ", slot_index)
-		# Future: Load into the game world with this character
+		var data = target_slot.char_data # Assuming char_data is stored in the slot
+		print("Selected: ", data.CharacterName, " ID: ", data.CharacterId)
+		
+		# GLOBAL DATA: Store the selected ID so the game scene knows who to load
+		# (You might want a Global script called 'GameManager' for this)
+		# GameManager.current_character_id = data.CharacterId
+		
+		# scene_to_game_world()
 
 func open_creation_popup(slot_index: int):
 	var path = "res://scenes/character_creation/character_creation_popup.tscn"
@@ -96,34 +100,36 @@ func open_creation_popup(slot_index: int):
 		print("CRITICAL ERROR: Could not find popup scene at: ", path)
 
 func _on_character_data_received(data: Dictionary, slot_index: int):
-	# Update the UI slot immediately
-	var target_slot = grid.get_child(slot_index)
-	target_slot.update_slot_display(data)
+	var char_id = data.CharacterId
+	# Character Data requires a Dictionary of Strings
+	var slot_bundle = {"SlotIndex": str(slot_index)}
 	
-	# Save the new data to PlayFab
-	save_single_slot_to_playfab(slot_index, data)
+	print("Saving SlotIndex to character...")
+	PlayFabManager.client.update_character_data(char_id, slot_bundle, func(result):
+		print("Slot assigned! Refreshing...")
+		load_slots_from_playfab()
+	)
 	
-func save_single_slot_to_playfab(index: int, data: Dictionary):
-	# 1. Create a key like "Slot_0" so PlayFab knows which box to put the data in
-	var key = "Slot_" + str(index)
+
+func _fetch_character_slot_and_display(char_entity):
+	var char_id = char_entity.CharacterId
 	
-	# 2. Convert the dictionary (Name, Class) into a String so PlayFab can store it
-	var value = JSON.stringify(data) 
-	
-	# 3. Format the data for the PlayFab SDK
-	var request = {
-		"Data": { 
-			key: value 
-		}
-	}
-	
-	print("Attempting to save to PlayFab: ", key)
-	
-	# 4. The actual API call to the server
-	# Make sure PlayFabManager is an Autoload/Singleton in your Project Settings!
-	PlayFabManager.client.update_user_data(request, 
-		func(result): 
-			print("Successfully saved character to ", key),
-		func(error): 
-			print("PlayFab Error: ", error.message)
+	# Use the new bridge we added to PlayFabClient.gd
+	PlayFabManager.client.get_character_data(char_id, func(result):
+		var char_data = result.data.Data #
+		var slot_idx = 0 
+		
+		# Look for our saved SlotIndex string and convert back to int
+		if char_data.has("SlotIndex"):
+			slot_idx = char_data.SlotIndex.Value.to_int()
+		
+		# Safety check: make sure the index is within our 6 slots
+		if slot_idx < grid.get_child_count():
+			var target_slot = grid.get_child(slot_idx)
+			target_slot.update_slot_display({
+				"CharacterName": char_entity.CharacterName,
+				"Class": char_entity.CharacterType,
+				"CharacterId": char_id,
+				"Level": 1
+			})
 	)

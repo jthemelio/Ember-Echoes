@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 PlayFabManager="*uid://bincuw4pj5p2j"
+StatCalculator="*uid://beewn37afjtri"
 
 [display]
 

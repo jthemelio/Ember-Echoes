@@ -20,3 +20,52 @@ class GetUserInventoryRequest extends JsonSerializable:
 # Updated function using the correct Type
 func get_user_inventory(request_data: GetUserInventoryRequest, callback: Callable):
 	_post_with_session_auth(request_data, "/Client/GetUserInventory", callback)
+
+class ExecuteCloudScriptRequest extends JsonSerializable:
+	var FunctionName: String
+	var FunctionParameter: Dictionary
+
+	func _init(n: String, p: Dictionary):
+		FunctionName = n
+		FunctionParameter = p
+
+func execute_cloud_script(func_name: String, params: Dictionary, callback: Callable):
+	var request = ExecuteCloudScriptRequest.new(func_name, params)
+	_post_with_session_auth(request, "/Client/ExecuteCloudScript", callback)
+
+class UpdateCharacterStatisticsRequest extends JsonSerializable:
+	var CharacterId: String
+	var Statistics: Array # Array of Dictionaries: {"StatisticName": string, "Value": int}
+
+	func _init(id: String, stats: Array):
+		CharacterId = id
+		Statistics = stats
+
+# Updates character-specific statistics
+func update_character_statistics(char_id: String, stats: Array, callback: Callable):
+	var request = UpdateCharacterStatisticsRequest.new(char_id, stats)
+	_post_with_session_auth(request, "/Client/UpdateCharacterStatistics", callback)
+
+class UpdateCharacterDataRequest extends JsonSerializable:
+	var CharacterId: String
+	var Data: Dictionary # Keys and Values must both be Strings
+
+	func _init(id: String, data_dict: Dictionary):
+		CharacterId = id
+		Data = data_dict
+		
+# Updates custom data for a specific character
+func update_character_data(char_id: String, data_dict: Dictionary, callback: Callable):
+	var request = UpdateCharacterDataRequest.new(char_id, data_dict)
+	_post_with_session_auth(request, "/Client/UpdateCharacterData", callback)
+	
+class GetCharacterDataRequest extends JsonSerializable:
+	var CharacterId: String
+
+	func _init(id: String):
+		CharacterId = id
+		
+# Retrieves custom data for a specific character
+func get_character_data(char_id: String, callback: Callable):
+	var request = GetCharacterDataRequest.new(char_id)
+	_post_with_session_auth(request, "/Client/GetCharacterData", callback)

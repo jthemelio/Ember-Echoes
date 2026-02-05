@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dqonnkgps6qai"]
+
+[ext_resource type="Script" uid="uid://cksen1dsoc3dc" path="res://characterLogic/StatRow.gd" id="1_agqym"]
+
+[node name="StatRow" type="Node2D" unique_id=167415794]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=165053085]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_agqym")
+
+[node name="StatName" type="Label" parent="HBoxContainer" unique_id=844271095]
+layout_mode = 2
+text = "Strength"
+
+[node name="StatValue" type="Label" parent="HBoxContainer" unique_id=633304946]
+layout_mode = 2
+text = "0"
+
+[node name="Button" type="Button" parent="HBoxContainer" unique_id=705548599]
+layout_mode = 2
+text = "+"
