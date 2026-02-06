@@ -22,6 +22,7 @@ func _ready():
 	# These catch the results from the calls below
 	PlayFabManager.client.logged_in.connect(_on_login_success)
 	PlayFabManager.client.api_error.connect(_on_api_error)
+	PlayFabManager.client.registered.connect(_on_register_success)
 	
 	# 4. Connect UI signals
 	login_button.pressed.connect(_on_login_pressed)

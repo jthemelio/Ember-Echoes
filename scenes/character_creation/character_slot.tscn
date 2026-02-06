@@ -65,7 +65,32 @@ size_flags_vertical = 4
 layout_mode = 2
 horizontal_alignment = 1
 
-[node name="ClassLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=995262491]
+[node name="HBoxContainer" type="HBoxContainer" parent="Button/HBoxContainer/VBoxContainer" unique_id=1043086573]
 layout_mode = 2
 
+[node name="LevelLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1722976274]
+layout_mode = 2
+
+[node name="ClassLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=995262491]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_alignment = 2
+
+[node name="DeleteButton" type="Button" parent="Button/HBoxContainer" unique_id=813646487]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+text = "X"
+
+[node name="CreateLabel" type="Label" parent="Button" unique_id=274764347]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Create new character"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Button/HBoxContainer/DeleteButton" to="." method="_on_delete_button_pressed"]

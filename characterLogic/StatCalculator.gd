@@ -73,15 +73,17 @@ func get_smart_allocated_stats(char_class: String, level: int) -> Dictionary:
 	return current_stats
 	
 func sync_calculated_stats(char_id: String, hp: int, mp: int):
-	var request = {
-		"CharacterId": char_id,
-		"Data": {
-			"MaxHP": str(hp),
-			"MaxMP": str(mp)
-		}
+	# Create the dictionary that matches what PlayFab expects for 'Data'
+	var internal_data = {
+		"MaxHP": str(hp),
+		"MaxMP": str(mp)
 	}
-	# We use UpdateCharacterInternalData because this is a specific character slot
-	PlayFabManager.client.UpdateCharacterInternalData(request,
-		func(result): print("Cloud Stats Updated for Character: ", char_id),
-		func(error): print("Sync Error: ", error.message)
+	
+	print("Syncing Internal Vitals for ID: ", char_id)
+	
+	# Use the exact snake_case name you added to PlayFabClient.gd
+	PlayFabManager.client.update_character_internal_data(
+		char_id, 
+		internal_data, 
+		func(result): print("Cloud Internal Stats Updated successfully!")
 	)

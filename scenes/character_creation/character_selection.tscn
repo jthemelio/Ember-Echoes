@@ -87,3 +87,27 @@ layout_mode = 2
 
 [node name="CharacterSlot6" parent="CenterContainer/GridContainer" unique_id=1987746524 instance=ExtResource("2_2iywv")]
 layout_mode = 2
+
+[node name="LoadingOverlay" type="ColorRect" parent="." unique_id=1779962938]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7058824)
+
+[node name="CenterContainer" type="CenterContainer" parent="LoadingOverlay" unique_id=1231316737]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="LoadingOverlay/CenterContainer" unique_id=192572268]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Loading characters..."

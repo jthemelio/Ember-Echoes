@@ -69,3 +69,37 @@ class GetCharacterDataRequest extends JsonSerializable:
 func get_character_data(char_id: String, callback: Callable):
 	var request = GetCharacterDataRequest.new(char_id)
 	_post_with_session_auth(request, "/Client/GetCharacterData", callback)
+
+class GetAllUsersCharactersRequest extends JsonSerializable:
+	# This request can be empty, but the class must exist for the SDK
+	func _init():
+		pass
+		
+# Fetches all characters owned by the current player
+func get_all_users_characters(params: Dictionary, callback: Callable):
+	var request = GetAllUsersCharactersRequest.new()
+	_post_with_session_auth(request, "/Client/GetAllUsersCharacters", callback)
+	
+class DeleteCharacterRequest extends JsonSerializable:
+	var CharacterId: String
+	func _init(id: String):
+		CharacterId = id
+
+func delete_character(char_id: String, callback: Callable):
+	var request = DeleteCharacterRequest.new(char_id)
+	# Use session auth so PlayFab knows which player is requesting the delete
+	_post_with_session_auth(request, "/Client/DeleteCharacter", callback)
+
+class UpdateCharacterInternalDataRequest extends JsonSerializable:
+	var CharacterId: String
+	var Data: Dictionary
+
+	func _init(id: String, data_dict: Dictionary):
+		CharacterId = id
+		Data = data_dict
+
+# Add this function to the main body of PlayFabClient.gd
+func update_character_internal_data(char_id: String, data_dict: Dictionary, callback: Callable):
+	var request = UpdateCharacterInternalDataRequest.new(char_id, data_dict)
+	# This uses the method from the PlayFab.gd file you just shared
+	_post_with_session_auth(request, "/Client/UpdateCharacterInternalData", callback)
