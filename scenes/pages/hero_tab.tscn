@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://dgvn43oanfb3p"]
 
+[ext_resource type="Script" uid="uid://byyofgjhs7e7s" path="res://scenes/pages/hero_tab.gd" id="1_g5t2h"]
+
 [node name="HeroTab" type="ScrollContainer" unique_id=607381524]
 anchors_preset = 15
 anchor_right = 1.0
@@ -8,9 +10,12 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("1_g5t2h")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1041294370]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="VBoxContainer" unique_id=1046846194]
 layout_mode = 2
@@ -21,5 +26,487 @@ layout_mode = 2
 [node name="Label3" type="Label" parent="VBoxContainer" unique_id=1240066281]
 layout_mode = 2
 
+[node name="HeroHeader" type="HBoxContainer" parent="VBoxContainer" unique_id=1540906670]
+layout_mode = 2
+
+[node name="HeroPortrait" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=2029348168]
+layout_mode = 2
+
+[node name="HeroInfo" type="VBoxContainer" parent="VBoxContainer/HeroHeader" unique_id=1823220823]
+layout_mode = 2
+
+[node name="HeroName" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1840385984]
+layout_mode = 2
+
+[node name="HeroLevel" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=2015665349]
+layout_mode = 2
+
+[node name="HeroClass" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=693359840]
+layout_mode = 2
+
+[node name="@Label@31701" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=813219944]
+layout_mode = 2
+
+[node name="@Label@32469" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1440191853]
+layout_mode = 2
+
+[node name="@Label@33237" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1082129249]
+layout_mode = 2
+
+[node name="@Label@87554" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1584790983]
+layout_mode = 2
+
+[node name="@Label@88319" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=665883630]
+layout_mode = 2
+
+[node name="@Label@89084" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=799250904]
+layout_mode = 2
+
+[node name="@Label@111047" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=267907845]
+layout_mode = 2
+text = "Hero Name"
+
+[node name="@Label@111952" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1437154449]
+layout_mode = 2
+text = "Level: 1"
+
+[node name="@Label@112857" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=558221362]
+layout_mode = 2
+text = "Class"
+
+[node name="@Label@138500" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1635458420]
+layout_mode = 2
+text = "Hero Name"
+
+[node name="@Label@139531" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=1765078403]
+layout_mode = 2
+text = "Level: 1"
+
+[node name="@Label@140562" type="Label" parent="VBoxContainer/HeroHeader/HeroInfo" unique_id=595494896]
+layout_mode = 2
+text = "Class"
+
+[node name="PromotionBadge" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1486662935]
+layout_mode = 2
+
+[node name="@TextureRect@29397" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1461201236]
+layout_mode = 2
+
+[node name="@VBoxContainer@30165" type="VBoxContainer" parent="VBoxContainer/HeroHeader" unique_id=1428039003]
+layout_mode = 2
+
+[node name="@TextureRect@30933" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1576330514]
+layout_mode = 2
+
+[node name="@TextureRect@86001" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=2011269239]
+layout_mode = 2
+
+[node name="@VBoxContainer@86766" type="VBoxContainer" parent="VBoxContainer/HeroHeader" unique_id=1040634848]
+layout_mode = 2
+
+[node name="@TextureRect@89849" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1479588749]
+layout_mode = 2
+
+[node name="@TextureRect@108332" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1533499513]
+layout_mode = 2
+
+[node name="@VBoxContainer@109237" type="VBoxContainer" parent="VBoxContainer/HeroHeader" unique_id=1359650857]
+layout_mode = 2
+
+[node name="@TextureRect@110142" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1247636877]
+layout_mode = 2
+
+[node name="@TextureRect@136438" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=1446287115]
+layout_mode = 2
+
+[node name="@VBoxContainer@137469" type="VBoxContainer" parent="VBoxContainer/HeroHeader" unique_id=381903520]
+layout_mode = 2
+
+[node name="@TextureRect@141593" type="TextureRect" parent="VBoxContainer/HeroHeader" unique_id=866352672]
+layout_mode = 2
+
+[node name="EquipmentSection" type="MarginContainer" parent="VBoxContainer" unique_id=813862798]
+layout_mode = 2
+
+[node name="SectionHeader" type="Label" parent="VBoxContainer/EquipmentSection" unique_id=1820488913]
+layout_mode = 2
+text = "Equipment"
+
+[node name="EquipmentGrid" type="GridContainer" parent="VBoxContainer/EquipmentSection" unique_id=737881868]
+layout_mode = 2
+columns = 2
+
+[node name="HeadgearSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=564254102]
+layout_mode = 2
+
+[node name="HeadgearLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/HeadgearSlot" unique_id=716146795]
+layout_mode = 0
+text = "Headgear"
+
+[node name="NecklaceSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=508423180]
+layout_mode = 2
+
+[node name="NecklaceLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/NecklaceSlot" unique_id=2082827730]
+layout_mode = 0
+text = "Necklace"
+
+[node name="RingSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1775068791]
+layout_mode = 2
+
+[node name="RingLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/RingSlot" unique_id=730081933]
+layout_mode = 0
+text = "Ring"
+
+[node name="BootsSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=247213841]
+layout_mode = 2
+
+[node name="BootsLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/BootsSlot" unique_id=521449179]
+layout_mode = 0
+text = "Boots"
+
+[node name="ArmorSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1383075814]
+layout_mode = 2
+
+[node name="ArmorLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/ArmorSlot" unique_id=961330297]
+layout_mode = 0
+text = "Armor"
+
+[node name="WeaponSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=2102971202]
+layout_mode = 2
+
+[node name="WeaponLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/WeaponSlot" unique_id=750722736]
+layout_mode = 0
+text = "Weapon"
+
+[node name="OffHandSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1859314099]
+layout_mode = 2
+
+[node name="OffHandLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/OffHandSlot" unique_id=1727782322]
+layout_mode = 0
+text = "Off-Hand"
+
+[node name="BackpackSlot" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=523404313]
+layout_mode = 2
+
+[node name="BackpackLabel" type="Label" parent="VBoxContainer/EquipmentSection/EquipmentGrid/BackpackSlot" unique_id=948071084]
+layout_mode = 0
+text = "Backpack"
+
+[node name="@TextureRect@36309" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=2013809035]
+layout_mode = 2
+
+[node name="@TextureRect@37077" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=2014781824]
+layout_mode = 2
+
+[node name="@TextureRect@37845" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1200173359]
+layout_mode = 2
+
+[node name="@TextureRect@38613" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=983536569]
+layout_mode = 2
+
+[node name="@TextureRect@39381" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1334024463]
+layout_mode = 2
+
+[node name="@TextureRect@40149" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=651167357]
+layout_mode = 2
+
+[node name="@TextureRect@40917" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=464052568]
+layout_mode = 2
+
+[node name="@TextureRect@41685" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=328372383]
+layout_mode = 2
+
+[node name="@TextureRect@92909" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=281444759]
+layout_mode = 2
+
+[node name="@TextureRect@93674" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1354564105]
+layout_mode = 2
+
+[node name="@TextureRect@94439" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=23780211]
+layout_mode = 2
+
+[node name="@TextureRect@95207" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=66582195]
+layout_mode = 2
+
+[node name="@TextureRect@95972" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1472632982]
+layout_mode = 2
+
+[node name="@TextureRect@96737" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=2069457653]
+layout_mode = 2
+
+[node name="@TextureRect@97502" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1509524463]
+layout_mode = 2
+
+[node name="@TextureRect@98267" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=834630458]
+layout_mode = 2
+
+[node name="@TextureRect@116477" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1838921061]
+layout_mode = 2
+
+[node name="@TextureRect@118286" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=314362823]
+layout_mode = 2
+
+[node name="@TextureRect@120095" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=929911942]
+layout_mode = 2
+
+[node name="@TextureRect@121904" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1604242373]
+layout_mode = 2
+
+[node name="@TextureRect@123716" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=215727834]
+layout_mode = 2
+
+[node name="@TextureRect@125525" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1026885253]
+layout_mode = 2
+
+[node name="@TextureRect@127337" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1084249949]
+layout_mode = 2
+
+[node name="@TextureRect@129146" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=755485093]
+layout_mode = 2
+
+[node name="@TextureRect@145717" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=91724416]
+layout_mode = 2
+
+[node name="@TextureRect@146748" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=34765134]
+layout_mode = 2
+
+[node name="@TextureRect@147779" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=959337412]
+layout_mode = 2
+
+[node name="@TextureRect@148810" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1231174141]
+layout_mode = 2
+
+[node name="@TextureRect@149841" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=844888809]
+layout_mode = 2
+
+[node name="@TextureRect@150872" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=687707984]
+layout_mode = 2
+
+[node name="@TextureRect@151903" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=609232269]
+layout_mode = 2
+
+[node name="@TextureRect@152934" type="TextureRect" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1572956260]
+layout_mode = 2
+
+[node name="@Panel@157838" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=2003685708]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Panel@157850" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1527552759]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Panel@157862" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=799248995]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Panel@157874" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1801967678]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Panel@157886" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1825152746]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Panel@157898" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1131484523]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="OffhandSlot" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=1522291231]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Panel@157921" type="Panel" parent="VBoxContainer/EquipmentSection/EquipmentGrid" unique_id=2109113579]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="@Label@34773" type="Label" parent="VBoxContainer/EquipmentSection" unique_id=276694487]
+layout_mode = 2
+text = "Equipment"
+
+[node name="@GridContainer@35541" type="GridContainer" parent="VBoxContainer/EquipmentSection" unique_id=287458944]
+layout_mode = 2
+columns = 2
+
+[node name="@Label@91379" type="Label" parent="VBoxContainer/EquipmentSection" unique_id=1035204625]
+layout_mode = 2
+text = "Equipment"
+
+[node name="@GridContainer@92144" type="GridContainer" parent="VBoxContainer/EquipmentSection" unique_id=1168929009]
+layout_mode = 2
+columns = 2
+
+[node name="@Label@114667" type="Label" parent="VBoxContainer/EquipmentSection" unique_id=1690276491]
+layout_mode = 2
+text = "EQUIPMENT"
+
+[node name="@GridContainer@115572" type="GridContainer" parent="VBoxContainer/EquipmentSection" unique_id=1417048634]
+layout_mode = 2
+columns = 2
+
+[node name="@Label@143655" type="Label" parent="VBoxContainer/EquipmentSection" unique_id=1038901140]
+layout_mode = 2
+text = "EQUIPMENT"
+
+[node name="@GridContainer@144686" type="GridContainer" parent="VBoxContainer/EquipmentSection" unique_id=972641398]
+layout_mode = 2
+columns = 2
+
+[node name="@HBoxContainer@27864" type="HBoxContainer" parent="VBoxContainer" unique_id=183582509]
+layout_mode = 2
+
+[node name="@MarginContainer@34005" type="MarginContainer" parent="VBoxContainer" unique_id=1578701222]
+layout_mode = 2
+
+[node name="@HBoxContainer@85236" type="HBoxContainer" parent="VBoxContainer" unique_id=1680475131]
+layout_mode = 2
+
+[node name="@MarginContainer@90614" type="MarginContainer" parent="VBoxContainer" unique_id=1832775417]
+layout_mode = 2
+
+[node name="StatsSection" type="MarginContainer" parent="VBoxContainer" unique_id=2147097301]
+layout_mode = 2
+
+[node name="SectionHeader" type="Label" parent="VBoxContainer/StatsSection" unique_id=1043558557]
+layout_mode = 2
+text = "Stats"
+
+[node name="StatsContainer" type="VBoxContainer" parent="VBoxContainer/StatsSection" unique_id=1148121130]
+layout_mode = 2
+
+[node name="@HBoxContainer@107427" type="HBoxContainer" parent="VBoxContainer" unique_id=1697957646]
+layout_mode = 2
+
+[node name="@MarginContainer@113762" type="MarginContainer" parent="VBoxContainer" unique_id=9586584]
+layout_mode = 2
+
+[node name="@HBoxContainer@135407" type="HBoxContainer" parent="VBoxContainer" unique_id=969773142]
+layout_mode = 2
+
+[node name="@MarginContainer@142624" type="MarginContainer" parent="VBoxContainer" unique_id=1045018595]
+layout_mode = 2
+
 [node name="GridContainer" type="GridContainer" parent="." unique_id=2076030583]
 layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=119269382]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=1151785375]
+layout_mode = 2
+
+[node name="@VBoxContainer@134376" type="VBoxContainer" parent="ScrollContainer" unique_id=195691178]
+layout_mode = 2
+
+[node name="MainVBox" type="VBoxContainer" parent="ScrollContainer" unique_id=41230563]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EquipmentAndStatsSection" type="VBoxContainer" parent="ScrollContainer/MainVBox" unique_id=207496392]
+layout_mode = 2
+
+[node name="EquipmentLabel" type="Label" parent="ScrollContainer/MainVBox/EquipmentAndStatsSection" unique_id=188709060]
+layout_mode = 2
+text = "Equipment"
+horizontal_alignment = 1
+
+[node name="StatsLabel" type="Label" parent="ScrollContainer/MainVBox/EquipmentAndStatsSection" unique_id=277483906]
+layout_mode = 2
+text = "Stats"
+horizontal_alignment = 1
+
+[node name="StatsVBox" type="VBoxContainer" parent="ScrollContainer/MainVBox/EquipmentAndStatsSection" unique_id=745816830]
+layout_mode = 2
+
+[node name="Separator1" type="HSeparator" parent="ScrollContainer/MainVBox" unique_id=1962204647]
+layout_mode = 2
+
+[node name="CurrenciesSection" type="VBoxContainer" parent="ScrollContainer/MainVBox" unique_id=739114584]
+layout_mode = 2
+
+[node name="CurrenciesLabel" type="Label" parent="ScrollContainer/MainVBox/CurrenciesSection" unique_id=1695529751]
+layout_mode = 2
+text = "Currencies"
+horizontal_alignment = 1
+
+[node name="CurrenciesList" type="VBoxContainer" parent="ScrollContainer/MainVBox/CurrenciesSection" unique_id=815637953]
+layout_mode = 2
+
+[node name="GoldCurrencyRow" type="HBoxContainer" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList" unique_id=1728628831]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GoldCurrencyRow" unique_id=1691838596]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GoldCurrencyRow" unique_id=1859740761]
+layout_mode = 2
+text = "Gold"
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GoldCurrencyRow" unique_id=2078727285]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="QuantityLabel" type="Label" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GoldCurrencyRow" unique_id=1980890719]
+layout_mode = 2
+text = "\"1"
+vertical_alignment = 1
+
+[node name="GemsCurrencyRow" type="HBoxContainer" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList" unique_id=2063700684]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GemsCurrencyRow" unique_id=541357341]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="NameLabel" type="Label" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GemsCurrencyRow" unique_id=1637987066]
+layout_mode = 2
+text = "Gems"
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GemsCurrencyRow" unique_id=484774893]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="QuantityLabel" type="Label" parent="ScrollContainer/MainVBox/CurrenciesSection/CurrenciesList/GemsCurrencyRow" unique_id=1170151948]
+layout_mode = 2
+text = "\"1"
+vertical_alignment = 1
+
+[node name="Separator2" type="HSeparator" parent="ScrollContainer/MainVBox" unique_id=814701290]
+layout_mode = 2
+
+[node name="PromotionsSection" type="VBoxContainer" parent="ScrollContainer/MainVBox" unique_id=136159485]
+layout_mode = 2
+
+[node name="PromotionsLabel" type="Label" parent="ScrollContainer/MainVBox/PromotionsSection" unique_id=1975234293]
+layout_mode = 2
+text = "Promotions"
+horizontal_alignment = 1
+
+[node name="PromotionPanel" type="PanelContainer" parent="ScrollContainer/MainVBox/PromotionsSection" unique_id=69035016]
+layout_mode = 2
+
+[node name="PromotionDetailsVBox" type="VBoxContainer" parent="ScrollContainer/MainVBox/PromotionsSection/PromotionPanel" unique_id=1336064447]
+layout_mode = 2
+
+[node name="CurrentPromotionLabel" type="Label" parent="ScrollContainer/MainVBox/PromotionsSection/PromotionPanel/PromotionDetailsVBox" unique_id=871541172]
+layout_mode = 2
+text = "Current Promotion: Iron Knight"
+
+[node name="PromotionTasksLabel" type="Label" parent="ScrollContainer/MainVBox/PromotionsSection/PromotionPanel/PromotionDetailsVBox" unique_id=1976491362]
+layout_mode = 2
+text = "Complete tasks to advance."
+
+[node name="@ScrollContainer@157691" type="ScrollContainer" parent="." unique_id=1638462813]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
