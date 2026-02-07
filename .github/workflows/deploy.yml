@@ -16,7 +16,7 @@ jobs:
       - name: Godot Web Export
         uses: firebelley/godot-export@v5.2.1
         with:
-          # Direct links for Godot 4.6 Stable
+          # Verified links for Godot 4.6 Stable
           godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_linux.x86_64.zip
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_export_templates.tpz
           relative_project_path: ./
@@ -25,5 +25,5 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          # Folder where the exporter places the web files
-          folder: out/web
+          # The firebelley action often outputs to a folder named 'web' inside an 'exports' directory
+          folder: exports/web
