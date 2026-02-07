@@ -85,21 +85,26 @@ alignment = 1
 custom_minimum_size = Vector2(225, 40)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_0jb1h")
 placeholder_text = "E-mail"
 alignment = 1
 
 [node name="PasswordInput" type="LineEdit" parent="LoginPanel/VBoxContainer" unique_id=1278901718]
+visible = false
 custom_minimum_size = Vector2(225, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/normal = SubResource("StyleBoxFlat_i5s6q")
+placeholder_text = "Password"
+alignment = 1
 secret = true
 
 [node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer" unique_id=1545918363]
 custom_minimum_size = Vector2(225, 40)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_e4i2w")
 
 [node name="SplashOverlay" type="TextureRect" parent="." unique_id=2110692922]

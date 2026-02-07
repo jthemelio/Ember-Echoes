@@ -1,3 +1,10 @@
 # Godot 4+ specific ignores
 .godot/
-/android/
+*.tmp
+*.translation
+*.import
+
+# Export artifacts
+EchoEmbersExport/  # Matches your export_path in the cfg
+build/
+export_presets.cfg

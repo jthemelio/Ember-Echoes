@@ -1,0 +1,26 @@
+name Publish to GitHub Pages
+on
+  push
+    branches [ main ] # Trigger on every push to main
+
+jobs
+  export_game
+    runs-on ubuntu-latest
+    permissions
+      contents write
+    steps
+      - name Checkout
+        uses actionscheckout@v4
+
+      - name Godot Web Export
+        uses firebelleygodot-export@v5.2.1
+        with
+          godot_executable_download_url httpsgithub.comgodotenginegodotreleasesdownload4.3-stableGodot_v4.3-stable_linux_x86_64.zip
+          godot_export_templates_download_url httpsgithub.comgodotenginegodotreleasesdownload4.3-stableGodot_v4.3-stable_export_templates.tpz
+          relative_project_path .
+          archive_export_output true
+
+      - name Deploy to GitHub Pages
+        uses JamesIvesgithub-pages-deploy-action@v4
+        with
+          folder buildweb # This should match your export path
