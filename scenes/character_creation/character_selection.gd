@@ -104,14 +104,10 @@ func _on_slot_pressed(slot_index: int, is_empty: bool):
 		print("Opening character creation for slot: ", slot_index)
 		open_creation_popup(slot_index)
 	else:
-		var data = target_slot.char_data # Assuming char_data is stored in the slot
-		print("Selected: ", data.CharacterName, " ID: ", data.CharacterId)
-		
-		# GLOBAL DATA: Store the selected ID so the game scene knows who to load
-		# (You might want a Global script called 'GameManager' for this)
-		# GameManager.current_character_id = data.CharacterId
-		
-		# scene_to_game_world()
+		# Use the data stored in the slot from PlayFab 
+		var data = target_slot.char_data 
+		# Hand off to GameManager to store Name, ID, and Class [cite: 13]
+		GameManager.start_game_with_character(data)
 
 func open_creation_popup(slot_index: int):
 	var path = "res://scenes/character_creation/character_creation_popup.tscn"

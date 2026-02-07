@@ -1,0 +1,87 @@
+[gd_scene format=3 uid="uid://ycpt7nti4cxp"]
+
+[ext_resource type="Script" uid="uid://2vndb8tmmrkv" path="res://scenes/pages/hunting_grounds.gd" id="1_6jnp4"]
+[ext_resource type="PackedScene" uid="uid://dwl14ax22pv12" path="res://scenes/pages/MobSlot.tscn" id="2_e62pk"]
+
+[node name="HuntingGrounds" type="VBoxContainer" unique_id=106764822]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+script = ExtResource("1_6jnp4")
+mob_slot_scene = ExtResource("2_e62pk")
+
+[node name="ModeSwitcher" type="PanelContainer" parent="." unique_id=1967275843]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ModeSwitcher" unique_id=1173101693]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Hunt" type="Button" parent="ModeSwitcher/HBoxContainer" unique_id=1559913446]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hunt
+"
+
+[node name="Mine" type="Button" parent="ModeSwitcher/HBoxContainer" unique_id=1197541967]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Mine"
+
+[node name="Header" type="PanelContainer" parent="." unique_id=704615873]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Header" unique_id=870940806]
+layout_mode = 2
+
+[node name="HeaderContent" type="HBoxContainer" parent="Header/VBoxContainer2" unique_id=2031645417]
+layout_mode = 2
+
+[node name="CharNameLabel" type="Label" parent="Header/VBoxContainer2/HeaderContent" unique_id=62825774]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Character"
+horizontal_alignment = 1
+
+[node name="ClassName" type="Label" parent="Header/VBoxContainer2/HeaderContent" unique_id=496960625]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Class"
+horizontal_alignment = 1
+
+[node name="HPDisplay" type="Label" parent="Header/VBoxContainer2" unique_id=2117701692]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "HP BAR"
+horizontal_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=644562122]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=619970938]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="MonsterName" type="Label" parent="PanelContainer/VBoxContainer" unique_id=388799383]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+text = "Chicken"
+horizontal_alignment = 1
+
+[node name="MonsterHP" type="ProgressBar" parent="PanelContainer/VBoxContainer" unique_id=1879719180]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1190167296]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2

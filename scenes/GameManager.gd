@@ -15,4 +15,4 @@ func start_game_with_character(data: Dictionary):
 	
 	# Change to your actual game world scene
 	# Ensure this path is correct for your project!
-	get_tree().change_scene_to_file("res://scenes/world/main_world.tscn")
+	get_tree().change_scene_to_file("res://scenes/pages/idleHome.tscn")
