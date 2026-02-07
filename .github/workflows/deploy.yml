@@ -16,15 +16,14 @@ jobs:
       - name: Godot Web Export
         uses: firebelley/godot-export@v5.2.1
         with:
-          # Fixed the download URLs to the direct official stable links
-          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux_x86_64.zip
-          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
+          # Direct links for Godot 4.6 Stable
+          godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_linux.x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_export_templates.tpz
           relative_project_path: ./
-          # Fixed the parameter name from 'archive_export_output' to 'archive_output'
           archive_output: true
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          # This folder name must match where the exporter puts the files
+          # Folder where the exporter places the web files
           folder: out/web
