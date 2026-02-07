@@ -27,4 +27,4 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           # Automatically detects the folder created by the export step
-          folder: ${{ steps.export.outputs.build_directory }}
+          folder: ${{ steps.export.outputs.build_directory }}/Web
