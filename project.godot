@@ -30,7 +30,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-playfab/plugin.cfg")
+enabled=PackedStringArray("res://addons/gamedev_assistant/plugin.cfg", "res://addons/godot-playfab/plugin.cfg")
 
 [physics]
 

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dgvn43oanfb3p"]
 
-[node name="HeroTab" type="PanelContainer" unique_id=389107906]
+[node name="HeroTab" type="ScrollContainer" unique_id=607381524]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -19,4 +19,7 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Label3" type="Label" parent="VBoxContainer" unique_id=1240066281]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="." unique_id=2076030583]
 layout_mode = 2
