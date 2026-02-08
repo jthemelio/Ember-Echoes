@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://dgvn43oanfb3p"]
 
-[node name="HeroTab" type="PanelContainer" unique_id=389107906]
+[ext_resource type="PackedScene" uid="uid://du3e7j080vpj7" path="res://characterLogic/SubStatRow.tscn" id="1_g5t2h"]
+[ext_resource type="Script" uid="uid://cksen1dsoc3dc" path="res://characterLogic/StatRow.gd" id="2_d25hg"]
+[ext_resource type="PackedScene" uid="uid://dqonnkgps6qai" path="res://characterLogic/StatRow.tscn" id="2_hccm8"]
+[ext_resource type="Script" uid="uid://d3diywgt7d2n8" path="res://characterLogic/SubStatRow.gd" id="2_nqu77"]
+
+[node name="HeroTab" type="ScrollContainer" unique_id=229612391]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -9,14 +14,120 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1041294370]
+[node name="ScrollWrapper" type="VBoxContainer" parent="." unique_id=1701138636]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="S1_Profile_Equipment_Stats" type="VBoxContainer" parent="ScrollWrapper" unique_id=1041294370]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Profile" type="VBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats" unique_id=1988677648]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CharName" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile" unique_id=1046846194]
+layout_mode = 2
+text = "Character Name"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile" unique_id=207080736]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer" unique_id=1046846194]
+[node name="LevelLabel" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile/HBoxContainer" unique_id=1665319057]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Level 1"
+
+[node name="ClassLabel" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile/HBoxContainer" unique_id=1240066281]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Novice Marksman"
+horizontal_alignment = 2
+
+[node name="Equipment" type="GridContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats" unique_id=877860440]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 4
+
+[node name="PanelContainer" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=595946023]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="VBoxContainer" unique_id=1665319057]
+[node name="PanelContainer2" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=1197096258]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 
-[node name="Label3" type="Label" parent="VBoxContainer" unique_id=1240066281]
+[node name="PanelContainer3" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=1452968210]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="PanelContainer4" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=1982028308]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="PanelContainer5" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=1934614371]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="PanelContainer6" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=1532842245]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="PanelContainer7" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=112005972]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="PanelContainer8" type="PanelContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" unique_id=1266453404]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="Stats" type="VBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats" unique_id=85582998]
+layout_mode = 2
+
+[node name="HPRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=167415794 instance=ExtResource("1_g5t2h")]
+layout_mode = 2
+script = ExtResource("2_nqu77")
+
+[node name="StrRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1302286274 instance=ExtResource("2_hccm8")]
+layout_mode = 2
+script = ExtResource("2_d25hg")
+
+[node name="AgiRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1231962323 instance=ExtResource("2_hccm8")]
+layout_mode = 2
+script = ExtResource("2_d25hg")
+stat_name_display = "Agility"
+
+[node name="VitRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1179989950 instance=ExtResource("2_hccm8")]
+layout_mode = 2
+script = ExtResource("2_d25hg")
+stat_name_display = "Vitality"
+
+[node name="SpiRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=5546439 instance=ExtResource("2_hccm8")]
+layout_mode = 2
+script = ExtResource("2_d25hg")
+stat_name_display = "Spirit"
+
+[node name="S2_Currencies" type="VBoxContainer" parent="ScrollWrapper" unique_id=1355746981]
+layout_mode = 2
+
+[node name="Header" type="VBoxContainer" parent="ScrollWrapper/S2_Currencies" unique_id=326905446]
+layout_mode = 2
+
+[node name="Currencies" type="Label" parent="ScrollWrapper/S2_Currencies/Header" unique_id=184471168]
+layout_mode = 2
+text = "Currencies"
+
+[node name="Description" type="Label" parent="ScrollWrapper/S2_Currencies/Header" unique_id=750563423]
+layout_mode = 2
+text = "Your account-wide currencies and materials"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollWrapper/S2_Currencies/Header" unique_id=1524528321]
+layout_mode = 2
+
+[node name="Currency_01" type="Label" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=992150430]
+layout_mode = 2
+
+[node name="Promotions" type="VBoxContainer" parent="ScrollWrapper" unique_id=491009529]
 layout_mode = 2

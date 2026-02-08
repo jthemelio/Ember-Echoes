@@ -2,6 +2,9 @@ extends Node
 
 var class_data = {}
 var promotion_reqs = {}
+var promotion_multipliers = {} # Added to match your JSON
+
+# Maps PlayFab Statistics (Full) to JSON keys (Short)
 var stat_map = {
 	"Strength": "Str",
 	"Agility": "Agi",
@@ -12,78 +15,68 @@ var stat_map = {
 func initialize_from_playfab(data: Dictionary):
 	class_data = data.get("Classes", {})
 	promotion_reqs = data.get("PromotionRequirements", {})
-	
+	promotion_multipliers = data.get("PromotionMultipliers", {}) # Load from Title Data
+
 func calculate_base_stats(stats: Dictionary) -> Dictionary:
-	var strength = stats.get("Strength", 0)
-	var agility = stats.get("Agility", 0)
-	var vitality = stats.get("Vitality", 0)
-	var spirit = stats.get("Spirit", 0)
+	# Pulls using full names from your character statistics
+	var str_val = stats.get("Strength", 0)
+	var agi_val = stats.get("Agility", 0)
+	var vit_val = stats.get("Vitality", 0)
+	var spi_val = stats.get("Spirit", 0)
 	
-	var base_hp = (strength * 3) + (agility * 3) + (vitality * 24) + (spirit * 3)
-	var base_mp = spirit * 5
+	var base_hp = (str_val * 3) + (agi_val * 3) + (vit_val * 24) + (spi_val * 3)
+	var base_mp = spi_val * 5
 	
-	return {
-		"HP": base_hp,
-		"MP": base_mp
-	}
+	return {"HP": base_hp, "MP": base_mp}
 
 func apply_multipliers(base_values: Dictionary, char_class: String, level: int) -> Dictionary:
 	var final_hp = base_values.HP
 	var final_mp = base_values.MP
 	
-	# Twin-Soul logic
+	# Fetch multipliers from your Title Data JSON logic
+	var class_mults = promotion_multipliers.get(char_class, {})
+	var best_mult = 1.0
+	
+	# Find the highest level tier the player has reached
+	for tier_lvl in class_mults.keys():
+		if level >= int(tier_lvl):
+			best_mult = float(class_mults[tier_lvl])
+	
+	# Apply based on class type (HP for Twin-Soul, MP for others)
 	if char_class == "Twin-Soul":
-		var multiplier = 1.0
-		if level >= 110: multiplier = 1.15
-		elif level >= 100: multiplier = 1.12
-		elif level >= 70: multiplier = 1.10
-		elif level >= 40: multiplier = 1.08
-		elif level >= 15: multiplier = 1.05
-		final_hp = int(final_hp * multiplier)
-		
-	# (Wuxia, Spiritmender, and Emberlord)
+		final_hp = int(final_hp * best_mult)
 	elif char_class in ["Wuxia", "Spiritmender", "Emberlord"]:
-		var multiplier = 1.0
-		if level >= 110: multiplier = 6.0
-		elif level >= 100: multiplier = 5.0
-		elif level >= 70: multiplier = 4.0
-		elif level >= 40: multiplier = 3.0
-		final_mp = int(final_mp * multiplier)
+		final_mp = int(final_mp * best_mult)
 		
 	return {"MaxHP": final_hp, "MaxMP": final_mp}
 
 func get_smart_allocated_stats(char_class: String, level: int) -> Dictionary:
-	# 1. Setup Caps: Only Wuxia and Spiritmender cap at 110
 	var cap = 110 if char_class in ["Wuxia", "Spiritmender"] else 120
 	var effective_lvl = clamp(level, 1, cap)
 	
-	# 2. FETCH FROM CLOUD instead of hardcoded maps
-	# .get() provides a safety backup if the class name is missing
 	var start = class_data.get(char_class, {"Str": 0, "Agi": 0, "Vit": 0, "Spi": 0})
 	var target = promotion_reqs.get(char_class, {"Str": 0, "Agi": 0, "Vit": 0, "Spi": 0})
 	
 	var current_stats = {}
 	
-	# 3. Smart Spread Calculation using Cloud Data
-	for stat in ["Str", "Agi", "Vit", "Spi"]:
-		var total_growth = target[stat] - start[stat]
+	for full_name in stat_map.keys():
+		var short_key = stat_map[full_name]
+		var total_growth = target.get(short_key, 0) - start.get(short_key, 0)
 		var growth_per_level = float(total_growth) / (cap - 1)
-		current_stats[stat] = start[stat] + int(growth_per_level * (effective_lvl - 1))
+		
+		# Stores result as "Strength", "Agility", etc.
+		current_stats[full_name] = start.get(short_key, 0) + int(growth_per_level * (effective_lvl - 1))
 		
 	return current_stats
-	
+
 func sync_calculated_stats(char_id: String, hp: int, mp: int):
-	# Create the dictionary that matches what PlayFab expects for 'Data'
 	var internal_data = {
 		"MaxHP": str(hp),
 		"MaxMP": str(mp)
 	}
-	
-	print("Syncing Internal Vitals for ID: ", char_id)
-	
-	# Use the exact snake_case name you added to PlayFabClient.gd
+	# Updates the Character Internal Data on PlayFab
 	PlayFabManager.client.update_character_internal_data(
 		char_id, 
 		internal_data, 
-		func(result): print("Cloud Internal Stats Updated successfully!")
+		func(result): print("Cloud Internal Stats Updated!")
 	)

@@ -1,13 +1,13 @@
-[gd_scene format=3 uid="uid://dqonnkgps6qai"]
+[gd_scene format=3 uid="uid://du3e7j080vpj7"]
 
-[node name="StatRow" type="HBoxContainer" unique_id=1302286274]
+[node name="SubStatRow" type="HBoxContainer" unique_id=1302286274]
 offset_right = 103.0
 offset_bottom = 31.0
 size_flags_horizontal = 3
 
 [node name="StatName" type="Label" parent="." unique_id=844271095]
 layout_mode = 2
-text = "Label"
+text = "SubStatLabel"
 
 [node name="Control" type="Control" parent="." unique_id=468524868]
 layout_mode = 2
@@ -16,7 +16,3 @@ size_flags_horizontal = 3
 [node name="StatValue" type="Label" parent="." unique_id=633304946]
 layout_mode = 2
 text = "0"
-
-[node name="AddButton" type="Button" parent="." unique_id=705548599]
-layout_mode = 2
-text = "+"
