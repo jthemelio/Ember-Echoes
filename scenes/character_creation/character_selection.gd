@@ -124,32 +124,32 @@ func open_creation_popup(slot_index: int):
 		popup.character_confirmed.connect(_on_character_data_received.bind(slot_index))
 
 func _on_character_data_received(data: Dictionary, slot_index: int):
-	# Update label so the user knows we are moving to the game
+	# 1. Update the loading overlay to provide feedback to the user
 	var label = loading_overlay.get_node_or_null("CenterContainer/Label")
-	if label: label.text = "Loading World..."
+	if label: 
+		label.text = "Initializing Character..."
 	loading_overlay.show()
 	
 	var char_id = data.CharacterId
 	var slot_bundle = {"SlotIndex": str(slot_index)}
 	
+	# 2. Save the slot assignment to PlayFab
 	PlayFabManager.client.update_character_data(char_id, slot_bundle, func(result):
-		print("Slot assigned! Setting GameManager data...")
+		print("Slot assigned! Syncing character stats...")
 		
-		# 1. Source of Truth update
-		GameManager.active_character_id = data.CharacterId
-		GameManager.active_character_name = data.CharacterName
-		GameManager.active_character_class = data.CharacterType 
-		GameManager.active_character_level = 1
-		GameManager.active_character_stats = {
-			"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0,
-			"AvailableAttributePoints": 0
+		# 3. Create a bundle of data to hand off to GameManager
+		# We use the keys that GameManager.start_game_with_character expects
+		var game_init_bundle = {
+			"CharacterId": data.CharacterId,
+			"CharacterName": data.CharacterName,
+			"Class": data.CharacterType, # Ensure this matches your creation popup key
+			"Level": 1,
+			"AwakeningCount": 0
 		}
-
-		# Small delay to ensure PlayFab processes the data before the next scene reads it
-		await get_tree().create_timer(0.3).timeout 
 		
-		# 2. Transition to the scene where HeroTab lives
-		get_tree().change_scene_to_file("res://scenes/pages/idleHome.tscn")
+		# 4. Trigger the GameManager pre-fetch and scene transition
+		# This will fetch stats, store them, and then change the scene to idleHome.tscn.
+		GameManager.start_game_with_character(game_init_bundle)
 	)
 	
 

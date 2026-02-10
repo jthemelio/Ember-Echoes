@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://ceia2diutw1sk"]
+
+[ext_resource type="Script" uid="uid://btvhp35ybk7o4" path="res://scenes/pages/InventorySlot.gd" id="1_s4ebw"]
+
+[node name="InventorySlot" type="PanelContainer" unique_id=2049013501]
+custom_minimum_size = Vector2(80, 80)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s4ebw")
+
+[node name="QualityBorder" type="TextureRect" parent="." unique_id=1806854884]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="." unique_id=650447792]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LabelsOverlay" type="Control" parent="." unique_id=1258338202]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CountLabel" type="Label" parent="LabelsOverlay" unique_id=1849672682]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -450.0
+offset_bottom = 23.0
+grow_horizontal = 0
+size_flags_vertical = 0
+horizontal_alignment = 2
+
+[node name="QuantityLabel" type="Label" parent="LabelsOverlay" unique_id=622440074]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -450.0
+offset_top = -23.0
+grow_horizontal = 0
+grow_vertical = 0
+size_flags_vertical = 8
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="Timer" type="Timer" parent="." unique_id=735471002]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ccmw0cwiw7ar0" path="res://scenes/pages/idleHome.gd" id="1_3u8s3"]
 [ext_resource type="PackedScene" uid="uid://dgvn43oanfb3p" path="res://scenes/pages/hero_tab.tscn" id="2_4xnaw"]
 [ext_resource type="PackedScene" uid="uid://ycpt7nti4cxp" path="res://scenes/pages/hunting_grounds.tscn" id="3_vehlf"]
-[ext_resource type="Script" uid="uid://dh48yqgkw0ifq" path="res://scenes/pages/hero_tab.gd" id="3_vmrhr"]
+[ext_resource type="PackedScene" uid="uid://dmykdb6m3kuy" path="res://scenes/pages/EquipmentTooltip.tscn" id="4_vmrhr"]
 
 [node name="IdleHome" type="Control" unique_id=1163464952]
 layout_mode = 3
@@ -34,7 +34,6 @@ size_flags_vertical = 3
 
 [node name="HeroTab" parent="MainLayout/ContentArea/PageContainer" unique_id=229612391 instance=ExtResource("2_4xnaw")]
 layout_mode = 2
-script = ExtResource("3_vmrhr")
 
 [node name="HuntingTab" parent="MainLayout/ContentArea/PageContainer" unique_id=106764822 instance=ExtResource("3_vehlf")]
 visible = false
@@ -67,6 +66,9 @@ size_flags_horizontal = 3
 [node name="Button5" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1437330831]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="EquipmentTooltip" parent="MainLayout" unique_id=1638817052 instance=ExtResource("4_vmrhr")]
+layout_mode = 2
 
 [connection signal="pressed" from="MainLayout/NavBar/NavButtons/Hero" to="." method="_on_hero_button_pressed"]
 [connection signal="pressed" from="MainLayout/NavBar/NavButtons/Idle" to="." method="_on_idle_button_pressed"]

@@ -46,6 +46,23 @@ func update_character_internal_data(char_id: String, data_dict: Dictionary, call
 	var request = UpdateCharacterInternalDataRequest.new(char_id, data_dict)
 	_post_with_session_auth(request, "/Client/UpdateCharacterInternalData", callback)
 
+# --- NEW: Statistics Functions ---
+
+# Fetches all statistics for a specific character
+func get_character_statistics(char_id: String, callback: Callable):
+	var request = GetCharacterStatisticsRequest.new(char_id)
+	_post_with_session_auth(request, "/Client/GetCharacterStatistics", callback)
+
+# Updates statistics for a specific character (Raw Dictionary Method)
+func update_character_statistics(char_id: String, stats_array: Array, callback: Callable):
+	var request_dict = {
+		"CharacterId": char_id,
+		"CharacterStatistics": stats_array
+	}
+	var headers = {}
+	if _add_auth_headers(headers, AUTH_TYPE.SESSION_TICKET):
+		_http_request(HTTPClient.METHOD_POST, request_dict, "/Client/UpdateCharacterStatistics", callback, headers)
+
 # --- Request Classes ---
 
 class GetUserInventoryRequest extends JsonSerializable:
@@ -86,3 +103,8 @@ class UpdateCharacterInternalDataRequest extends JsonSerializable:
 	func _init(id: String, data_dict: Dictionary):
 		CharacterId = id
 		Data = data_dict
+
+class GetCharacterStatisticsRequest extends JsonSerializable:
+	var CharacterId: String
+	func _init(id: String):
+		CharacterId = id

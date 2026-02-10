@@ -68,12 +68,21 @@ func _on_login_pressed():
 		PlayFabManager.client.login_with_email(input_text, password_text, {}, info_params)
 
 func _on_login_success(result):
-	# Check if the login type was CustomID (Guest)
-	if PlayFabManager.client_config.login_type == PlayFabClientConfig.LoginType.LOGIN_CUSTOM_ID:
-		show_link_account_reminder()
+	# 1. Fetch Title Data immediately after login
+	var title_data_request = GetTitleDataRequest.new()
 	
-	# Proceed to character creation
-	get_tree().change_scene_to_file("res://scenes/character_creation/character_selection.tscn")
+	PlayFabManager.client.get_title_data(title_data_request, func(t_result):
+		# Access the raw JSON string from your Title Data
+		var raw_json = t_result.data.Data.get("GameData", "")
+		if raw_json != "":
+			var parsed_data = JSON.parse_string(raw_json)
+			# 2. Feed the JSON to the Calculator
+			StatCalculator.initialize_from_playfab(parsed_data)
+			print("StatCalculator Initialized!")
+		
+		# 3. Proceed to character selection once data is ready
+		get_tree().change_scene_to_file("res://scenes/character_creation/character_selection.tscn")
+	)
 
 func show_link_account_reminder():
 	# This would trigger a UI popup you've designed

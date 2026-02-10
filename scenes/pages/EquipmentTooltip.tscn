@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://dmykdb6m3kuy"]
+
+[ext_resource type="Script" uid="uid://chp1j1w0a3e70" path="res://scenes/pages/EquipmentTooltip.gd" id="1_pb4ep"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e3j1y"]
+bg_color = Color(0.07450981, 0.07450981, 0.07450981, 0.78431374)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5971761, 0.5971762, 0.59717584, 1)
+
+[node name="EquipmentTooltip" type="PanelContainer" unique_id=1638817052]
+offset_right = 91.0
+offset_bottom = 86.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_e3j1y")
+script = ExtResource("1_pb4ep")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1950322273]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=607159611]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=996109933]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="ItemIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=821756262]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=545483245]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemName" type="RichTextLabel" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1681172164]
+layout_mode = 2
+fit_content = true
+autowrap_mode = 0
+
+[node name="ItemType" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=2093834711]
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="StatsContent" type="RichTextLabel" parent="MarginContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=414638796]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+bbcode_enabled = true
+fit_content = true
+autowrap_mode = 0

@@ -1,14 +1,15 @@
 extends VBoxContainer
 
 @export var mob_slot_scene: PackedScene 
-@onready var grid = $GridContainer
+@onready var grid = $ScrollContainer/VBoxContainer/GridContainer
 
 # These are your "Unique" primary nodes
-@onready var primary_name = $PanelContainer/VBoxContainer/MonsterName
-@onready var primary_hp = $PanelContainer/VBoxContainer/MonsterHP
-@onready var char_name_label = $Header/VBoxContainer2/HeaderContent/CharNameLabel 
-@onready var class_name_label = $Header/VBoxContainer2/HeaderContent/ClassName
-@onready var hp_display = $Header/VBoxContainer2/HPDisplay
+
+@onready var primary_name = $ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer/MonsterName
+@onready var primary_hp = $ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer/MonsterHP
+@onready var char_name_label = $ScrollContainer/VBoxContainer/Header/VBoxContainer2/HeaderContent/CharNameLabel
+@onready var class_name_label = $ScrollContainer/VBoxContainer/Header/VBoxContainer2/HeaderContent/ClassName
+@onready var hp_display = $ScrollContainer/VBoxContainer/Header/VBoxContainer2/HPDisplay
 
 func _ready() -> void:
 	# Load the data from GameManager

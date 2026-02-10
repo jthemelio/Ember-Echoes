@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://dgvn43oanfb3p"]
 
 [ext_resource type="PackedScene" uid="uid://du3e7j080vpj7" path="res://characterLogic/SubStatRow.tscn" id="1_g5t2h"]
-[ext_resource type="Script" uid="uid://cksen1dsoc3dc" path="res://characterLogic/StatRow.gd" id="2_d25hg"]
+[ext_resource type="Script" uid="uid://dh48yqgkw0ifq" path="res://scenes/pages/hero_tab.gd" id="1_nqu77"]
 [ext_resource type="PackedScene" uid="uid://dqonnkgps6qai" path="res://characterLogic/StatRow.tscn" id="2_hccm8"]
 [ext_resource type="Script" uid="uid://d3diywgt7d2n8" path="res://characterLogic/SubStatRow.gd" id="2_nqu77"]
+[ext_resource type="PackedScene" uid="uid://xcad25hmn1yn" path="res://characterLogic/CurrencySlotRow.tscn" id="5_2tbbl"]
 
 [node name="HeroTab" type="ScrollContainer" unique_id=229612391]
 anchors_preset = 15
@@ -13,6 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("1_nqu77")
 
 [node name="ScrollWrapper" type="VBoxContainer" parent="." unique_id=1701138636]
 layout_mode = 2
@@ -92,22 +94,30 @@ script = ExtResource("2_nqu77")
 
 [node name="StrRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1302286274 instance=ExtResource("2_hccm8")]
 layout_mode = 2
-script = ExtResource("2_d25hg")
 
 [node name="AgiRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1231962323 instance=ExtResource("2_hccm8")]
 layout_mode = 2
-script = ExtResource("2_d25hg")
 stat_name_display = "Agility"
 
 [node name="VitRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1179989950 instance=ExtResource("2_hccm8")]
 layout_mode = 2
-script = ExtResource("2_d25hg")
 stat_name_display = "Vitality"
 
 [node name="SpiRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=5546439 instance=ExtResource("2_hccm8")]
 layout_mode = 2
-script = ExtResource("2_d25hg")
 stat_name_display = "Spirit"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=2080013914]
+layout_mode = 2
+
+[node name="PointsLabel" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer" unique_id=943238778]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OkButton" type="Button" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer" unique_id=5536964]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 2
+text = "Ok"
 
 [node name="S2_Currencies" type="VBoxContainer" parent="ScrollWrapper" unique_id=1355746981]
 layout_mode = 2
@@ -126,8 +136,46 @@ text = "Your account-wide currencies and materials"
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollWrapper/S2_Currencies/Header" unique_id=1524528321]
 layout_mode = 2
 
-[node name="Currency_01" type="Label" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=992150430]
+[node name="Gold" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1990436388 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
+
+[node name="EchoToken" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1782847859 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "ET"
+
+[node name="Comets" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1015996013 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "CM"
+
+[node name="WyrmSphere" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=490692987 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "WS"
+
+[node name="Ignis1" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=934122705 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "I1"
+
+[node name="Ignis2" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1069220813 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "I2"
+
+[node name="Ignis3" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1596337947 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "I3"
+
+[node name="Ignis4" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=538156146 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "I4"
+
+[node name="Ignis5" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1441499773 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "I5"
+
+[node name="Ignis6" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1121503516 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+layout_mode = 2
+currency_code = "I6"
 
 [node name="Promotions" type="VBoxContainer" parent="ScrollWrapper" unique_id=491009529]
 layout_mode = 2
+
+[connection signal="pressed" from="ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]

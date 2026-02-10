@@ -5,72 +5,185 @@ extends ScrollContainer
 @onready var agi_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/AgiRow
 @onready var vit_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/VitRow
 @onready var spi_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/SpiRow
+@onready var name_label = $ScrollWrapper/S1_Profile_Equipment_Stats/Profile/CharName
+
+# --- NEW: Currency & Material Labels ---
+# Make sure these paths match your UI tree
+@onready var gold_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Gold
+@onready var echo_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/EchoToken
+@onready var comet_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Comets
+@onready var wyrmsphere_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/WyrmSphere
+@onready var ignis_labels = {
+	"I1": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis1,
+	"I2": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis2,
+	"I3": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis3,
+	"I4": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis4,
+	"I5": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis5,
+	"I6": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis6
+}
+
+# UI elements for bulk submission
+@onready var points_box = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer
+@onready var points_label = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer/PointsLabel
+@onready var ok_button = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer/OkButton
+
+var pending_stats = {"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0}
+var total_pending_cost = 0
 
 func _ready():
-	# Connect signals from each row to the new function
-	str_row.stat_increased.connect(_on_stat_increased)
-	agi_row.stat_increased.connect(_on_stat_increased)
-	vit_row.stat_increased.connect(_on_stat_increased)
-	spi_row.stat_increased.connect(_on_stat_increased)
+	# Connect stat row signals
+	str_row.stat_increased.connect(_on_stat_increase_requested)
+	agi_row.stat_increased.connect(_on_stat_increase_requested)
+	vit_row.stat_increased.connect(_on_stat_increase_requested)
+	spi_row.stat_increased.connect(_on_stat_increase_requested)
 	
+	str_row.stat_decreased.connect(_on_stat_decrease_requested)
+	agi_row.stat_decreased.connect(_on_stat_decrease_requested)
+	vit_row.stat_decreased.connect(_on_stat_decrease_requested)
+	spi_row.stat_decreased.connect(_on_stat_decrease_requested)
+	
+	if ok_button and not ok_button.pressed.is_connected(_on_ok_button_pressed):
+		ok_button.pressed.connect(_on_ok_button_pressed)
+	
+	GameManager.character_stats_updated.connect(update_hero_ui)
+	
+	# Since GameManager now pre-fetches during login, we usually don't need to fetch here
 	update_hero_ui()
 
 func update_hero_ui():
+	var invested = GameManager.active_character_stats
 	var char_class = GameManager.active_character_class
 	var level = GameManager.active_character_level
-	var invested = GameManager.active_character_stats # From PlayFab
+	var awaken_count = GameManager.active_character_awakening
 	
-	# 1. Get "Smart Growth" Base Stats from your Calculator
+	if name_label:
+		name_label.text = GameManager.active_character_name
+
+	# --- NEW: Automated Currency Refresh ---
+	# This replaces all the individual gold_label, echo_label, etc. lines
+	for child in get_tree().get_nodes_in_group("currency_slots"):
+		if child.has_method("update_display"):
+			child.update_display()
+	
+	# --- Existing Stat Logic ---
 	var base = StatCalculator.get_smart_allocated_stats(char_class, level)
+	var total_str = int(base.get("Strength", 0) + invested.get("Strength", 0)) + pending_stats["Strength"]
+	var total_agi = int(base.get("Agility", 0) + invested.get("Agility", 0)) + pending_stats["Agility"]
+	var total_vit = int(base.get("Vitality", 0) + invested.get("Vitality", 0)) + pending_stats["Vitality"]
+	var total_spi = int(base.get("Spirit", 0) + invested.get("Spirit", 0)) + pending_stats["Spirit"]
 	
-	# 2. Calculate Totals (Base JSON + Invested PlayFab)
-	var total_str = base.get("Strength", 0) + invested.get("Strength", 0)
-	var total_agi = base.get("Agility", 0) + invested.get("Agility", 0)
-	var total_vit = base.get("Vitality", 0) + invested.get("Vitality", 0)
-	var total_spi = base.get("Spirit", 0) + invested.get("Spirit", 0)
-	
-	# 3. Calculate Derived Vitals (HP/MP)
-	var totals_dict = {
-		"Strength": total_str,
-		"Agility": total_agi,
-		"Vitality": total_vit,
-		"Spirit": total_spi
-	}
+	var totals_dict = {"Strength": total_str, "Agility": total_agi, "Vitality": total_vit, "Spirit": total_spi}
 	var base_vitals = StatCalculator.calculate_base_stats(totals_dict)
 	var final_vitals = StatCalculator.apply_multipliers(base_vitals, char_class, level)
 	
-	# 4. Push to UI Rows
-	var points = invested.get("AvailableAttributePoints", 0)
-	var can_up = points > 0
+	var points_available = int(invested.get("AvailableAttributePoints", 0))
+	var points_remaining = points_available - total_pending_cost
+	var can_up = points_remaining > 0 and awaken_count > 0
+	
+	if points_box:
+		points_box.visible = (points_remaining > 0 or total_pending_cost > 0)
+		if points_label:
+			points_label.text = "Available Points: " + str(points_remaining)
+			
+	if ok_button:
+		ok_button.visible = total_pending_cost > 0
 	
 	if hp_row:
-		var current_hp = invested.get("CurrentHP", final_vitals.MaxHP)
-		hp_row.update_hp(str(current_hp), str(final_vitals.MaxHP))
+		var current_hp = int(invested.get("CurrentHP", final_vitals.MaxHP))
+		hp_row.update_hp(str(current_hp), str(int(final_vitals.MaxHP)))
 		
-	if str_row: str_row.update_display("Strength", total_str, can_up)
-	if agi_row: agi_row.update_display("Agility", total_agi, can_up)
-	if vit_row: vit_row.update_display("Vitality", total_vit, can_up)
-	if spi_row: spi_row.update_display("Spirit", total_spi, can_up)
+	if str_row: str_row.update_display("Strength", total_str, can_up, pending_stats["Strength"] > 0)
+	if agi_row: agi_row.update_display("Agility", total_agi, can_up, pending_stats["Agility"] > 0)
+	if vit_row: vit_row.update_display("Vitality", total_vit, can_up, pending_stats["Vitality"] > 0)
+	if spi_row: spi_row.update_display("Spirit", total_spi, can_up, pending_stats["Spirit"] > 0)
 
+func _on_stat_increase_requested(stat_name: String):
+	var points_available = int(GameManager.active_character_stats.get("AvailableAttributePoints", 0))
+	if total_pending_cost < points_available:
+		pending_stats[stat_name] += 1
+		total_pending_cost += 1
+		update_hero_ui()
 
-func _on_stat_increased(stat_name: String):
-	var current_stat_val = GameManager.active_character_stats.get(stat_name, 0)
-	var current_points = GameManager.active_character_stats.get("AvailableAttributePoints", 0)
+func _on_stat_decrease_requested(stat_name: String):
+	if pending_stats[stat_name] > 0:
+		pending_stats[stat_name] -= 1
+		total_pending_cost -= 1
+		update_hero_ui()
+
+func _on_ok_button_pressed():
+	if total_pending_cost <= 0: return
 	
-	if current_points <= 0: return
-
-	# Format the update as an ARRAY of dictionaries for the API 
-	var updates_array = [
-		{"StatisticName": stat_name, "Value": current_stat_val + 1},
-		{"StatisticName": "AvailableAttributePoints", "Value": current_points - 1}
-	]
+	var stats_to_send = pending_stats.duplicate()
+	var char_id = GameManager.active_character_id
 	
-	PlayFabManager.client.update_character_statistics(
-		GameManager.active_character_id,
-		updates_array, # Pass the array here 
-		func(_result): # Added underscore to fix warning 
-			print(stat_name, " increased successfully!")
-			GameManager.active_character_stats[stat_name] = current_stat_val + 1
-			GameManager.active_character_stats["AvailableAttributePoints"] = current_points - 1
+	# Optimistic local update
+	GameManager.active_character_stats["AvailableAttributePoints"] -= total_pending_cost
+	
+	pending_stats = {"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0}
+	total_pending_cost = 0
+	update_hero_ui() 
+
+	# FIX: Sending every variation of ID to satisfy the CloudScript
+	var params = {
+		"CharacterId": char_id,
+		"characterId": char_id,
+		"character_id": char_id,
+		"statsToIncrease": stats_to_send
+	}
+	
+	PlayFabManager.client.execute_cloud_script("bulkIncreaseAttributes", params, func(result):
+		var data = {}
+		if result.has("FunctionResult"):
+			data = result.FunctionResult
+		elif result.has("data") and result.data.has("FunctionResult"):
+			data = result.data.FunctionResult
+			
+		if data.get("success", false):
+			var server_stats = data.get("newStats", {})
+			for stat_name in server_stats.keys():
+				GameManager.active_character_stats[stat_name] = int(server_stats[stat_name])
+			
+			update_hero_ui()
+			print("HeroTab: Sync complete. Points: ", GameManager.active_character_stats["AvailableAttributePoints"])
+		else:
+			fetch_character_stats_from_playfab()
+			print("HeroTab: Server sync failed. If points revert, CharacterId is missing in CloudScript.")
+	)
+
+func fetch_character_stats_from_playfab():
+	var char_id = GameManager.active_character_id
+	PlayFabManager.client.get_character_statistics(char_id, func(result):
+		var stats_dict = result.get("data", {}).get("CharacterStatistics", {})
+		var new_stats = {"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0, "AvailableAttributePoints": 0}
+		for key in stats_dict.keys():
+			var val = stats_dict[key]
+			if new_stats.has(key): new_stats[key] = int(val)
+			elif key == "Level": GameManager.active_character_level = int(val)
+			elif key == "AwakeningCount": GameManager.active_character_awakening = int(val)
+		
+		GameManager.active_character_stats = new_stats
+		update_hero_ui()
+	)
+
+func deposit_material_to_bank(item_id: String, currency_code: String, amount: int):
+	var params = {
+		"CharacterId": GameManager.active_character_id,
+		"ItemInstanceId": item_id,
+		"CurrencyCode": currency_code, # Pass "CM", "DS", "I1", etc.
+		"Amount": amount
+	}
+	
+	PlayFabManager.client.execute_cloud_script("depositMaterial", params, func(result):
+		var data = result.get("FunctionResult", {})
+		if data.get("success", false):
+			var code = data.get("currency")
+			var new_bal = data.get("newBalance")
+			
+			print("Bank Updated: ", code, " is now ", new_bal)
+			
+			# Update the global currency dictionary
+			GameManager.active_user_currencies[code] = new_bal
+			
+			# Refresh the UI to show the new numbers
 			update_hero_ui()
 	)
