@@ -33,19 +33,18 @@ func _follow_mouse_clamped():
 
 func show_at_mouse(data: ItemData):
 	if data == null: return
-	
+
 	# 1. Update content while invisible to prevent 'old data' flash
 	visible = false
 	_update_ui(data)
 	
-	# 2. Force Godot to calculate the new box size immediately
+	# 2. Force layout to recalc so get_combined_minimum_size() is correct next frame
 	force_update_transform()
-	reset_size() # Snaps the height to the new text
-	
-	# 3. Teleport while hidden
+	# Defer position-and-show so container minimum size has updated from the new text
+	call_deferred("_show_positioned")
+
+func _show_positioned():
 	_follow_mouse_clamped()
-	
-	# 4. Show only when perfectly positioned
 	visible = true
 
 func _update_ui(data: ItemData):

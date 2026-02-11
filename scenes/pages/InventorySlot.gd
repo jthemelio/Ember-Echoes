@@ -58,7 +58,7 @@ func _on_gui_input(event: InputEvent):
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				# Start the timer for mobile long-press or delay
-				$Timer.start(0.5) 
+				$Timer.start(0.5)
 			else:
 				# Stop timer and hide tooltip when button is released
 				$Timer.stop()
