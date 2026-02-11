@@ -21,6 +21,7 @@ PlayFabManager="*uid://bincuw4pj5p2j"
 StatCalculator="*uid://beewn37afjtri"
 GameManager="*uid://bsr3wkn2s5tcf"
 GlobalUI="*uid://dg3xb2h660f8h"
+ItemDatabase="*uid://cbqvm6mc3nh05"
 
 [display]
 

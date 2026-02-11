@@ -85,7 +85,6 @@ alignment = 1
 custom_minimum_size = Vector2(225, 40)
 layout_mode = 2
 size_flags_horizontal = 4
-caret_blink = true
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
 theme_override_constants/caret_width = 2
@@ -93,19 +92,20 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_0jb1h")
 placeholder_text = "E-mail"
 alignment = 1
+caret_blink = true
 
 [node name="PasswordInput" type="LineEdit" parent="LoginPanel/VBoxContainer" unique_id=1278901718]
 visible = false
 custom_minimum_size = Vector2(225, 40)
 layout_mode = 2
 size_flags_horizontal = 4
-caret_blink = true
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
 theme_override_constants/caret_width = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_i5s6q")
 placeholder_text = "Password"
 alignment = 1
+caret_blink = true
 secret = true
 
 [node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer" unique_id=1545918363]
