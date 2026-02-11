@@ -48,22 +48,43 @@ func _show_positioned():
 	visible = true
 
 func _update_ui(data: ItemData):
-	var quality_colors = {"Normal": "#ffffff", "Tempered": "#00ff00", "Infused": "#0080ff", "Brilliant": "#a033cc", "Radiant": "#ffcc00"}
+	# 1. Setup Quality Colors (Matching your InventorySlot system)
+	var quality_colors = {
+		"Normal": "#ffffff", 
+		"Tempered": "#00ff00", 
+		"Infused": "#0080ff", 
+		"Brilliant": "#a033cc", 
+		"Radiant": "#ffcc00"
+	}
 	var q_color = quality_colors.get(data.quality.capitalize(), "#ffffff")
 	
+	# 2. Basic Information (ItemData root)
 	item_name.bbcode_enabled = true
-	item_name.text = "[b][color=%s]%s (+%d)[/color][/b]" % [q_color, data.display_name, data.plus_level]
+	var plus_text = " (+%d)" % data.plus_level if data.plus_level > 0 else ""
+	item_name.text = "[b][color=%s]%s%s[/color][/b]" % [q_color, data.display_name, plus_text]
 	item_type.text = "Type: " + data.item_type
 	
 	var icon_path = "res://assets/icons/" + data.item_id + ".png"
 	item_icon.texture = load(icon_path) if FileAccess.file_exists(icon_path) else null
 
-	var body = "[color=#ff4444]Class: %s[/color]\n" % data.item_class
-	if data.get_stat("MinAtk") > 0:
-		body += "Attack: %d - %d\n" % [data.get_stat("MinAtk"), data.get_stat("MaxAtk")]
-	if data.get_stat("MagicAtk") > 0:
-		body += "[color=#4488ff]Magic Atk: +%d[/color]\n" % data.get_stat("MagicAtk")
+	# 3. Dynamic Body Text (Branching by Resource Type)
+	var body = ""
 	
-	body += "Dura.: %d / %d" % [data.current_dura, data.get_stat("MaxDura")]
+	if data is WeaponData:
+		body += "[color=#ffcc66]Physical ATK: %d - %d[/color]\n" % [data.min_attack, data.max_attack]
+		if data.magic_attack > 0:
+			body += "[color=#4488ff]Magic ATK: %d[/color]\n" % data.magic_attack
+		if data.strength_req > 0 or data.dexterity_req > 0:
+			body += "[i]Req: STR %d | DEX %d[/i]\n" % [data.strength_req, data.dexterity_req]
+			
+	elif data is EquipmentData:
+		body += "[color=#66ff66]Defense: %d[/color]\n" % data.physical_defense
+		if data.magic_defense > 0:
+			body += "[color=#4488ff]Magic Resist: %d[/color]\n" % data.magic_defense
+	
+	# 4. Footer (Durability and Requirements)
+	body += "\n[color=#aaaaaa]Level Required: %d[/color]\n" % data.level_requirement
+	body += "[color=#aaaaaa]Durability: %d[/color]" % data.max_durability # Using the base class var
+	
 	stats_label.bbcode_enabled = true
 	stats_label.text = body
