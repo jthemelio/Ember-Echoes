@@ -8,6 +8,8 @@ extends Control
 @onready var password_input = $LoginPanel/VBoxContainer/PasswordInput
 @onready var login_button = $LoginPanel/VBoxContainer/LoginButton
 
+var _login_timeout_timer: Timer
+
 func _ready():
 	# 1. Setup initial visibility
 	login_panel.modulate.a = 0.0
@@ -28,9 +30,21 @@ func _ready():
 	login_button.pressed.connect(_on_login_pressed)
 	if not email_input.text_changed.is_connected(_on_custom_id_input_text_changed):
 		email_input.text_changed.connect(_on_custom_id_input_text_changed)
+	# Mobile: ensure tap on email field grabs focus so virtual keyboard can show
+	if not email_input.gui_input.is_connected(_on_email_gui_input):
+		email_input.gui_input.connect(_on_email_gui_input)
+
+	# Timeout so mobile users aren't stuck on "Authenticating..." if request never completes (e.g. Safari/network)
+	_login_timeout_timer = Timer.new()
+	_login_timeout_timer.one_shot = true
+	_login_timeout_timer.wait_time = 20.0
+	_login_timeout_timer.timeout.connect(_on_login_timeout)
+	add_child(_login_timeout_timer)
 
 func _input(event):
-	if event is InputEventMouseButton and event.pressed and splash_overlay.visible:
+	# Dismiss splash on tap (mouse or touch; mobile Safari sends touch, not mouse)
+	var is_tap = (event is InputEventMouseButton and event.pressed) or (event is InputEventScreenTouch and event.pressed)
+	if is_tap and splash_overlay.visible:
 		fade_to_login()
 
 func fade_to_login():
@@ -41,19 +55,24 @@ func fade_to_login():
 	tween.parallel().tween_property(login_panel, "modulate:a", 1.0, 1.0).set_trans(Tween.TRANS_SINE)
 	tween.tween_callback(splash_overlay.hide)
 	splash_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# Give email field focus after panel is visible so next tap can show keyboard (mobile)
+	tween.tween_callback(func(): email_input.call_deferred("grab_focus"))
 
 func _on_login_pressed():
 	login_button.disabled = true
 	login_button.text = "Authenticating..."
-	
+	_login_timeout_timer.start()
+
 	var info_params = GetPlayerCombinedInfoRequestParams.new()
 	var input_text = email_input.text.strip_edges()
 	var password_text = password_input.text.strip_edges()
-	
+
 	if input_text == "":
+		# On web/mobile Safari, OS.get_unique_id() can be empty or restricted; use fallback so request is sent
 		var device_id = OS.get_unique_id()
-		print("Attempting Silent Device Login...")
-		# Matches: (custom_id: String, create_user: bool, info_params: GetPlayerCombinedInfoRequestParams)
+		if device_id.is_empty():
+			device_id = "web_%d_%d" % [Time.get_ticks_msec(), randi()]
+		print("Attempting Silent Device Login... (id: ", device_id.length(), " chars)")
 		PlayFabManager.client.login_with_custom_id(device_id, true, info_params)
 	else:
 		if password_text.length() < 6:
@@ -68,6 +87,7 @@ func _on_login_pressed():
 		PlayFabManager.client.login_with_email(input_text, password_text, {}, info_params)
 
 func _on_login_success(result):
+	_login_timeout_timer.stop()
 	# 1. Fetch Title Data immediately after login
 	var title_data_request = GetTitleDataRequest.new()
 	
@@ -90,6 +110,7 @@ func show_link_account_reminder():
 	print("REMINDER: Player is a guest. Suggest linking an account.")
 
 func _on_api_error(error):
+	_login_timeout_timer.stop()
 	# The SDK passes an ApiErrorWrapper object, not a Dictionary.
 	# We check the 'error' property for the string "AccountNotFound"
 	if error.error == "AccountNotFound":
@@ -117,9 +138,21 @@ func register_new_user():
 	# Matches: (username, email, password, info_params)
 	PlayFabManager.client.register_email_password(temp_username, email, password, info_params)
 
+func _on_login_timeout():
+	if login_button.text == "Authenticating...":
+		login_button.disabled = false
+		login_button.text = "Timed out. Try again."
+
 func _on_register_success(result):
 	print("SUCCESS! New account created: ", result.PlayFabId)
 	_on_login_success(result)
+
+func _on_email_gui_input(event: InputEvent):
+	# On mobile, explicitly grab focus on tap so the browser shows the virtual keyboard
+	if event is InputEventScreenTouch and event.pressed:
+		email_input.grab_focus()
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		email_input.grab_focus()
 
 func _on_custom_id_input_text_changed(new_text: String) -> void:
 	var text_trimmed = new_text.strip_edges()
