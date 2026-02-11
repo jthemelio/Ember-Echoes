@@ -22,6 +22,8 @@ StatCalculator="*res://logic/autoloads/StatCalculator.gd"
 GameManager="*res://logic/autoloads/GameManager.gd"
 GlobalUI="*res://logic/autoloads/GlobalUI.gd"
 ItemDatabase="*res://logic/autoloads/ItemDatabase.gd"
+IdleCombatManager="*res://logic/autoloads/IdleCombatManager.gd"
+LootManager="*res://logic/autoloads/LootManager.gd"
 
 [display]
 

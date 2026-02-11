@@ -26,6 +26,7 @@ theme_override_constants/separation = 0
 [node name="ContentArea" type="ScrollContainer" parent="MainLayout" unique_id=1449707285]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="PageContainer" type="VBoxContainer" parent="MainLayout/ContentArea" unique_id=1820643591]
 layout_mode = 2
@@ -50,22 +51,27 @@ layout_mode = 2
 [node name="Hero" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1659472364]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Hero"
 
-[node name="Button2" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=2075316434]
+[node name="Shop" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=2075316434]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Shop"
 
 [node name="Idle" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=445963650]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Idle"
 
-[node name="Button4" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1833123607]
+[node name="Achieve" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1833123607]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Achieve"
 
-[node name="Button5" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1437330831]
+[node name="Settings" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1437330831]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "Settings"
 
 [node name="EquipmentTooltip" parent="MainLayout" unique_id=1638817052 instance=ExtResource("4_vmrhr")]
 layout_mode = 2

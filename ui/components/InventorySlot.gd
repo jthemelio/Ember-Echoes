@@ -61,11 +61,14 @@ func _on_gui_input(event: InputEvent):
 				$Timer.stop()
 				GlobalUI.hide_tooltip()
 		
-		# Right-click to Equip (We will build this logic in the Hero Tab)
+		# Right-click to Equip
 		elif event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			if item_data:
-				print("Attempting to equip: ", item_data.display_name)
-				# HeroTab.equip_item(item_data) # Planned next step
+				var result = GameManager.can_equip(item_data)
+				if result.get("ok", false):
+					GameManager.equip_item(item_data)
+				else:
+					print("Cannot equip %s: %s" % [item_data.display_name, result.get("reason", "")])
 
 func _on_timer_timeout():
 	# Trigger tooltip after the set delay

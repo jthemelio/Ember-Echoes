@@ -1,110 +1,325 @@
 [gd_scene format=3 uid="uid://ycpt7nti4cxp"]
 
 [ext_resource type="Script" uid="uid://2vndb8tmmrkv" path="res://ui/pages/hunting_grounds.gd" id="1_6jnp4"]
-[ext_resource type="PackedScene" uid="uid://dwl14ax22pv12" path="res://ui/components/MobSlot.tscn" id="2_e62pk"]
-[ext_resource type="Script" uid="uid://qmiyqm1281q8" path="res://ui/components/InventoryGrid.gd" id="3_aqnn3"]
-[ext_resource type="Script" uid="uid://dbr7lhewqd52e" path="res://ui/pages/DebugLootScript.gd" id="4_ms0jx"]
+[ext_resource type="Script" uid="uid://qmiyqm1281q8" path="res://ui/components/InventoryGrid.gd" id="2_aqnn3"]
 
-[node name="HuntingGrounds" type="VBoxContainer" unique_id=106764822]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="ButtonGroup" id="ButtonGroup_fight"]
+
+[node name="HuntingGrounds" type="VBoxContainer" unique_id=1845837456]
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 0
 script = ExtResource("1_6jnp4")
-mob_slot_scene = ExtResource("2_e62pk")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=313859441]
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=879840907]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=263935882]
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer" unique_id=674268387]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 12
 
-[node name="ModeSwitcher" type="PanelContainer" parent="ScrollContainer/VBoxContainer" unique_id=1967275843]
-custom_minimum_size = Vector2(0, 30)
+[node name="IdleActivityPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=1501042164]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/ModeSwitcher" unique_id=1173101693]
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/IdleActivityPanel" unique_id=1399204926]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin" unique_id=1111059961]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=554026047]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Idle Activity"
+
+[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=1593730356]
+layout_mode = 2
+text = "Select what your character should do. This activity will continue whether you are online, offline, or looking at other screens."
+autowrap_mode = 2
+
+[node name="ModeSwitcher" type="HBoxContainer" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=1321858353]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="Hunt" type="Button" parent="ScrollContainer/VBoxContainer/ModeSwitcher/HBoxContainer" unique_id=1559913446]
-custom_minimum_size = Vector2(50, 0)
+[node name="FightingBtn" type="Button" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher" unique_id=711056404]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Hunt
-"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_fight")
+text = "Fighting"
 
-[node name="Mine" type="Button" parent="ScrollContainer/VBoxContainer/ModeSwitcher/HBoxContainer" unique_id=1197541967]
-custom_minimum_size = Vector2(50, 0)
+[node name="MiningBtn" type="Button" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher" unique_id=1302886742]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Mine"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_fight")
+text = "Mining"
 
-[node name="Header" type="PanelContainer" parent="ScrollContainer/VBoxContainer" unique_id=704615873]
-custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/Header" unique_id=870940806]
+[node name="ZonePanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=523918033]
 layout_mode = 2
 
-[node name="HeaderContent" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/Header/VBoxContainer2" unique_id=2031645417]
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ZonePanel" unique_id=1957108357]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ZonePanel/Margin" unique_id=2108852229]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ZoneTitleLabel" type="Label" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=2132668843]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Zone Selection"
+
+[node name="ZoneLabel" type="Label" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=1332022212]
+layout_mode = 2
+text = "Zone"
+
+[node name="ZoneDropdown" type="OptionButton" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=2035912412]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="CharNameLabel" type="Label" parent="ScrollContainer/VBoxContainer/Header/VBoxContainer2/HeaderContent" unique_id=62825774]
+[node name="CreatureLabel" type="Label" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=1540513243]
+layout_mode = 2
+text = "Creature"
+
+[node name="CreatureDropdown" type="OptionButton" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=674220360]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="ChangeZoneBtn" type="Button" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=2049144877]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Change Farming Zone"
+
+[node name="CombatPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=1437069844]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/CombatPanel" unique_id=2119892942]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin" unique_id=486977421]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CombatTitle" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=837917390]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Combat Status"
+
+[node name="ZoneInfoLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1228203257]
+layout_mode = 2
+text = "Currently fighting in Twin City"
+
+[node name="PlayerHPRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=914667092]
+layout_mode = 2
+
+[node name="PlayerHPLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=1989231959]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Character"
-horizontal_alignment = 1
+text = "Your HP"
 
-[node name="ClassName" type="Label" parent="ScrollContainer/VBoxContainer/Header/VBoxContainer2/HeaderContent" unique_id=496960625]
+[node name="PlayerHPValue" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=344129008]
+layout_mode = 2
+text = "0 / 0"
+horizontal_alignment = 2
+
+[node name="PlayerHPBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=790311567]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="AttackSpeedBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1176295926]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+max_value = 1.0
+show_percentage = false
+
+[node name="SummonRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1505050649]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SummonLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1603847676]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Class"
-horizontal_alignment = 1
+text = "Summon"
 
-[node name="HPDisplay" type="Label" parent="ScrollContainer/VBoxContainer/Header/VBoxContainer2" unique_id=2117701692]
+[node name="Summon1Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=2116185277]
+custom_minimum_size = Vector2(44, 36)
+layout_mode = 2
+text = "+1"
+
+[node name="Summon5Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1632527800]
+custom_minimum_size = Vector2(44, 36)
+layout_mode = 2
+text = "+5"
+
+[node name="Summon10Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1223193660]
+custom_minimum_size = Vector2(44, 36)
+layout_mode = 2
+text = "+10"
+
+[node name="Summon25Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1088252236]
+custom_minimum_size = Vector2(44, 36)
+layout_mode = 2
+text = "+25"
+
+[node name="QueueCountLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1805984669]
+layout_mode = 2
+text = "Queue: 0/25"
+horizontal_alignment = 2
+
+[node name="HuntProgressLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=2072622660]
+layout_mode = 2
+text = "Current Hunt (0/25)"
+
+[node name="MobNameRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=334960670]
+layout_mode = 2
+
+[node name="MobNameLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=33905035]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "HP BAR"
-horizontal_alignment = 1
+text = "Pheasant"
 
-[node name="PanelContainer" type="PanelContainer" parent="ScrollContainer/VBoxContainer" unique_id=644562122]
-custom_minimum_size = Vector2(0, 80)
+[node name="MobHPValue" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=671874778]
 layout_mode = 2
+text = "0 / 0"
+horizontal_alignment = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/PanelContainer" unique_id=619970938]
+[node name="MobHPBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1594029404]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-theme_override_constants/separation = 0
-alignment = 1
+show_percentage = false
 
-[node name="MonsterName" type="Label" parent="ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=388799383]
-custom_minimum_size = Vector2(0, 25)
+[node name="QueueTitle" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=307229349]
 layout_mode = 2
-text = "Chicken"
-horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+text = "Monster Queue"
 
-[node name="MonsterHP" type="ProgressBar" parent="ScrollContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1879719180]
+[node name="QueueGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1248465849]
 layout_mode = 2
-
-[node name="GridContainer" type="GridContainer" parent="ScrollContainer/VBoxContainer" unique_id=1190167296]
-layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 6
 columns = 2
 
-[node name="InventoryGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer" unique_id=957885380]
+[node name="Spacer" type="Control" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1073525221]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="LevelRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1871786362]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/LevelRow" unique_id=550158095]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Level 1"
+
+[node name="LevelPercent" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/LevelRow" unique_id=380547885]
+layout_mode = 2
+text = "0.00%"
+horizontal_alignment = 2
+
+[node name="XPBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=118703309]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+max_value = 110.0
+show_percentage = false
+
+[node name="XPLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1351245354]
+layout_mode = 2
+text = "0 / 110 XP"
+horizontal_alignment = 1
+
+[node name="FooterRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1480844000]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/FooterRow" unique_id=167347823]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "In Combat"
+
+[node name="KillsLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/FooterRow" unique_id=242854823]
+layout_mode = 2
+text = "Kills: 0  Deaths: 0"
+horizontal_alignment = 2
+
+[node name="InventoryPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=1006860755]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/InventoryPanel" unique_id=164560253]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin" unique_id=677272070]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BagTitle" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=2096770820]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Main Bag (0/40)"
+
+[node name="BagDesc" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=10199472]
+layout_mode = 2
+text = "Manage your collected items. Click an item to see details."
+autowrap_mode = 2
+
+[node name="SelectBagBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1498983230]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Items"
+
+[node name="BagGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1991163560]
 layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 5
-script = ExtResource("3_aqnn3")
+script = ExtResource("2_aqnn3")
 
-[node name="DebugLootButton" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=1202398262]
-custom_minimum_size = Vector2(50, 100)
+[node name="WarehouseTitle" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=516761949]
 layout_mode = 2
-script = ExtResource("4_ms0jx")
+theme_override_font_sizes/font_size = 20
+text = "Warehouse (0/40)"
+
+[node name="WarehouseDesc" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=125482578]
+layout_mode = 2
+text = "Manage your collected items. Click an item to see details."
+autowrap_mode = 2
+
+[node name="SelectWarehouseBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1503934595]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Items"
+
+[node name="WarehouseGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1179767012]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 5
+script = ExtResource("2_aqnn3")
