@@ -11,17 +11,17 @@ config_version=5
 [application]
 
 config/name="Ember Echoes"
-run/main_scene="uid://li0hft8r02xr"
+run/main_scene="res://ui/login/entry_page.tscn"
 config/features=PackedStringArray("4.6", "GL Compatibility")
-config/icon="uid://b73nrdjuhghx1"
+config/icon="res://assets/textures/MobileAppIcon.jpg"
 
 [autoload]
 
 PlayFabManager="*uid://bincuw4pj5p2j"
-StatCalculator="*uid://beewn37afjtri"
-GameManager="*uid://bsr3wkn2s5tcf"
-GlobalUI="*uid://dg3xb2h660f8h"
-ItemDatabase="*uid://cbqvm6mc3nh05"
+StatCalculator="*res://logic/autoloads/StatCalculator.gd"
+GameManager="*res://logic/autoloads/GameManager.gd"
+GlobalUI="*res://logic/autoloads/GlobalUI.gd"
+ItemDatabase="*res://logic/autoloads/ItemDatabase.gd"
 
 [display]
 

@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://51xtsd686yvi"]
+
+[ext_resource type="Script" uid="uid://ccmw0cwiw7ar0" path="res://ui/pages/idleHome.gd" id="1_3u8s3"]
+[ext_resource type="PackedScene" uid="uid://dgvn43oanfb3p" path="res://ui/pages/hero_tab.tscn" id="2_4xnaw"]
+[ext_resource type="PackedScene" uid="uid://ycpt7nti4cxp" path="res://ui/pages/hunting_grounds.tscn" id="3_vehlf"]
+[ext_resource type="PackedScene" uid="uid://dmykdb6m3kuy" path="res://ui/components/EquipmentTooltip.tscn" id="4_vmrhr"]
+
+[node name="IdleHome" type="Control" unique_id=1163464952]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3u8s3")
+
+[node name="MainLayout" type="VBoxContainer" parent="." unique_id=654606313]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="ContentArea" type="ScrollContainer" parent="MainLayout" unique_id=1449707285]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PageContainer" type="VBoxContainer" parent="MainLayout/ContentArea" unique_id=1820643591]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HeroTab" parent="MainLayout/ContentArea/PageContainer" unique_id=229612391 instance=ExtResource("2_4xnaw")]
+layout_mode = 2
+
+[node name="HuntingTab" parent="MainLayout/ContentArea/PageContainer" unique_id=106764822 instance=ExtResource("3_vehlf")]
+visible = false
+layout_mode = 2
+
+[node name="NavBar" type="PanelContainer" parent="MainLayout" unique_id=489164190]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="NavButtons" type="HBoxContainer" parent="MainLayout/NavBar" unique_id=2029648637]
+layout_mode = 2
+
+[node name="Hero" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1659472364]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button2" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=2075316434]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Idle" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=445963650]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button4" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1833123607]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button5" type="Button" parent="MainLayout/NavBar/NavButtons" unique_id=1437330831]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EquipmentTooltip" parent="MainLayout" unique_id=1638817052 instance=ExtResource("4_vmrhr")]
+layout_mode = 2
+
+[connection signal="pressed" from="MainLayout/NavBar/NavButtons/Hero" to="." method="_on_hero_button_pressed"]
+[connection signal="pressed" from="MainLayout/NavBar/NavButtons/Idle" to="." method="_on_idle_button_pressed"]

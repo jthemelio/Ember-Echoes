@@ -1,0 +1,113 @@
+[gd_scene format=3 uid="uid://cutevgils2vum"]
+
+[ext_resource type="Script" uid="uid://u6cc56s513nc" path="res://ui/character_creation/character_selection.gd" id="1_c3n0d"]
+[ext_resource type="Texture2D" uid="uid://c0ehtjk8ldhmu" path="res://assets/textures/MobileEntryBg.png" id="1_nu1bw"]
+[ext_resource type="PackedScene" uid="uid://by5ijd14vgmpy" path="res://ui/character_creation/character_slot.tscn" id="2_2iywv"]
+
+[node name="CharacterSelection" type="Control" unique_id=1093166137]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c3n0d")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1442942906]
+modulate = Color(0.32915837, 0.3291584, 0.3291584, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_nu1bw")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=656559101]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Edit Order" type="CheckButton" parent="VBoxContainer" unique_id=1309213612]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=96272322]
+visible = false
+layout_mode = 0
+offset_right = 40.0
+mouse_filter = 1
+
+[node name="CenterContainer" type="Control" parent="." unique_id=1217860527]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer" unique_id=232533621]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -350.0
+offset_right = 150.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 20
+
+[node name="CharacterSlot" parent="CenterContainer/GridContainer" unique_id=1676626075 instance=ExtResource("2_2iywv")]
+layout_mode = 2
+
+[node name="CharacterSlot2" parent="CenterContainer/GridContainer" unique_id=584753920 instance=ExtResource("2_2iywv")]
+layout_mode = 2
+
+[node name="CharacterSlot3" parent="CenterContainer/GridContainer" unique_id=1773627401 instance=ExtResource("2_2iywv")]
+layout_mode = 2
+
+[node name="CharacterSlot4" parent="CenterContainer/GridContainer" unique_id=645159390 instance=ExtResource("2_2iywv")]
+layout_mode = 2
+
+[node name="CharacterSlot5" parent="CenterContainer/GridContainer" unique_id=2016725876 instance=ExtResource("2_2iywv")]
+layout_mode = 2
+
+[node name="CharacterSlot6" parent="CenterContainer/GridContainer" unique_id=1987746524 instance=ExtResource("2_2iywv")]
+layout_mode = 2
+
+[node name="LoadingOverlay" type="ColorRect" parent="." unique_id=1779962938]
+visible = false
+z_index = 10
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7058824)
+
+[node name="CenterContainer" type="CenterContainer" parent="LoadingOverlay" unique_id=1231316737]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="LoadingOverlay/CenterContainer" unique_id=192572268]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Loading characters..."
