@@ -258,17 +258,26 @@ func _on_spawn_timer() -> void:
 # ───── Internal: Stats ─────
 
 func _refresh_player_stats() -> void:
-	var stats = GameManager.active_character_stats
+	var invested = GameManager.active_character_stats
 	var char_class = GameManager.active_character_class
 	var level = GameManager.active_character_level
 
-	# Calculate base HP
-	var base = StatCalculator.calculate_base_stats(stats)
+	# Combine class base stats + player-invested attribute points (same as Hero Tab)
+	var class_base = StatCalculator.get_smart_allocated_stats(char_class, level)
+	var total_stats = {
+		"Strength": int(class_base.get("Strength", 0)) + int(invested.get("Strength", 0)),
+		"Agility": int(class_base.get("Agility", 0)) + int(invested.get("Agility", 0)),
+		"Vitality": int(class_base.get("Vitality", 0)) + int(invested.get("Vitality", 0)),
+		"Spirit": int(class_base.get("Spirit", 0)) + int(invested.get("Spirit", 0)),
+	}
+
+	# Calculate base HP from combined stats
+	var base = StatCalculator.calculate_base_stats(total_stats)
 	var finals = StatCalculator.apply_multipliers(base, char_class, level)
 	player_max_hp = finals.get("MaxHP", 50)
 
 	# Add shield LifeBonus to max HP
-	var offhand = GameManager.equipped_items.get("Offhand")
+	var offhand = GameManager.get_equipped_item_data("Offhand")
 	if offhand and offhand.item_type == "Shield":
 		player_max_hp += offhand.get_stat("LifeBonus")
 
@@ -276,12 +285,12 @@ func _refresh_player_stats() -> void:
 	if player_hp <= 0 or player_hp > player_max_hp:
 		player_hp = player_max_hp
 
-	# Calculate combat details WITH gear
+	# Calculate combat details WITH gear (using combined stats)
 	var gear_data = GameManager.build_gear_data()
-	var combat = StatCalculator.calculate_combat_details(stats, gear_data)
+	var combat = StatCalculator.calculate_combat_details(total_stats, gear_data)
 
 	# For weapon-equipped players, use weapon's MinAtk/MaxAtk directly
-	var weapon = GameManager.equipped_items.get("Weapon")
+	var weapon = GameManager.get_equipped_item_data("Weapon")
 	if weapon and weapon.get_stat("MinAtk") > 0:
 		_player_min_atk = weapon.get_stat("MinAtk")
 		_player_max_atk = weapon.get_stat("MaxAtk")
@@ -379,7 +388,11 @@ func _on_mob_killed(mob: Dictionary) -> void:
 	while current_xp >= xp_to_next_level:
 		current_xp -= xp_to_next_level
 		GameManager.active_character_level += 1
+		# Award attribute points on level-up (5 per level)
+		GameManager.active_character_stats["AvailableAttributePoints"] = \
+			GameManager.active_character_stats.get("AvailableAttributePoints", 0) + 5
 		_refresh_player_stats()
+		GameManager.character_stats_updated.emit()
 
 	# Check hunt completion
 	if kills_this_hunt >= hunt_target:

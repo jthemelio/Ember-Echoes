@@ -1,6 +1,6 @@
 # LootManager.gd — Client-side loot rolling with batched PlayFab verification
 # Loads LootConfig and ItemCatalog from PlayFab Title Data.
-# On mob kill: rolls loot locally ("ghost loot"), shows it immediately.
+# On mob kill: rolls loot locally ("ghost loot") as compact instance dicts, shows it immediately.
 # Every HEARTBEAT_INTERVAL seconds: sends a batch report to PlayFab CloudScript for verification.
 extends Node
 
@@ -22,7 +22,7 @@ var quality_chances: Dictionary = {
 }
 
 # ───── Item catalog (loaded from PlayFab ItemCatalog) ─────
-# Combined flat array of all items from armor[] + weapons[]
+# Combined flat array of all catalog entries (armor[] + weapons[])
 var _all_items: Array = []
 
 # ───── Heartbeat ─────
@@ -30,11 +30,10 @@ const HEARTBEAT_INTERVAL: float = 10.0  # Seconds between batch reports
 var _heartbeat_timer: Timer = null
 
 # ───── Pending data (accumulated between heartbeats) ─────
-var _pending_kills: Dictionary = {}  # mob_id -> {count, rareCount}
-var _pending_items: Array = []       # Array of {itemId, quality}
+var _pending_kills: Dictionary = {}      # mob_id -> {count, rareCount}
+var _pending_items: Array = []           # Array of compact instance dicts to persist
 var _pending_gold: int = 0
 var _pending_xp: int = 0
-var pending_inventory: Array = []    # Ghost loot ItemData objects (shown in UI)
 
 func _ready():
 	_heartbeat_timer = Timer.new()
@@ -109,11 +108,16 @@ func _roll_loot(mob_level: int) -> void:
 	if _all_items.is_empty():
 		return  # No catalog loaded
 
-	# Step 2: Filter items by level range
+	# Step 2: Filter to Normal quality items within level range
+	# We pick a base item, then roll quality separately
 	var eligible: Array = []
 	for item in _all_items:
 		var cd = item.get("CustomData", {})
 		var item_level = int(cd.get("LevelReq", 0))
+		var item_quality = cd.get("Quality", "Normal")
+		# Only consider Normal quality as base pool (avoid duplicate rolls from Tempered variants)
+		if item_quality != "Normal":
+			continue
 		if abs(item_level - mob_level) <= level_range:
 			eligible.append(item)
 
@@ -122,64 +126,32 @@ func _roll_loot(mob_level: int) -> void:
 
 	# Step 3: Pick a random base item from eligible pool
 	var base_item = eligible[randi() % eligible.size()]
-	var base_id = base_item.get("ItemId", "")
+	var base_item_id = base_item.get("ItemId", "")  # e.g. "Steel_Ring_Normal"
 
 	# Step 4: Roll quality tier
 	var quality = _roll_quality()
 
-	# Step 5: Find the specific quality variant
-	# Items follow naming convention: BaseName_Quality (e.g. "Sanctified_Blade_Brilliant")
-	# Try to find exact variant; if not found, use the base item
-	var target_item = _find_quality_variant(base_item, quality)
-	if target_item.is_empty():
-		target_item = base_item
+	# Step 5: Create compact instance dict
+	var instance_dict = ItemDatabase.create_instance_dict(base_item_id, quality)
 
-	# Step 6: Create ghost ItemData
-	var ghost = _create_ghost_item(target_item)
-	if ghost:
-		pending_inventory.append(ghost)
-		_pending_items.append({"itemId": target_item.get("ItemId", ""), "quality": quality})
-		loot_dropped.emit(ghost)
+	# Step 6: Resolve to ItemData and set durability from template if not set
+	var item_data = ItemDatabase.resolve_instance(instance_dict)
+	if instance_dict.get("dura", -1) == -1:
+		instance_dict["dura"] = item_data.stats.get("MaxDura", 0)
+
+	# Step 7: Add to bag and pending report
+	GameManager.active_user_inventory.append(instance_dict)
+	_pending_items.append(instance_dict.duplicate())
+	loot_dropped.emit(item_data)
 
 func _roll_quality() -> String:
 	var roll = randf()
 	var cumulative = 0.0
-	# Sort by rarity (most common first)
 	for quality_name in ["Normal", "Tempered", "Infused", "Brilliant", "Radiant"]:
 		cumulative += quality_chances.get(quality_name, 0.0)
 		if roll <= cumulative:
 			return quality_name
 	return "Normal"
-
-func _find_quality_variant(base_item: Dictionary, target_quality: String) -> Dictionary:
-	# Extract the base name pattern from the ItemId
-	# e.g. "Sanctified_Blade_Normal" -> look for "Sanctified_Blade_" + target_quality
-	var base_id: String = base_item.get("ItemId", "")
-	var cd = base_item.get("CustomData", {})
-	var base_quality: String = cd.get("Quality", "Normal")
-
-	# Replace the quality suffix
-	if base_id.ends_with("_" + base_quality):
-		var prefix = base_id.substr(0, base_id.length() - base_quality.length())
-		var target_id = prefix + target_quality
-
-		for item in _all_items:
-			if item.get("ItemId", "") == target_id:
-				return item
-
-	return {}
-
-func _create_ghost_item(pf_item: Dictionary) -> ItemData:
-	# Use ItemDatabase to parse the PlayFab-format dict into an ItemData resource
-	# The pf_item is in catalog format, not inventory format, so we adapt it
-	var adapted = {
-		"ItemId": pf_item.get("ItemId", ""),
-		"ItemInstanceId": "ghost_" + str(randi()),
-		"DisplayName": pf_item.get("DisplayName", "Unknown"),
-		"ItemClass": pf_item.get("ItemClass", ""),
-		"CustomData": pf_item.get("CustomData", {}),
-	}
-	return ItemDatabase.parse_playfab_item(adapted)
 
 # ───── Batch Report to PlayFab ─────
 
@@ -215,17 +187,14 @@ func _send_batch_report() -> void:
 
 func _on_batch_verified(result: Dictionary) -> void:
 	var fn_result = result.get("data", {}).get("FunctionResult", {})
-	if fn_result.get("success", false):
+	if fn_result is Dictionary and fn_result.get("success", false):
 		print("LootManager: Batch verified (%d kills confirmed)" % fn_result.get("totalKillsVerified", 0))
-		# Move ghost items from pending to confirmed
-		# Items are now officially in the player's PlayFab inventory
-		pending_inventory.clear()
 		batch_verified.emit(fn_result)
 	else:
-		var error = fn_result.get("error", "Unknown error")
+		var error = "Unknown error"
+		if fn_result is Dictionary:
+			error = fn_result.get("error", "Unknown error")
 		push_warning("LootManager: Batch rejected -- %s" % error)
-		# Remove ghost items that were rejected
-		pending_inventory.clear()
 
 func _reset_pending() -> void:
 	_pending_kills.clear()
@@ -238,10 +207,11 @@ func _reset_pending() -> void:
 func batch_roll_loot(mob_level: int, kill_count: int, rare_count: int) -> Array:
 	var items: Array = []
 	var total_rolls = kill_count + (rare_count * IdleCombatManager.RARE_LOOT_ROLLS)
+	var before_size = GameManager.active_user_inventory.size()
 	for i in range(total_rolls):
-		# Temporarily capture loot
-		var before = pending_inventory.size()
 		_roll_loot(mob_level)
-		if pending_inventory.size() > before:
-			items.append(pending_inventory[-1])
+	# Collect any new items added to inventory
+	for j in range(before_size, GameManager.active_user_inventory.size()):
+		var instance_dict = GameManager.active_user_inventory[j]
+		items.append(ItemDatabase.resolve_instance(instance_dict))
 	return items

@@ -4,6 +4,12 @@
 [ext_resource type="PackedScene" uid="uid://dgvn43oanfb3p" path="res://ui/pages/hero_tab.tscn" id="2_4xnaw"]
 [ext_resource type="PackedScene" uid="uid://ycpt7nti4cxp" path="res://ui/pages/hunting_grounds.tscn" id="3_vehlf"]
 [ext_resource type="PackedScene" uid="uid://dmykdb6m3kuy" path="res://ui/components/EquipmentTooltip.tscn" id="4_vmrhr"]
+[ext_resource type="PackedScene" path="res://ui/pages/shops/armorer_shop.tscn" id="5_armorer"]
+[ext_resource type="PackedScene" path="res://ui/pages/shops/weaponsmith_shop.tscn" id="6_weapon"]
+[ext_resource type="PackedScene" path="res://ui/pages/shops/consumables_shop.tscn" id="7_consum"]
+[ext_resource type="PackedScene" path="res://ui/pages/shops/artisan_shop.tscn" id="8_artisan"]
+[ext_resource type="PackedScene" path="res://ui/pages/shops/auction_shop.tscn" id="9_auction"]
+[ext_resource type="PackedScene" path="res://ui/pages/shops/lady_luck_shop.tscn" id="10_luck"]
 
 [node name="IdleHome" type="Control" unique_id=1163464952]
 layout_mode = 3
@@ -37,6 +43,30 @@ size_flags_vertical = 3
 layout_mode = 2
 
 [node name="HuntingTab" parent="MainLayout/ContentArea/PageContainer" unique_id=106764822 instance=ExtResource("3_vehlf")]
+visible = false
+layout_mode = 2
+
+[node name="ArmorerTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("5_armorer")]
+visible = false
+layout_mode = 2
+
+[node name="WeaponsmithTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("6_weapon")]
+visible = false
+layout_mode = 2
+
+[node name="ConsumablesTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("7_consum")]
+visible = false
+layout_mode = 2
+
+[node name="ArtisanTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("8_artisan")]
+visible = false
+layout_mode = 2
+
+[node name="AuctionTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("9_auction")]
+visible = false
+layout_mode = 2
+
+[node name="LadyLuckTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("10_luck")]
 visible = false
 layout_mode = 2
 
@@ -75,6 +105,60 @@ text = "Settings"
 
 [node name="EquipmentTooltip" parent="MainLayout" unique_id=1638817052 instance=ExtResource("4_vmrhr")]
 layout_mode = 2
+
+[node name="ShopPopup" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.3
+anchor_right = 0.5
+anchor_bottom = 0.88
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Margin" type="MarginContainer" parent="ShopPopup"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="ShopPopup/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ArmorerBtn" type="Button" parent="ShopPopup/Margin/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Armorer"
+
+[node name="WeaponsmithBtn" type="Button" parent="ShopPopup/Margin/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Weaponsmith"
+
+[node name="ConsumablesBtn" type="Button" parent="ShopPopup/Margin/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Consumables"
+
+[node name="ArtisanBtn" type="Button" parent="ShopPopup/Margin/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Artisan"
+
+[node name="AuctionBtn" type="Button" parent="ShopPopup/Margin/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Auction"
+
+[node name="LadyLuckBtn" type="Button" parent="ShopPopup/Margin/VBox"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Lady Luck"
 
 [connection signal="pressed" from="MainLayout/NavBar/NavButtons/Hero" to="." method="_on_hero_button_pressed"]
 [connection signal="pressed" from="MainLayout/NavBar/NavButtons/Idle" to="." method="_on_idle_button_pressed"]

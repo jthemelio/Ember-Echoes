@@ -79,6 +79,11 @@ func _ready() -> void:
 	icm.xp_gained.connect(_on_xp_gained)
 	icm.zone_changed.connect(_on_zone_changed)
 
+	# ── Connect LootManager for inventory refresh ──
+	var loot_mgr = get_node_or_null("/root/LootManager")
+	if loot_mgr:
+		loot_mgr.loot_dropped.connect(_on_loot_dropped)
+
 	# ── Kick off combat on first load ──
 	icm.start_combat()
 
@@ -163,6 +168,9 @@ func _on_xp_gained(_amount: int) -> void:
 func _on_zone_changed() -> void:
 	_populate_creature_dropdown()
 	_refresh_combat_ui()
+
+func _on_loot_dropped(_item: ItemData) -> void:
+	_refresh_inventory_ui()
 
 # ─── UI Refresh ───
 

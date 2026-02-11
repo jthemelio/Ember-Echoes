@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/pages/shops/weaponsmith_shop.gd" id="1_script"]
+
+[node name="WeaponsmithShop" type="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_script")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="ShopHeader" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ShopHeader"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Weaponsmith"
+
+[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+layout_mode = 2
+text = "Purchase weapons for your class. Only Normal quality available."
+autowrap_mode = 2
+
+[node name="GoldRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+layout_mode = 2
+
+[node name="GoldLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/GoldRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Gold:"
+
+[node name="GoldValue" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/GoldRow"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="ItemGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2

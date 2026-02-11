@@ -33,5 +33,9 @@ var stats: Dictionary = {
 @export var sockets: int = 0
 @export var amount: int = 1
 
+# Instance Modifications (new: Internal Data inventory system)
+var socket_gems: Array = []        # e.g. [null, "FireGem"] -- null = empty socket
+var enchantments: Dictionary = {}  # e.g. {"HP": 50, "DmgReduce": 5}
+
 func get_stat(stat_name: String) -> int:
 	return stats.get(stat_name, 0)
