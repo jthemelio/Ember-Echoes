@@ -1,1 +1,28 @@
-{"background_color":"#000000","display":"fullscreen","icons":[{"sizes":"144x144","src":"index.144x144.png","type":"image/png"},{"sizes":"180x180","src":"index.180x180.png","type":"image/png"},{"sizes":"512x512","src":"index.512x512.png","type":"image/png"}],"name":"Ember Echoes","orientation":"portrait","start_url":"./index.html"}
+{
+    "background_color": "#000000",
+    "display": "fullscreen",
+    "icons": [
+        {
+            "src": "index.144x144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any" 
+        },
+        {
+            "src": "index.180x180.png",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "index.512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "name": "Ember Echoes",
+    "short_name": "Ember Echoes",
+    "orientation": "portrait",
+    "start_url": "./index.html"
+}
