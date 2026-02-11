@@ -23,4 +23,4 @@ yarn-error.log*
 EchoEmbersExport/
 export_presets.cfg
 # If you use a generic build folder for exports
-build/
+# build/
