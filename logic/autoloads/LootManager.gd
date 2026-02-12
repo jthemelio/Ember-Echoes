@@ -58,10 +58,9 @@ func load_loot_config(config: Dictionary) -> void:
 
 func load_item_catalog(catalog: Dictionary) -> void:
 	_all_items.clear()
-	var armor = catalog.get("armor", [])
-	var weapons = catalog.get("weapons", [])
-	_all_items.append_array(armor)
-	_all_items.append_array(weapons)
+	for category_key in ["armor", "weapons", "misc"]:
+		var items = catalog.get(category_key, [])
+		_all_items.append_array(items)
 	print("LootManager: Catalog loaded (%d total items)" % _all_items.size())
 
 	# Start heartbeat once we have data
@@ -98,6 +97,34 @@ func _on_mob_slain(mob_data: Dictionary) -> void:
 	for i in range(loot_rolls):
 		_roll_loot(mob_level)
 
+	# Roll rare material drops (independent of normal loot)
+	_roll_rare_materials()
+
+# ───── Rare Material Drop Rates ─────
+const COMET_DROP_CHANCE: float = 1.0 / 400.0     # 1 in 400
+const WYRM_SPHERE_DROP_CHANCE: float = 1.0 / 4000.0  # 1 in 4000
+
+func _roll_rare_materials() -> void:
+	# Comet drop
+	if randf() < COMET_DROP_CHANCE:
+		var instance = ItemDatabase.create_instance_dict("Comet_Normal", "Normal")
+		instance["dura"] = 0
+		GameManager.active_user_inventory.append(instance)
+		_pending_items.append(instance.duplicate())
+		var item_data = ItemDatabase.resolve_instance(instance)
+		loot_dropped.emit(item_data)
+		print("LootManager: Rare drop -- Comet!")
+
+	# Wyrm Sphere drop
+	if randf() < WYRM_SPHERE_DROP_CHANCE:
+		var instance = ItemDatabase.create_instance_dict("Wyrm_Sphere_Normal", "Normal")
+		instance["dura"] = 0
+		GameManager.active_user_inventory.append(instance)
+		_pending_items.append(instance.duplicate())
+		var item_data = ItemDatabase.resolve_instance(instance)
+		loot_dropped.emit(item_data)
+		print("LootManager: Rare drop -- Wyrm Sphere!")
+
 # ───── Loot Rolling Algorithm ─────
 
 func _roll_loot(mob_level: int) -> void:
@@ -117,6 +144,10 @@ func _roll_loot(mob_level: int) -> void:
 		var item_quality = cd.get("Quality", "Normal")
 		# Only consider Normal quality as base pool (avoid duplicate rolls from Tempered variants)
 		if item_quality != "Normal":
+			continue
+		# Exclude materials (Comets, Wyrm Spheres) -- they have their own drop system
+		var item_type = cd.get("Type", "")
+		if item_type == "Material":
 			continue
 		if abs(item_level - mob_level) <= level_range:
 			eligible.append(item)

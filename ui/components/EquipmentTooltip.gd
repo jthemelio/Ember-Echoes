@@ -70,11 +70,17 @@ func _update_ui(data: ItemData):
 	var body = ""
 	
 	if data is WeaponData:
-		body += "[color=#ffcc66]Physical ATK: %d - %d[/color]\n" % [data.min_attack, data.max_attack]
-		if data.magic_attack > 0:
-			body += "[color=#4488ff]Magic ATK: %d[/color]\n" % data.magic_attack
-		if data.get_stat("Speed") > 0:
-			body += "Speed: %d\n" % data.get_stat("Speed")
+		if data.item_type == "Arrow":
+			body += "[color=#ffcc66]ATK Bonus: +%d[/color]\n" % data.min_attack
+			if data.amount > 0:
+				var max_amt = data.max_amount()
+				body += "Arrows: %d / %d\n" % [data.amount, max_amt]
+		else:
+			body += "[color=#ffcc66]Physical ATK: %d - %d[/color]\n" % [data.min_attack, data.max_attack]
+			if data.magic_attack > 0:
+				body += "[color=#4488ff]Magic ATK: %d[/color]\n" % data.magic_attack
+			if data.get_stat("Speed") > 0:
+				body += "Speed: %d\n" % data.get_stat("Speed")
 
 	elif data is EquipmentData:
 		if data.physical_defense > 0:

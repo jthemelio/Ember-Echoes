@@ -6,6 +6,12 @@ extends GridContainer
 # How many slots this grid should create (40 for bag, 40 for warehouse, etc.)
 @export var slot_count: int = 40
 
+# Offset into the inventory array (0 = bag shows items 0-39, 40 = warehouse shows items 40-79)
+@export var inventory_offset: int = 0
+
+# Quality filter: "" = show all, "Normal" = show only Normal, etc.
+var quality_filter: String = ""
+
 func _ready():
 	# Clear editor placeholders and fill grid
 	refresh_grid()
@@ -18,23 +24,36 @@ func refresh_grid():
 			var new_slot = slot_scene.instantiate()
 			add_child(new_slot)
 
-	# 2. Get the updated inventory (array of compact instance dicts)
+	# 2. Get the slice of inventory for this grid
 	var inventory = GameManager.active_user_inventory
+	var slice_start = inventory_offset
+	var slice_end = min(inventory_offset + slot_count, inventory.size())
 	var all_slots = get_children()
 
 	# 3. Map items to slots
-	for i in range(min(slot_count, all_slots.size())):
-		var slot = all_slots[i]
-		if i < inventory.size():
-			var entry = inventory[i]
-			# Compact instance dicts have a "uid" key
-			if entry is Dictionary and entry.has("uid"):
-				slot.set_item(ItemDatabase.resolve_instance(entry))
-			elif entry is ItemData:
-				# Legacy: already resolved ItemData
-				slot.set_item(entry)
-			else:
-				slot.set_item(null)
-		else:
-			# This slot should be empty
-			slot.set_item(null)
+	var slot_idx := 0
+	for inv_idx in range(slice_start, slice_end):
+		if slot_idx >= all_slots.size():
+			break
+		var entry = inventory[inv_idx]
+		var item_data: ItemData = null
+
+		if entry is Dictionary and entry.has("uid"):
+			item_data = ItemDatabase.resolve_instance(entry)
+		elif entry is ItemData:
+			item_data = entry
+
+		# Apply quality filter
+		if quality_filter != "" and item_data != null:
+			if item_data.quality != quality_filter:
+				# Still show slot but as empty (item hidden by filter)
+				all_slots[slot_idx].set_item(null)
+				slot_idx += 1
+				continue
+
+		all_slots[slot_idx].set_item(item_data)
+		slot_idx += 1
+
+	# 4. Clear remaining slots
+	for i in range(slot_idx, min(slot_count, all_slots.size())):
+		all_slots[i].set_item(null)

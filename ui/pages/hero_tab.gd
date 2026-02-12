@@ -7,8 +7,31 @@ extends ScrollContainer
 @onready var spi_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/SpiRow
 @onready var name_label = $ScrollWrapper/S1_Profile_Equipment_Stats/Profile/CharName
 
-# --- NEW: Currency & Material Labels ---
-# Make sure these paths match your UI tree
+# ─── Equipment Slots (InventorySlot instances) ───
+@onready var equip_slots: Dictionary = {
+	"Headgear": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/HeadgearSlot,
+	"Armor": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/ArmorSlot,
+	"Ring": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/RingSlot,
+	"Necklace": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/NecklaceSlot,
+	"Boots": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/BootsSlot,
+	"Weapon": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/WeaponSlot,
+	"Offhand": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/OffhandSlot,
+	"Backpack": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/BackpackSlot,
+}
+
+# Slot label names shown when empty
+const SLOT_LABELS := {
+	"Headgear": "Head",
+	"Armor": "Armor",
+	"Ring": "Ring",
+	"Necklace": "Neck",
+	"Boots": "Boots",
+	"Weapon": "Weapon",
+	"Offhand": "Offhand",
+	"Backpack": "Pack",
+}
+
+# --- Currency & Material Labels ---
 @onready var gold_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Gold
 @onready var echo_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/EchoToken
 @onready var comet_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Comets
@@ -46,6 +69,13 @@ func _ready():
 		ok_button.pressed.connect(_on_ok_button_pressed)
 	
 	GameManager.character_stats_updated.connect(update_hero_ui)
+	GameManager.equipment_changed.connect(_refresh_equipment_slots)
+	
+	# Set equipment slot mode on each slot so right-click unequips
+	for slot_name in equip_slots:
+		var slot_node = equip_slots[slot_name]
+		if slot_node:
+			slot_node.equipment_slot_name = slot_name
 	
 	# Since GameManager now pre-fetches during login, we usually don't need to fetch here
 	update_hero_ui()
@@ -59,8 +89,10 @@ func update_hero_ui():
 	if name_label:
 		name_label.text = GameManager.active_character_name
 
-	# --- NEW: Automated Currency Refresh ---
-	# This replaces all the individual gold_label, echo_label, etc. lines
+	# Refresh equipment slot visuals
+	_refresh_equipment_slots()
+
+	# Automated Currency Refresh
 	for child in get_tree().get_nodes_in_group("currency_slots"):
 		if child.has_method("update_display"):
 			child.update_display()
@@ -96,6 +128,27 @@ func update_hero_ui():
 	if agi_row: agi_row.update_display("Agility", total_agi, can_up, pending_stats["Agility"] > 0)
 	if vit_row: vit_row.update_display("Vitality", total_vit, can_up, pending_stats["Vitality"] > 0)
 	if spi_row: spi_row.update_display("Spirit", total_spi, can_up, pending_stats["Spirit"] > 0)
+
+# ─── Equipment Slot Population ───
+
+func _refresh_equipment_slots() -> void:
+	for slot_name in equip_slots:
+		var slot_node = equip_slots[slot_name]
+		if not slot_node or not is_instance_valid(slot_node):
+			continue
+
+		var item_data = GameManager.get_equipped_item_data(slot_name)
+		if item_data:
+			slot_node.set_item(item_data)
+		else:
+			# Empty slot -- show placeholder with slot label
+			slot_node.set_item(null)
+			# Set the count label to show slot name as a hint
+			var count_lbl = slot_node.get_node_or_null("LabelsOverlay/CountLabel")
+			if count_lbl:
+				count_lbl.text = SLOT_LABELS.get(slot_name, slot_name)
+				count_lbl.add_theme_font_size_override("font_size", 10)
+				count_lbl.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
 
 func _on_stat_increase_requested(stat_name: String):
 	var points_available = int(GameManager.active_character_stats.get("AvailableAttributePoints", 0))

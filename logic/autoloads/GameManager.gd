@@ -37,7 +37,7 @@ const TYPE_TO_SLOT: Dictionary = {
 	"Ring": "Ring",
 	"Necklace": "Necklace",
 	"Boots": "Boots",
-	"Shield": "Offhand",
+	"Shield": "Offhand", "Arrow": "Offhand",
 }
 
 # Maps armor Type to required class
@@ -51,6 +51,7 @@ var _stats_ready: bool = false
 var _currency_ready: bool = false
 var _title_data_ready: bool = false
 var _inventory_ready: bool = false
+var _achievements_ready: bool = false
 
 func start_game_with_character(data: Dictionary):
 	active_character_id = data.get("CharacterId", "")
@@ -63,6 +64,7 @@ func start_game_with_character(data: Dictionary):
 	_currency_ready = false
 	_title_data_ready = false
 	_inventory_ready = false
+	_achievements_ready = false
 
 	print("GameManager: Starting login for ", active_character_name)
 
@@ -162,6 +164,21 @@ func start_game_with_character(data: Dictionary):
 		_check_all_done()
 	)
 
+	# 5. Fetch Account Achievements (User Internal Data)
+	PlayFabManager.client.execute_cloud_script("loadAchievements", {}, func(result):
+		var fn_result = result.get("data", {}).get("FunctionResult", {})
+		if fn_result is Dictionary and fn_result.get("success", false):
+			var ach_data = fn_result.get("data", {})
+			var ach_mgr = get_node_or_null("/root/AchievementManager")
+			if ach_mgr:
+				ach_mgr.load_from_playfab(ach_data)
+		else:
+			print("GameManager: No achievement data found (new account?)")
+
+		_achievements_ready = true
+		_check_all_done()
+	)
+
 func _count_equipped() -> int:
 	var count = 0
 	for slot_name in equipped_items:
@@ -170,7 +187,7 @@ func _count_equipped() -> int:
 	return count
 
 func _check_all_done():
-	if _stats_ready and _currency_ready and _title_data_ready and _inventory_ready:
+	if _stats_ready and _currency_ready and _title_data_ready and _inventory_ready and _achievements_ready:
 		var target_scene = "res://ui/pages/idleHome.tscn"
 		get_tree().call_deferred("change_scene_to_file", target_scene)
 
@@ -184,8 +201,13 @@ func can_equip(item: ItemData) -> Dictionary:
 	if slot.is_empty():
 		return {"ok": false, "reason": "Item type '%s' cannot be equipped" % item.item_type}
 
-	# Class-specific armor check
-	if ARMOR_CLASS_REQ.has(item.item_type):
+	# Arrow class check (Marksman only)
+	if item.item_type == "Arrow" and item.item_class != "All_Classes":
+		if active_character_class != item.item_class:
+			return {"ok": false, "reason": "Arrows require %s class" % item.item_class}
+
+	# Class-specific armor check (skip if item is All_Classes)
+	if item.item_class != "All_Classes" and ARMOR_CLASS_REQ.has(item.item_type):
 		var required_class = ARMOR_CLASS_REQ[item.item_type]
 		if active_character_class != required_class:
 			return {"ok": false, "reason": "%s requires %s class" % [item.item_type, required_class]}
@@ -194,13 +216,16 @@ func can_equip(item: ItemData) -> Dictionary:
 	if item.level_req > active_character_level:
 		return {"ok": false, "reason": "Requires level %d" % item.level_req}
 
-	# Stat requirements
-	var char_stats = active_character_stats
-	if item.str_req > 0 and char_stats.get("Strength", 0) < item.str_req:
+	# Stat requirements -- use total stats (class base + invested), not just invested
+	var class_base = StatCalculator.get_smart_allocated_stats(active_character_class, active_character_level)
+	var total_str = int(class_base.get("Strength", 0)) + int(active_character_stats.get("Strength", 0))
+	var total_agi = int(class_base.get("Agility", 0)) + int(active_character_stats.get("Agility", 0))
+
+	if item.str_req > 0 and total_str < item.str_req:
 		return {"ok": false, "reason": "Requires %d Strength" % item.str_req}
-	if item.dex_req > 0 and char_stats.get("Agility", 0) < item.dex_req:
+	if item.dex_req > 0 and total_agi < item.dex_req:
 		return {"ok": false, "reason": "Requires %d Dexterity" % item.dex_req}
-	if item.agi_req > 0 and char_stats.get("Agility", 0) < item.agi_req:
+	if item.agi_req > 0 and total_agi < item.agi_req:
 		return {"ok": false, "reason": "Requires %d Agility" % item.agi_req}
 
 	return {"ok": true, "slot": slot}
@@ -229,6 +254,46 @@ func equip_item_by_uid(uid: String) -> bool:
 	var slot = check["slot"]
 	var old_equipped = equipped_items[slot]
 
+	# ── Arrow / stackable equip logic (5 packs max in offhand) ──
+	if item_data.is_stackable():
+		var bag_amt = int(instance_dict.get("amt", 1))
+		var bid = instance_dict.get("bid", "")
+		var quality = instance_dict.get("q", "Normal")
+		var equip_max = ItemDatabase.get_max_stack_amount(bid, quality)  # 5 * base_amount
+
+		if old_equipped != null and old_equipped.get("bid", "") == bid and old_equipped.get("q", "") == quality:
+			# Same arrow type already equipped — top up
+			var current_equipped = int(old_equipped.get("amt", 0))
+			var space = equip_max - current_equipped
+			if space <= 0:
+				push_warning("GameManager: Arrow slot full (%d/%d)" % [current_equipped, equip_max])
+				return false
+			var transfer = mini(space, bag_amt)
+			old_equipped["amt"] = current_equipped + transfer
+			if transfer >= bag_amt:
+				active_user_inventory.remove_at(bag_index)
+			else:
+				instance_dict["amt"] = bag_amt - transfer
+		else:
+			# Different type or empty slot — swap
+			if old_equipped != null:
+				active_user_inventory.append(old_equipped)
+			var transfer = mini(equip_max, bag_amt)
+			var equip_dict = instance_dict.duplicate()
+			equip_dict["amt"] = transfer
+			equipped_items[slot] = equip_dict
+			if transfer >= bag_amt:
+				active_user_inventory.remove_at(bag_index)
+			else:
+				instance_dict["amt"] = bag_amt - transfer
+
+		print("GameManager: Equipped arrows '%s' (%d) in slot '%s'" % [item_data.display_name, int(equipped_items[slot].get("amt", 0)), slot])
+		equipment_changed.emit()
+		inventory_changed.emit()
+		sync_inventory_to_server()
+		return true
+
+	# ── Standard (non-stackable) equip logic ──
 	# Move old equipped item back to bag (if any)
 	if old_equipped != null:
 		active_user_inventory.append(old_equipped)
@@ -242,7 +307,7 @@ func equip_item_by_uid(uid: String) -> bool:
 	inventory_changed.emit()
 
 	# Persist to PlayFab
-	_sync_inventory_to_server()
+	sync_inventory_to_server()
 	return true
 
 # Legacy equip (from ItemData) -- resolves uid internally
@@ -269,7 +334,7 @@ func unequip_slot(slot: String) -> ItemData:
 	inventory_changed.emit()
 
 	# Persist to PlayFab
-	_sync_inventory_to_server()
+	sync_inventory_to_server()
 	return item_data
 
 # ───── Resolved Equipment Access (for combat/stat calculations) ─────
@@ -329,9 +394,42 @@ func get_weapon_speed() -> int:
 		return w.get_stat("Speed")
 	return 0
 
+# ───── Material Helpers ─────
+
+func get_total_material_count(currency_code: String) -> int:
+	## Returns the total count of a material: currency balance + inventory item count.
+	## currency_code: "CM" for Comets, "WS" for Wyrm Spheres
+	var total = int(active_user_currencies.get(currency_code, 0))
+	# Map currency code to inventory bid
+	var bid_map = {"CM": "Comet", "WS": "Wyrm_Sphere"}
+	var bid = bid_map.get(currency_code, "")
+	if not bid.is_empty():
+		for item in active_user_inventory:
+			if item is Dictionary and item.get("bid", "") == bid:
+				total += 1
+	return total
+
+func consume_material(currency_code: String) -> bool:
+	## Consumes 1 material: prefers currency first, then removes an inventory item.
+	## Returns true if consumed successfully.
+	var currency_bal = int(active_user_currencies.get(currency_code, 0))
+	if currency_bal > 0:
+		active_user_currencies[currency_code] = currency_bal - 1
+		return true
+	# Fallback: remove from inventory
+	var bid_map = {"CM": "Comet", "WS": "Wyrm_Sphere"}
+	var bid = bid_map.get(currency_code, "")
+	if not bid.is_empty():
+		for i in range(active_user_inventory.size()):
+			var item = active_user_inventory[i]
+			if item is Dictionary and item.get("bid", "") == bid:
+				active_user_inventory.remove_at(i)
+				return true
+	return false
+
 # ───── Server Sync ─────
 
-func _sync_inventory_to_server() -> void:
+func sync_inventory_to_server() -> void:
 	PlayFabManager.client.execute_cloud_script("syncInventory", {
 		"characterId": active_character_id,
 		"bag": active_user_inventory,

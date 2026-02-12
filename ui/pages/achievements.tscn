@@ -1,0 +1,113 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/pages/achievements.gd" id="1_ach"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_scope"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_subtab"]
+
+[node name="Achievements" type="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+script = ExtResource("1_ach")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="HeaderPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/HeaderPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/HeaderPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Achievements"
+
+[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox"]
+layout_mode = 2
+text = "Track your progress across all hunted monsters. Complete kill milestones to earn Wyrm Spheres and unlock rare variant spawn bonuses."
+autowrap_mode = 2
+
+[node name="TabSwitcher" type="HBoxContainer" parent="ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="AccountBtn" type="Button" parent="ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox/TabSwitcher"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_scope")
+text = "Account"
+
+[node name="CharacterBtn" type="Button" parent="ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox/TabSwitcher"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_scope")
+text = "Character"
+
+[node name="SubTabPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/SubTabPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="SubTabRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/SubTabPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HuntKillsBtn" type="Button" parent="ScrollContainer/ContentVBox/SubTabPanel/Margin/SubTabRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hunt Kills"
+
+[node name="PetsBtn" type="Button" parent="ScrollContainer/ContentVBox/SubTabPanel/Margin/SubTabRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pets"
+
+[node name="ContentPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ContentPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ContentPanel/Margin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8

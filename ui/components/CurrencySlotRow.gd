@@ -22,7 +22,7 @@ func update_display():
 const CODE_TO_NAME = {
 	"GD": "Gold",
 	"ET": "Echo Tokens",
-	"CM": "Meteors",
+	"CM": "Comets",
 	"WS": "Wyrm Spheres",
 	"I1": "+1 Ignis Stones",
 	"I2": "+2 Ignis Stones",

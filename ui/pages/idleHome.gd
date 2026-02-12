@@ -15,6 +15,9 @@ const AfkRewardsPopupScene = preload("res://ui/components/AfkRewardsPopup.tscn")
 @onready var auction_tab = $MainLayout/ContentArea/PageContainer/AuctionTab
 @onready var lady_luck_tab = $MainLayout/ContentArea/PageContainer/LadyLuckTab
 
+# Achievements tab
+@onready var achievements_tab = $MainLayout/ContentArea/PageContainer/AchievementsTab
+
 # Shop popup
 @onready var shop_popup: PanelContainer = $ShopPopup
 
@@ -69,7 +72,7 @@ func _on_shop_sub_tab(tab: Control) -> void:
 	_show_tab(tab)
 
 func _on_achieve_button_pressed() -> void:
-	print("Achievements tab pressed (not yet implemented)")
+	_show_tab(achievements_tab)
 
 func _on_settings_button_pressed() -> void:
 	print("Settings tab pressed (not yet implemented)")

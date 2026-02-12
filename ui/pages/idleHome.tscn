@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://ui/pages/shops/artisan_shop.tscn" id="8_artisan"]
 [ext_resource type="PackedScene" path="res://ui/pages/shops/auction_shop.tscn" id="9_auction"]
 [ext_resource type="PackedScene" path="res://ui/pages/shops/lady_luck_shop.tscn" id="10_luck"]
+[ext_resource type="PackedScene" path="res://ui/pages/achievements.tscn" id="11_achieve"]
 
 [node name="IdleHome" type="Control" unique_id=1163464952]
 layout_mode = 3
@@ -70,6 +71,10 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 
+[node name="AchievementsTab" parent="MainLayout/ContentArea/PageContainer" instance=ExtResource("11_achieve")]
+visible = false
+layout_mode = 2
+
 [node name="NavBar" type="PanelContainer" parent="MainLayout" unique_id=489164190]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
@@ -103,8 +108,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Settings"
 
-[node name="EquipmentTooltip" parent="MainLayout" unique_id=1638817052 instance=ExtResource("4_vmrhr")]
-layout_mode = 2
+[node name="EquipmentTooltip" parent="." unique_id=1638817052 instance=ExtResource("4_vmrhr")]
+layout_mode = 1
+anchors_preset = 0
+z_index = 100
 
 [node name="ShopPopup" type="PanelContainer" parent="."]
 visible = false

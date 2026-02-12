@@ -9,7 +9,9 @@ signal combat_tick_updated           # Emitted every tick with latest state
 signal mob_slain(mob_data: Dictionary)  # Emitted when a mob reaches 0 HP (includes is_rare, xp, etc.)
 signal hunt_completed                # Emitted when kills_this_hunt == hunt_target
 signal player_died                   # Emitted when player HP reaches 0
+signal player_respawned              # Emitted when player respawns after death timer
 signal xp_gained(amount: int)        # Emitted when XP is awarded
+signal mob_spawned                   # Emitted when a new mob spawns (timer or manual)
 signal zone_changed                  # Emitted after changing zone/creature
 signal zones_loaded                  # Emitted when zone data is loaded from PlayFab
 signal afk_rewards_ready(rewards: Dictionary)  # Emitted with offline rewards to display
@@ -18,12 +20,13 @@ signal afk_rewards_ready(rewards: Dictionary)  # Emitted with offline rewards to
 const TICK_INTERVAL: float = 0.1     # 100ms per tick
 const MAX_QUEUE_SIZE: int = 25       # Max monsters in queue
 const MAX_ATTACKERS: int = 9         # Max monsters hitting player per tick
-const SPAWN_INTERVAL: float = 5.0    # Seconds between natural spawns
+const SPAWN_INTERVAL: float = 10.0   # Seconds between natural spawns
 const RARE_CHANCE: float = 0.05      # 5% chance for rare variant
 const RARE_STAT_MULT: float = 2.0    # Rare mobs have 2x stats
 const RARE_XP_MULT: int = 10         # Rare mobs give 10x XP
 const RARE_LOOT_ROLLS: int = 10      # Rare mobs give 10 loot rolls
 const MOB_ATTACK_INTERVAL: float = 1.0  # Default: mobs attack once per second
+const DEATH_RESPAWN_TIME: float = 5.0 # Seconds before player respawns after death
 const AFK_MAX_SECONDS: int = 7200    # 2 hours max AFK reward
 const AFK_SAVE_PATH: String = "user://afk_timestamp.save"
 
@@ -57,6 +60,8 @@ var xp_to_next_level: int = 110
 
 var combat_active: bool = false
 var is_fighting_mode: bool = true  # true = Fighting, false = Mining
+var is_dead: bool = false          # true during death respawn cooldown
+var _death_timer: float = 0.0      # Counts down to 0 during death
 
 # ───── Timers ─────
 var tick_timer: Timer = null
@@ -70,6 +75,7 @@ var _attack_cooldown: float = 0.0 # Counts down each tick
 # ───── Cached player combat stats ─────
 var _player_min_atk: int = 1
 var _player_max_atk: int = 5
+var _arrow_atk_bonus: int = 0
 var _player_p_atk: int = 0
 var _player_def: int = 0
 var _player_p_def: int = 0
@@ -227,7 +233,12 @@ func _spawn_mob_to_queue() -> void:
 	if template.is_empty():
 		return
 
-	var is_rare = randf() < RARE_CHANCE
+	# Check for achievement-based rare bonus
+	var rare_chance = RARE_CHANCE
+	var ach_mgr = get_node_or_null("/root/AchievementManager")
+	if ach_mgr:
+		rare_chance += ach_mgr.get_rare_bonus(template.get("name", ""))
+	var is_rare = randf() < rare_chance
 	var is_boss = template.get("isBoss", false)
 	var mult = RARE_STAT_MULT if is_rare else 1.0
 
@@ -253,6 +264,7 @@ func _on_spawn_timer() -> void:
 	if not combat_active:
 		return
 	_spawn_mob_to_queue()
+	mob_spawned.emit()
 	combat_tick_updated.emit()
 
 # ───── Internal: Stats ─────
@@ -276,10 +288,15 @@ func _refresh_player_stats() -> void:
 	var finals = StatCalculator.apply_multipliers(base, char_class, level)
 	player_max_hp = finals.get("MaxHP", 50)
 
-	# Add shield LifeBonus to max HP
+	# Add shield LifeBonus to max HP, or arrow ATK bonus
 	var offhand = GameManager.get_equipped_item_data("Offhand")
 	if offhand and offhand.item_type == "Shield":
 		player_max_hp += offhand.get_stat("LifeBonus")
+	elif offhand and offhand.item_type == "Arrow":
+		# Arrows add flat ATK bonus on top of weapon damage
+		_arrow_atk_bonus = offhand.get_stat("MinAtk")
+	else:
+		_arrow_atk_bonus = 0
 
 	# Only heal to full on first combat start, not on mid-combat recalcs
 	if player_hp <= 0 or player_hp > player_max_hp:
@@ -320,6 +337,23 @@ func _refresh_player_stats() -> void:
 func _on_tick() -> void:
 	if not combat_active:
 		return
+
+	# --- Handle death respawn timer ---
+	if is_dead:
+		_death_timer -= TICK_INTERVAL
+		if _death_timer <= 0.0:
+			# Respawn: full HP, spawn a fresh mob, restart spawn timer
+			is_dead = false
+			_death_timer = 0.0
+			player_hp = player_max_hp
+			_attack_cooldown = attack_interval
+			spawn_timer.start()
+			if monster_queue.is_empty():
+				_spawn_mob_to_queue()
+			player_respawned.emit()
+		combat_tick_updated.emit()
+		return
+
 	if monster_queue.is_empty():
 		return
 
@@ -348,7 +382,10 @@ func _on_tick() -> void:
 	# --- Check player death ---
 	if player_hp <= 0:
 		total_deaths += 1
-		player_hp = player_max_hp
+		is_dead = true
+		_death_timer = DEATH_RESPAWN_TIME
+		monster_queue.clear()  # Clear all enemies on death
+		spawn_timer.stop()     # Stop spawning during death
 		player_died.emit()
 
 	combat_tick_updated.emit()
@@ -359,14 +396,38 @@ func _player_attack() -> void:
 
 	var mob = monster_queue[0]  # Primary target
 
+	# Apply arrow ATK bonus if arrows are equipped
+	var bonus_min = _arrow_atk_bonus if _arrow_atk_bonus > 0 else 0
+	var bonus_max = bonus_min  # Arrows give flat bonus to both min and max
+
 	var player_damage = StatCalculator.get_physical_hit(
-		_player_min_atk, _player_max_atk, _player_p_atk,
+		_player_min_atk + bonus_min, _player_max_atk + bonus_max, _player_p_atk,
 		mob.get("defense", 0), 0
 	)
 	mob["hp"] = max(0, mob["hp"] - player_damage)
 
+	# Consume an arrow if arrows are equipped
+	if _arrow_atk_bonus > 0:
+		_consume_arrow()
+
 	if mob["hp"] <= 0:
 		_on_mob_killed(mob)
+
+func _consume_arrow() -> void:
+	var offhand_dict = GameManager.equipped_items.get("Offhand")
+	if offhand_dict == null:
+		return
+	var amt = int(offhand_dict.get("amt", 0))
+	if amt <= 1:
+		# Last arrow consumed — unequip
+		GameManager.equipped_items["Offhand"] = null
+		_arrow_atk_bonus = 0
+		GameManager.equipment_changed.emit()
+		GameManager.inventory_changed.emit()
+		GameManager.sync_inventory_to_server()
+		print("IdleCombatManager: Out of arrows!")
+	else:
+		offhand_dict["amt"] = amt - 1
 
 func _on_mob_killed(mob: Dictionary) -> void:
 	# Remove from queue

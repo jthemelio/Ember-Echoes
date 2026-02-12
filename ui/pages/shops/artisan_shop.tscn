@@ -1,9 +1,13 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://ui/pages/shops/artisan_shop.gd" id="1_script"]
+[ext_resource type="Script" path="res://ui/components/InventoryGrid.gd" id="2_invgrid"]
 
 [node name="ArtisanShop" type="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("1_script")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
@@ -14,34 +18,224 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 10
 
-[node name="ShopHeader" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+[node name="Header" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ShopHeader"]
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/Header/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/Header/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Artisan"
+
+[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/Header/Margin/VBox"]
+layout_mode = 2
+text = "Select an item to upgrade its level, quality, or Ignis+ bonus."
+autowrap_mode = 2
+
+[node name="ItemPickerPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ItemPickerPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ItemPickerPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PickerLabel" type="Label" parent="ScrollContainer/ContentVBox/ItemPickerPanel/Margin/VBox"]
+layout_mode = 2
+text = "Select Item"
+
+[node name="ItemPickerGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/ItemPickerPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="UpgradeModeBar" type="HBoxContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="LevelUpgradeBtn" type="Button" parent="ScrollContainer/ContentVBox/UpgradeModeBar"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+text = "Level"
+
+[node name="QualityUpgradeBtn" type="Button" parent="ScrollContainer/ContentVBox/UpgradeModeBar"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Quality"
+
+[node name="IgnisPlusBtn" type="Button" parent="ScrollContainer/ContentVBox/UpgradeModeBar"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Ignis+"
+
+[node name="UpgradePanel" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/UpgradePanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SlotRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="SourceSlot" type="PanelContainer" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="SourceLabel" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/SourceSlot"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Source"
+autowrap_mode = 2
+
+[node name="Arrow1" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MaterialSlot" type="PanelContainer" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="MaterialLabel" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/MaterialSlot"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Material"
+autowrap_mode = 2
+
+[node name="Arrow2" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "="
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResultSlot" type="PanelContainer" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+
+[node name="ResultLabel" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/ResultSlot"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "Result"
+autowrap_mode = 2
+
+[node name="InfoLabel" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox"]
+layout_mode = 2
+text = "Select an item and upgrade mode to begin."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="SuccessLabel" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+
+[node name="UpgradeBtn" type="Button" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+disabled = true
+text = "Upgrade"
+
+[node name="ResultMessageLabel" type="Label" parent="ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+
+[node name="MaterialPopup" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/MaterialPopup"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="PopupTitle" type="Label" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Artisan"
-
-[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
-layout_mode = 2
-text = "Craft and upgrade your equipment. Coming soon!"
-autowrap_mode = 2
-
-[node name="ComingSoon" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Coming Soon"
+text = "Select Material"
 horizontal_alignment = 1
+
+[node name="MaterialRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 12
+
+[node name="MaterialIcon" type="PanelContainer" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="IconLabel" type="Label" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow/MaterialIcon"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="MaterialCount" type="Label" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+vertical_alignment = 1
+text = "x0"
+
+[node name="BtnRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SelectMaterialBtn" type="Button" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/BtnRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Select"
+
+[node name="CancelMaterialBtn" type="Button" parent="ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/BtnRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cancel"
