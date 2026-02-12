@@ -333,6 +333,9 @@ func equip_item_by_uid(uid: String) -> bool:
 			else:
 				instance_dict["amt"] = bag_amt - transfer
 
+		# Clean up any ghost entries with zero or negative amount
+		_cleanup_ghost_items()
+
 		print("GameManager: Equipped arrows '%s' (%d) in slot '%s'" % [item_data.display_name, int(equipped_items[slot].get("amt", 0)), slot])
 		equipment_changed.emit()
 		inventory_changed.emit()
@@ -355,6 +358,29 @@ func equip_item_by_uid(uid: String) -> bool:
 	# Persist to PlayFab
 	sync_inventory_to_server()
 	return true
+
+# Remove ghost inventory entries with zero or negative amount (safety net for stackable bugs)
+func _cleanup_ghost_items() -> void:
+	for i in range(active_user_inventory.size() - 1, -1, -1):
+		var e = active_user_inventory[i]
+		if e is Dictionary and e.has("amt") and int(e.get("amt", 0)) <= 0:
+			push_warning("GameManager: Removing ghost item at index %d: %s" % [i, str(e)])
+			active_user_inventory.remove_at(i)
+
+# Claim a money bag item from inventory by uid — awards gold and removes the entry
+func claim_money_bag(uid: String) -> bool:
+	for i in range(active_user_inventory.size()):
+		var entry = active_user_inventory[i]
+		if entry is Dictionary and entry.get("uid", "") == uid:
+			var gold = int(entry.get("gold", 0))
+			active_user_currencies["GD"] = int(active_user_currencies.get("GD", 0)) + gold
+			active_user_inventory.remove_at(i)
+			inventory_changed.emit()
+			sync_inventory_to_server()
+			print("GameManager: Claimed money bag uid '%s': +%d gold" % [uid, gold])
+			return true
+	push_warning("GameManager: Could not find money bag uid '%s' in inventory" % uid)
+	return false
 
 # Legacy equip (from ItemData) -- resolves uid internally
 func equip_item(item: ItemData) -> bool:

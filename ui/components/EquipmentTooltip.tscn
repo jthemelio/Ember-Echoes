@@ -25,10 +25,11 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=607159611]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=607159611]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
+theme_override_constants/separation = 10
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=996109933]
 layout_mode = 2
@@ -36,9 +37,11 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 
 [node name="ItemIcon" type="TextureRect" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=821756262]
-custom_minimum_size = Vector2(64, 64)
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 size_flags_vertical = 0
+expand_mode = 1
+stretch_mode = 5
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=545483245]
 layout_mode = 2
@@ -60,3 +63,16 @@ size_flags_vertical = 0
 bbcode_enabled = true
 fit_content = true
 autowrap_mode = 0
+
+[node name="ActionRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="ActionBtn" type="Button" parent="MarginContainer/VBoxContainer/ActionRow"]
+visible = false
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Equip"

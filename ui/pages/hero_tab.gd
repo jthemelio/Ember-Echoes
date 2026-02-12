@@ -6,6 +6,7 @@ extends MarginContainer
 @onready var vit_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/VitRow
 @onready var spi_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/SpiRow
 @onready var name_label = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/CharName
+@onready var equipment_grid = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment
 
 # ─── Equipment Slots (InventorySlot instances) ───
 @onready var equip_slots: Dictionary = {
@@ -77,6 +78,10 @@ func _ready():
 		if slot_node:
 			slot_node.equipment_slot_name = slot_name
 	
+	# Keep equipment slots square when the grid fills available width
+	equipment_grid.resized.connect(_enforce_square_equip_slots)
+	call_deferred("_enforce_square_equip_slots")
+
 	# Since GameManager now pre-fetches during login, we usually don't need to fetch here
 	update_hero_ui()
 
@@ -149,6 +154,17 @@ func _refresh_equipment_slots() -> void:
 				count_lbl.text = SLOT_LABELS.get(slot_name, slot_name)
 				count_lbl.add_theme_font_size_override("font_size", 10)
 				count_lbl.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+
+func _enforce_square_equip_slots():
+	var cols: int = equipment_grid.columns
+	var h_sep: int = equipment_grid.get_theme_constant("h_separation")
+	var slot_w: float = (equipment_grid.size.x - h_sep * (cols - 1)) / float(cols)
+	if slot_w <= 0.0:
+		return
+	for slot_name in equip_slots:
+		var slot = equip_slots[slot_name]
+		if slot:
+			slot.custom_minimum_size = Vector2(slot_w, slot_w)
 
 func _on_stat_increase_requested(stat_name: String):
 	var points_available = int(GameManager.active_character_stats.get("AvailableAttributePoints", 0))

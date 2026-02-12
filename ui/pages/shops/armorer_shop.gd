@@ -89,6 +89,11 @@ func _populate_shop() -> void:
 		_create_type_heading(type_name)
 		for item in groups[type_name]:
 			_create_shop_slot(item)
+		# Pad to fill the row if odd number of children so next heading starts on a new line
+		if item_grid.get_child_count() % 2 != 0:
+			var pad = Control.new()
+			pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			item_grid.add_child(pad)
 
 func _create_type_heading(type_name: String) -> void:
 	var heading = Label.new()

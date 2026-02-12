@@ -259,10 +259,22 @@ func _process_reward(reward: Dictionary) -> void:
 
 	# All rewards are type:"item" now — handle by id category
 	if reward_id.begins_with("money_bag_"):
-		# Money bags → add gold locally
+		# Money bags → add as inventory item (player must right-click to claim gold)
 		var gold_amount = MONEY_BAG_GOLD.get(reward_id, 0)
-		GameManager.active_user_currencies["GD"] = int(GameManager.active_user_currencies.get("GD", 0)) + gold_amount
-		print("LadyLuck: Won %s (%d gold)" % [reward.get("name", ""), gold_amount])
+		var bag_instance = {
+			"uid": _generate_uid(),
+			"bid": reward_id,
+			"q": "Normal",
+			"plus": 0,
+			"skt": [],
+			"ench": {},
+			"dura": 0,
+			"gold": gold_amount,  # Gold amount stored for claiming
+		}
+		GameManager.active_user_inventory.append(bag_instance)
+		GameManager.inventory_changed.emit()
+		GameManager.sync_inventory_to_server()
+		print("LadyLuck: Won %s (%d gold) — added to inventory" % [reward.get("name", ""), gold_amount])
 		return
 
 	# Build inventory instance for all other items
@@ -308,7 +320,7 @@ func _show_result(reward: Dictionary, lucky_pet) -> void:
 	# Determine display based on the reward id / properties
 	if reward_id.begins_with("money_bag_"):
 		var gold = MONEY_BAG_GOLD.get(reward_id, 0)
-		reward_desc.text = "%s gold added to your balance." % _format_number(gold)
+		reward_desc.text = "%s gold bag added to your inventory! Right-click to claim." % _format_number(gold)
 		reward_name_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 	elif reward.has("sockets") and int(reward.get("sockets", 0)) > 0:
 		var quality = reward.get("quality", "Normal")

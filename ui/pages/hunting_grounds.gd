@@ -53,6 +53,7 @@ extends MarginContainer
 # Bag buttons
 @onready var select_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/SelectBagBtn
 @onready var sell_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/SellBagBtn
+@onready var move_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/MoveBagBtn
 @onready var cancel_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/CancelBagBtn
 
 # Quality filter buttons
@@ -112,9 +113,10 @@ func _ready() -> void:
 	# ── Connect GameManager inventory_changed (e.g. shop purchases, equip/unequip) ──
 	GameManager.inventory_changed.connect(_on_inventory_changed)
 
-	# ── Bag select/sell/filter buttons ──
+	# ── Bag select/sell/move/filter buttons ──
 	select_bag_btn.pressed.connect(_on_select_pressed)
 	sell_bag_btn.pressed.connect(_on_sell_pressed)
+	move_bag_btn.pressed.connect(_on_move_pressed)
 	cancel_bag_btn.pressed.connect(_on_cancel_select)
 
 	# Quality filter buttons -- colored borders, no text except "All"
@@ -436,6 +438,8 @@ func _on_select_pressed() -> void:
 	select_bag_btn.visible = false
 	sell_bag_btn.visible = true
 	sell_bag_btn.text = "Sell (0)"
+	move_bag_btn.visible = true
+	move_bag_btn.text = "Move (0)"
 	cancel_bag_btn.visible = true
 	_set_slots_select_mode(true)
 
@@ -444,6 +448,7 @@ func _on_cancel_select() -> void:
 	_selected_indices.clear()
 	select_bag_btn.visible = true
 	sell_bag_btn.visible = false
+	move_bag_btn.visible = false
 	cancel_bag_btn.visible = false
 	_set_slots_select_mode(false)
 	_clear_selection_highlights()
@@ -511,6 +516,55 @@ func _on_sell_pressed() -> void:
 	GameManager.inventory_changed.emit()
 	_refresh_inventory_ui()
 
+func _on_move_pressed() -> void:
+	if _selected_indices.is_empty():
+		return
+
+	var inv = GameManager.active_user_inventory
+	# Warehouse is items at index 40+. Max 40 warehouse slots.
+	var warehouse_count = max(0, inv.size() - 40)
+	var warehouse_space = 40 - warehouse_count
+
+	if warehouse_space <= 0:
+		print("Warehouse is full (40/40)")
+		return
+
+	# Collect items to move (cap at available warehouse space)
+	_selected_indices.sort()
+	var moved := 0
+	var indices_to_move: Array = []
+	for idx in _selected_indices:
+		if moved >= warehouse_space:
+			break
+		if idx >= inv.size() or idx >= 40:
+			continue  # Only move bag items (0-39)
+		indices_to_move.append(idx)
+		moved += 1
+
+	if indices_to_move.is_empty():
+		return
+
+	# Move items: remove from bag positions and append to end (warehouse)
+	# Work in reverse to preserve indices during removal
+	var items_to_move: Array = []
+	indices_to_move.sort()
+	indices_to_move.reverse()
+	for idx in indices_to_move:
+		items_to_move.append(inv[idx])
+		inv.remove_at(idx)
+
+	# Append moved items to end of inventory (warehouse region)
+	for item in items_to_move:
+		inv.append(item)
+
+	print("Moved %d items to warehouse" % items_to_move.size())
+	GameManager.sync_inventory_to_server()
+
+	# Exit select mode
+	_on_cancel_select()
+	GameManager.inventory_changed.emit()
+	_refresh_inventory_ui()
+
 func _set_slots_select_mode(enabled: bool) -> void:
 	if not bag_grid:
 		return
@@ -552,6 +606,7 @@ func _on_slot_tapped(slot: PanelContainer) -> void:
 		slot.modulate = Color(1.0, 1.0, 0.5, 1.0)  # Yellow highlight
 
 	sell_bag_btn.text = "Sell (%d)" % _selected_indices.size()
+	move_bag_btn.text = "Move (%d)" % _selected_indices.size()
 
 func _refresh_inventory_ui() -> void:
 	var inv = GameManager.active_user_inventory

@@ -320,6 +320,13 @@ size_flags_horizontal = 3
 text = "Sell"
 visible = false
 
+[node name="MoveBagBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Move"
+visible = false
+
 [node name="CancelBagBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2

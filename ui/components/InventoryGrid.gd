@@ -22,7 +22,19 @@ func refresh_grid():
 	if current_slots.size() < slot_count:
 		for i in range(slot_count - current_slots.size()):
 			var new_slot = slot_scene.instantiate()
+			new_slot.is_warehouse = (inventory_offset >= 40)
 			add_child(new_slot)
+	else:
+		# Update warehouse flag on existing slots
+		for slot in current_slots:
+			slot.is_warehouse = (inventory_offset >= 40)
+
+	# 1b. Safety: remove zero/negative amount ghost entries from inventory
+	var inv = GameManager.active_user_inventory
+	for i in range(inv.size() - 1, -1, -1):
+		var e = inv[i]
+		if e is Dictionary and e.has("amt") and int(e.get("amt", 0)) <= 0:
+			inv.remove_at(i)
 
 	# 2. Get the slice of inventory for this grid
 	var inventory = GameManager.active_user_inventory

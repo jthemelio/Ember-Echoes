@@ -15,11 +15,11 @@ func _get_or_create_tooltip() -> Control:
 	# EquipmentTooltip._ready() will set GlobalUI.equipment_tooltip = self when it runs
 	return tooltip
 
-func show_tooltip(item_data: ItemData):
+func show_tooltip(item_data: ItemData, context: String = ""):
 	var tip = _get_or_create_tooltip()
 	if tip:
-		tip.show_at_mouse(item_data)
+		tip.show_centered(item_data, context)
 
 func hide_tooltip():
 	if equipment_tooltip and is_instance_valid(equipment_tooltip):
-		equipment_tooltip.visible = false
+		equipment_tooltip.dismiss()
