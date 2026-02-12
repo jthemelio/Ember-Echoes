@@ -110,12 +110,23 @@ func _on_action_pressed() -> void:
 		return
 
 	if _current_context == "bag":
-		GameManager.equip_item(_current_data)
+		var ok = GameManager.equip_item(_current_data)
+		if ok:
+			GlobalUI.show_floating_text("%s equipped!" % _current_data.display_name, Color.WHITE)
 	elif _current_context == "money_bag":
-		GameManager.claim_money_bag(_current_data.instance_id)
+		# Grab gold amount before claiming (entry will be removed)
+		var gold := 0
+		for entry in GameManager.active_user_inventory:
+			if entry is Dictionary and entry.get("uid", "") == _current_data.instance_id:
+				gold = int(entry.get("gold", 0))
+				break
+		var ok = GameManager.claim_money_bag(_current_data.instance_id)
+		if ok:
+			GlobalUI.show_floating_text("+%sg" % GameManager.format_gold(gold), Color(1, 0.84, 0))
 	elif _current_context.begins_with("equipment:"):
 		var slot = _current_context.substr("equipment:".length())
 		GameManager.unequip_slot(slot)
+		GlobalUI.show_floating_text("%s unequipped!" % _current_data.display_name, Color.WHITE)
 
 	dismiss()
 

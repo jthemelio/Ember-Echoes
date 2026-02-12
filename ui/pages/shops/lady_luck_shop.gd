@@ -59,6 +59,10 @@ func _ready() -> void:
 	_set_phase(Phase.IDLE)
 	_fetch_status()
 
+	# Dynamic square chest sizing
+	call_deferred("_enforce_square_chests")
+	chest_grid.resized.connect(_enforce_square_chests)
+
 func _process(delta: float) -> void:
 	if not _status_loaded or _free_roll_available:
 		return
@@ -397,6 +401,19 @@ func _update_buttons() -> void:
 
 	echo_btn.disabled = not (can_pay and _et_balance >= ECHO_COST)
 	echo_btn.text = "Use Echo Points (%d ET)" % ECHO_COST
+
+# ─── Square Chest Sizing ───
+
+func _enforce_square_chests() -> void:
+	var grid_w = chest_grid.size.x
+	if grid_w <= 0:
+		return
+	var cols = chest_grid.columns  # 3
+	var sep = chest_grid.get_theme_constant("h_separation")
+	var cell_w = (grid_w - sep * (cols - 1)) / cols
+	for i in range(chest_grid.get_child_count()):
+		var chest = chest_grid.get_child(i)
+		chest.custom_minimum_size = Vector2(cell_w, cell_w)
 
 # ─── Chest Styling Helpers ───
 

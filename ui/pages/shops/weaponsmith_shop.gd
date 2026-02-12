@@ -151,6 +151,7 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 			print("Weaponsmith: Purchase successful! Gold remaining: %s" % fn_result.get("goldRemaining", "?"))
 			GameManager.active_user_currencies["GD"] = fn_result.get("goldRemaining", gold - price)
 			_refresh_gold()
+			GlobalUI.show_floating_text("Purchased %s!" % display_name, Color.WHITE)
 
 			# Add the compact instance dict returned by CloudScript to local bag
 			var new_item = fn_result.get("item", {})
@@ -207,6 +208,7 @@ func _on_buy_arrow_pressed(item_id: String, display_name: String, price: int, am
 			print("Weaponsmith: Arrow purchase successful! Gold remaining: %s" % fn_result.get("goldRemaining", "?"))
 			GameManager.active_user_currencies["GD"] = fn_result.get("goldRemaining", gold - price)
 			_refresh_gold()
+			GlobalUI.show_floating_text("Purchased %s!" % display_name, Color.WHITE)
 
 			# Stack arrows into inventory (5 packs per slot max)
 			var bid = ItemDatabase.extract_base_id(item_id)

@@ -58,7 +58,7 @@ func load_loot_config(config: Dictionary) -> void:
 
 func load_item_catalog(catalog: Dictionary) -> void:
 	_all_items.clear()
-	for category_key in ["armor", "weapons", "misc"]:
+	for category_key in ["armor", "weapons"]:
 		var items = catalog.get(category_key, [])
 		_all_items.append_array(items)
 	print("LootManager: Catalog loaded (%d total items)" % _all_items.size())

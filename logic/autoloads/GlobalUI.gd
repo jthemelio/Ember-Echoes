@@ -23,3 +23,20 @@ func show_tooltip(item_data: ItemData, context: String = ""):
 func hide_tooltip():
 	if equipment_tooltip and is_instance_valid(equipment_tooltip):
 		equipment_tooltip.dismiss()
+
+# ─── Floating Feedback Text ───
+
+const FloatingTextScript = preload("res://ui/components/FloatingText.gd")
+
+func show_floating_text(msg: String, color: Color = Color.WHITE) -> void:
+	var lbl = Label.new()
+	lbl.set_script(FloatingTextScript)
+	lbl.text = msg
+	lbl.add_theme_color_override("font_color", color)
+
+	# Place at top-center of viewport, slightly below the top edge
+	var vp_size = get_tree().root.get_visible_rect().size
+	lbl.position = Vector2(vp_size.x * 0.5 - 100, vp_size.y * 0.25)
+	lbl.size = Vector2(200, 30)
+
+	get_tree().root.add_child(lbl)

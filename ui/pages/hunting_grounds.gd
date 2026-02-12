@@ -502,6 +502,12 @@ func _on_sell_pressed() -> void:
 
 	print("Sold %d items: +%d gold, +%d echo tokens" % [items_to_remove.size(), gold_earned, echo_earned])
 
+	# Floating feedback for sell
+	if gold_earned > 0:
+		GlobalUI.show_floating_text("+%sg" % GameManager.format_gold(gold_earned), Color(1, 0.84, 0))
+	if echo_earned > 0:
+		GlobalUI.show_floating_text("+%d Echo" % echo_earned, Color(0.6, 0.4, 1.0))
+
 	# Send sell request to PlayFab
 	var sell_uids: Array = []
 	for idx in _selected_indices:
@@ -553,7 +559,10 @@ func _on_move_pressed() -> void:
 		items_to_move.append(inv[idx])
 		inv.remove_at(idx)
 
-	# Append moved items to end of inventory (warehouse region)
+	# Ensure inventory has at least 40 entries (bag region) before warehouse
+	while inv.size() < 40:
+		inv.append(null)
+	# Append moved items to warehouse region (index 40+)
 	for item in items_to_move:
 		inv.append(item)
 

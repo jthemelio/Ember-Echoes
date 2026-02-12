@@ -67,18 +67,14 @@ func set_item(data: ItemData):
 		border_glow.visible = false
 		count_label.text = ""
 		quantity_label.text = ""
-		if is_warehouse:
-			# Warehouse empty: faint grey with thin white border
-			self_modulate = Color(0.75, 0.75, 0.75, 1.0)
-			var ws = StyleBoxFlat.new()
-			ws.bg_color = Color(0.92, 0.91, 0.90, 1.0)
-			ws.set_corner_radius_all(6)
-			ws.border_color = Color.WHITE
-			ws.set_border_width_all(1)
-			add_theme_stylebox_override("panel", ws)
-		else:
-			self_modulate = Color(0.3, 0.3, 0.3, 1.0)    # Dim the slot panel
-			remove_theme_stylebox_override("panel")
+		# Uniform empty slot style: faint grey with thin white border
+		self_modulate = Color(0.75, 0.75, 0.75, 1.0)
+		var empty_style = StyleBoxFlat.new()
+		empty_style.bg_color = Color(0.92, 0.91, 0.90, 1.0)
+		empty_style.set_corner_radius_all(6)
+		empty_style.border_color = Color.WHITE
+		empty_style.set_border_width_all(1)
+		add_theme_stylebox_override("panel", empty_style)
 		return
 
 	# 1. Configure quality border glow

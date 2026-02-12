@@ -50,6 +50,12 @@ func refresh_grid():
 		var entry = inventory[inv_idx]
 		var item_data: ItemData = null
 
+		# Handle null padding entries (used for bag/warehouse boundary)
+		if entry == null:
+			all_slots[slot_idx].set_item(null)
+			slot_idx += 1
+			continue
+
 		if entry is Dictionary and entry.has("uid"):
 			item_data = ItemDatabase.resolve_instance(entry)
 		elif entry is ItemData:

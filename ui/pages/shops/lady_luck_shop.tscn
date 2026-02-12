@@ -135,7 +135,6 @@ theme_override_constants/v_separation = 8
 columns = 3
 
 [node name="Chest1" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -146,7 +145,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest2" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -157,7 +155,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest3" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -168,7 +165,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest4" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -179,7 +175,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest5" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -190,7 +185,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest6" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -201,7 +195,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest7" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -212,7 +205,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest8" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -223,7 +215,6 @@ vertical_alignment = 1
 text = "?"
 
 [node name="Chest9" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
-custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 size_flags_horizontal = 3
 

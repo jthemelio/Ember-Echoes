@@ -123,6 +123,7 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int, amount: 
 			print("Consumables: Purchase successful! Gold remaining: %s" % fn_result.get("goldRemaining", "?"))
 			GameManager.active_user_currencies["GD"] = fn_result.get("goldRemaining", gold - price)
 			_refresh_gold()
+			GlobalUI.show_floating_text("Purchased %s!" % display_name, Color.WHITE)
 
 			# Stack purchased arrows into inventory (5 packs per slot max)
 			var bid = ItemDatabase.extract_base_id(item_id)

@@ -27,7 +27,7 @@ vertical_scroll_mode = 3
 [node name="ContentVBox" type="VBoxContainer" parent="ScrollContent"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="Header" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
@@ -60,10 +60,10 @@ mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ItemPickerPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ItemPickerPanel/Margin"]
 layout_mode = 2
@@ -181,10 +181,10 @@ mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/MaterialPalette"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/MaterialPalette/Margin"]
 layout_mode = 2
