@@ -21,5 +21,4 @@ yarn-error.log*
 
 # === Export Artifacts ===
 EchoEmbersExport/
-export_presets.cfg
 # build/
