@@ -15,42 +15,45 @@
 // ═══════════════════════════════════════════════════════════════
 
 // ── Reward Table ──
-// Most rewards are type:"item" (handled client-side).
-// Only type:"currency" entries are granted server-side via AddUserVirtualCurrency.
+// All rewards are type:"item" (handled client-side). No server-side currency granting.
+// Total weight: ~200.6  (adjust as needed)
 var LADY_LUCK_REWARDS = [
     // --- Money Bag Progression (Class 1-10) ---
-    { type: "item", id: "money_bag_1",  quantity: 1, weight: 25, name: "Class 1 Pouch" },
-    { type: "item", id: "money_bag_2",  quantity: 1, weight: 20, name: "Class 2 Pouch" },
-    { type: "item", id: "money_bag_3",  quantity: 1, weight: 15, name: "Class 3 Sack" },
-    { type: "item", id: "money_bag_4",  quantity: 1, weight: 12, name: "Class 4 Sack" },
-    { type: "item", id: "money_bag_5",  quantity: 1, weight: 10, name: "Class 5 Chest" },
-    { type: "item", id: "money_bag_6",  quantity: 1, weight: 8,  name: "Class 6 Chest" },
-    { type: "item", id: "money_bag_7",  quantity: 1, weight: 6,  name: "Class 7 Treasury" },
-    { type: "item", id: "money_bag_8",  quantity: 1, weight: 4,  name: "Class 8 Treasury" },
-    { type: "item", id: "money_bag_9",  quantity: 1, weight: 2,  name: "Class 9 Royal Coffer" },
-    { type: "item", id: "money_bag_10", quantity: 1, weight: 1,  name: "Class 10 Imperial Hoard" },
+    { type: "item", id: "money_bag_1",  quantity: 1, weight: 25,   name: "Class 1 Pouch" },
+    { type: "item", id: "money_bag_2",  quantity: 1, weight: 20,   name: "Class 2 Pouch" },
+    { type: "item", id: "money_bag_3",  quantity: 1, weight: 15,   name: "Class 3 Sack" },
+    { type: "item", id: "money_bag_4",  quantity: 1, weight: 12,   name: "Class 4 Sack" },
+    { type: "item", id: "money_bag_5",  quantity: 1, weight: 10,   name: "Class 5 Chest" },
+    { type: "item", id: "money_bag_6",  quantity: 1, weight: 8,    name: "Class 6 Chest" },
+    { type: "item", id: "money_bag_7",  quantity: 1, weight: 6,    name: "Class 7 Treasury" },
+    { type: "item", id: "money_bag_8",  quantity: 1, weight: 4,    name: "Class 8 Treasury" },
+    { type: "item", id: "money_bag_9",  quantity: 1, weight: 2,    name: "Class 9 Royal Coffer" },
+    { type: "item", id: "money_bag_10", quantity: 1, weight: 1,    name: "Class 10 Imperial Hoard" },
 
-    // --- Upgrade Materials & Artifacts (all items now, no currencies) ---
-    { type: "item", id: "ignis_plus_1", quantity: 1, weight: 20, name: "+1 Ignis" },
-    { type: "item", id: "ignis_plus_2", quantity: 1, weight: 10, name: "+2 Ignis" },
-    { type: "item", id: "ignis_plus_3", quantity: 1, weight: 5,  name: "+3 Ignis" },
+    // --- Ignis Upgrade Materials (+1 common → +6 ultra rare) ---
+    { type: "item", id: "ignis_plus_1", quantity: 1, weight: 20,   name: "+1 Ignis" },
+    { type: "item", id: "ignis_plus_2", quantity: 1, weight: 10,   name: "+2 Ignis" },
+    { type: "item", id: "ignis_plus_3", quantity: 1, weight: 5,    name: "+3 Ignis" },
+    { type: "item", id: "ignis_plus_4", quantity: 1, weight: 1,    name: "+4 Ignis" },
+    { type: "item", id: "ignis_plus_5", quantity: 1, weight: 0.2,  name: "+5 Ignis" },
+    { type: "item", id: "ignis_plus_6", quantity: 1, weight: 0.05, name: "+6 Ignis" },
 
-    // Independent Comet and Wyrm Sphere
-    { type: "item", id: "comet_stone",          quantity: 1, weight: 15, name: "Comet" },
-    { type: "item", id: "wyrm_sphere_artifact", quantity: 1, weight: 5,  name: "Wyrm Sphere" },
+    // --- Comets & Wyrm Spheres ---
+    { type: "item", id: "comet_stone",          quantity: 1, weight: 15,   name: "Comet" },
+    { type: "item", id: "wyrm_sphere_artifact", quantity: 1, weight: 5,    name: "Wyrm Sphere" },
 
-    // Scrolls
-    { type: "item", id: "comet_scroll",       quantity: 1, weight: 10, name: "Comet Scroll" },
-    { type: "item", id: "wyrm_sphere_scroll", quantity: 1, weight: 2,  name: "Wyrm Sphere Scroll" },
+    // --- Scrolls (very rare) ---
+    { type: "item", id: "comet_scroll",       quantity: 1, weight: 0.5,  name: "Comet Scroll" },
+    { type: "item", id: "wyrm_sphere_scroll", quantity: 1, weight: 0.15, name: "Wyrm Sphere Scroll" },
 
     // --- Gemstones ---
     { type: "item", id: "gem_drake_radiant",   quality: "Radiant", quantity: 1, weight: 1, name: "Radiant Drake Heartstone" },
     { type: "item", id: "gem_phoenix_radiant", quality: "Radiant", quantity: 1, weight: 1, name: "Radiant Ember Talon" },
     { type: "item", id: "gem_unicorn_radiant", quality: "Radiant", quantity: 1, weight: 1, name: "Radiant Unicorn Shard" },
 
-    // --- High-End Equipment ---
-    { type: "item", id: "boots_10", level: 10, quality: "Brilliant", sockets: 2, quantity: 1, weight: 1, name: "Brilliant 2-Socket Boots" },
-    { type: "item", id: "bs_10",    level: 10, quality: "Brilliant", sockets: 2, quantity: 1, weight: 1, name: "Brilliant 2-Socket Mageblade" }
+    // --- High-End Equipment (extremely rare) ---
+    { type: "item", id: "boots_10", level: 10, quality: "Brilliant", sockets: 2, quantity: 1, weight: 0.1, name: "Brilliant 2-Socket Boots" },
+    { type: "item", id: "bs_10",    level: 10, quality: "Brilliant", sockets: 2, quantity: 1, weight: 0.1, name: "Brilliant 2-Socket Mageblade" }
 ];
 
 var LUCKY_PET_CHANCE = 1.0 / 2000.0;
@@ -151,9 +154,7 @@ handlers.getLadyLuckStatus = function (args, context) {
         hasPending: hasPending,
         currencies: {
             ET: currencies.ET || 0,
-            GD: currencies.GD || 0,
-            CM: currencies.CM || 0,
-            WS: currencies.WS || 0
+            GD: currencies.GD || 0
         }
     };
 };
@@ -261,9 +262,7 @@ handlers.ladyLuckRoll = function (args, context) {
         lotteryTickets: updatedLT,
         currencies: {
             ET: updatedCurrencies.ET || 0,
-            GD: updatedCurrencies.GD || 0,
-            CM: updatedCurrencies.CM || 0,
-            WS: updatedCurrencies.WS || 0
+            GD: updatedCurrencies.GD || 0
         }
     };
 };
@@ -350,9 +349,7 @@ handlers.ladyLuckClaim = function (args, context) {
         lotteryTickets: updatedLT,
         currencies: {
             ET: updatedCurrencies.ET || 0,
-            GD: updatedCurrencies.GD || 0,
-            CM: updatedCurrencies.CM || 0,
-            WS: updatedCurrencies.WS || 0
+            GD: updatedCurrencies.GD || 0
         }
     };
 };

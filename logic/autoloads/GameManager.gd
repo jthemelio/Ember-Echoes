@@ -440,38 +440,64 @@ func get_weapon_speed() -> int:
 		return w.get_stat("Speed")
 	return 0
 
-# ───── Material Helpers ─────
+# ───── Material Helpers (inventory-only, no currencies) ─────
+# All materials are now inventory items with a bid. No PlayFab VirtualCurrency.
+# Mapping from material name to inventory bid:
+#   Comet           → "Comet"
+#   Wyrm Sphere     → "Wyrm_Sphere"
+#   Comet Scroll    → "Comet_Scroll"
+#   Wyrm Sphere Scroll → "Wyrm_Sphere_Scroll"
+#   +1 Ignis        → "ignis_plus_1"   (through +6 → "ignis_plus_6")
 
-func get_total_material_count(currency_code: String) -> int:
-	## Returns the total count of a material: currency balance + inventory item count.
-	## currency_code: "CM" for Comets, "WS" for Wyrm Spheres
-	var total = int(active_user_currencies.get(currency_code, 0))
-	# Map currency code to inventory bid
-	var bid_map = {"CM": "Comet", "WS": "Wyrm_Sphere"}
-	var bid = bid_map.get(currency_code, "")
-	if not bid.is_empty():
-		for item in active_user_inventory:
-			if item is Dictionary and item.get("bid", "") == bid:
-				total += 1
+func get_material_count(bid: String) -> int:
+	## Returns total count of a material in inventory by bid.
+	## Counts individual items (1 per dict) AND stacked items (via "amt" key).
+	var total := 0
+	for item in active_user_inventory:
+		if item is Dictionary and item.get("bid", "") == bid:
+			total += int(item.get("amt", 1))
 	return total
 
-func consume_material(currency_code: String) -> bool:
-	## Consumes 1 material: prefers currency first, then removes an inventory item.
-	## Returns true if consumed successfully.
-	var currency_bal = int(active_user_currencies.get(currency_code, 0))
-	if currency_bal > 0:
-		active_user_currencies[currency_code] = currency_bal - 1
-		return true
-	# Fallback: remove from inventory
-	var bid_map = {"CM": "Comet", "WS": "Wyrm_Sphere"}
-	var bid = bid_map.get(currency_code, "")
-	if not bid.is_empty():
-		for i in range(active_user_inventory.size()):
-			var item = active_user_inventory[i]
-			if item is Dictionary and item.get("bid", "") == bid:
-				active_user_inventory.remove_at(i)
-				return true
-	return false
+func consume_material(bid: String, amount: int = 1) -> bool:
+	## Consumes N of a material from inventory by bid. Returns true if consumed.
+	var remaining = amount
+	# First pass: consume from stacks
+	for i in range(active_user_inventory.size() - 1, -1, -1):
+		if remaining <= 0:
+			break
+		var item = active_user_inventory[i]
+		if not item is Dictionary or item.get("bid", "") != bid:
+			continue
+		var stack = int(item.get("amt", 1))
+		if stack <= remaining:
+			remaining -= stack
+			active_user_inventory.remove_at(i)
+		else:
+			item["amt"] = stack - remaining
+			remaining = 0
+	if remaining > 0:
+		return false  # Not enough materials
+	inventory_changed.emit()
+	return true
+
+# Legacy wrapper for old code that used currency codes
+func get_total_material_count(currency_code: String) -> int:
+	var bid = _currency_code_to_bid(currency_code)
+	if bid.is_empty():
+		return 0
+	return get_material_count(bid)
+
+func _currency_code_to_bid(code: String) -> String:
+	match code:
+		"CM": return "Comet"
+		"WS": return "Wyrm_Sphere"
+		"I1": return "ignis_plus_1"
+		"I2": return "ignis_plus_2"
+		"I3": return "ignis_plus_3"
+		"I4": return "ignis_plus_4"
+		"I5": return "ignis_plus_5"
+		"I6": return "ignis_plus_6"
+	return ""
 
 # ───── Changelog Helpers ─────
 

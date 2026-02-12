@@ -218,25 +218,6 @@ func fetch_character_stats_from_playfab():
 		update_hero_ui()
 	)
 
-func deposit_material_to_bank(item_id: String, currency_code: String, amount: int):
-	var params = {
-		"CharacterId": GameManager.active_character_id,
-		"ItemInstanceId": item_id,
-		"CurrencyCode": currency_code, # Pass "CM", "DS", "I1", etc.
-		"Amount": amount
-	}
-	
-	PlayFabManager.client.execute_cloud_script("depositMaterial", params, func(result):
-		var data = result.get("FunctionResult", {})
-		if data.get("success", false):
-			var code = data.get("currency")
-			var new_bal = data.get("newBalance")
-			
-			print("Bank Updated: ", code, " is now ", new_bal)
-			
-			# Update the global currency dictionary
-			GameManager.active_user_currencies[code] = new_bal
-			
-			# Refresh the UI to show the new numbers
-			update_hero_ui()
-	)
+# deposit_material_to_bank removed — all materials are now inventory items only.
+# No PlayFab currency deposit needed; materials stay in inventory and are
+# counted directly via GameManager.get_material_count().
