@@ -2,23 +2,19 @@
 .godot/
 *.tmp
 *.translation
-# NOTE: Do NOT ignore .import or .uid files in Godot 4, 
+# NOTE: Do NOT ignore .import or .uid files in Godot 4,
 # as this breaks resource links for other users.
+
+# === Local Export Artifacts (CI builds these fresh) ===
+build/
+EchoEmbersExport/
 
 # === Node.js MCP Bridge ===
 node_modules/
-# Ignore compiled JS if you want users to build it themselves
-# build/ 
-# dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env
 
 # === Cursor AI Settings ===
-# IMPORTANT: This prevents leaking your local PC paths in mcp.json
 .cursor/mcp.json
-
-# === Export Artifacts ===
-EchoEmbersExport/
-# build/
