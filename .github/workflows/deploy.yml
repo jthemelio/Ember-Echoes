@@ -11,20 +11,26 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Godot Web Export
-        # The 'id' allows the next step to find the export folder automatically
         id: export
-        uses: firebelley/godot-export@v5.2.1
+        uses: firebelley/godot-export@v7.0.0
         with:
           godot_executable_download_url: https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_linux.x86_64.zip
           godot_export_templates_download_url: https://github.com/godotengine/godot/releases/download/4.6-stable/Godot_v4.6-stable_export_templates.tpz
           relative_project_path: ./
-          archive_output: false # Set to false to deploy raw HTML/JS files
+          archive_output: false
+          verbose: true
+          cache: true
+
+      - name: Copy coi-serviceworker
+        run: |
+          cp ${{ github.workspace }}/coi-serviceworker.js ${{ steps.export.outputs.build_directory }}/Web/ || echo "coi-serviceworker.js not found in workspace"
+          echo "--- Files in build directory ---"
+          ls -la ${{ steps.export.outputs.build_directory }}/Web/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          # Automatically detects the folder created by the export step
           folder: ${{ steps.export.outputs.build_directory }}/Web
