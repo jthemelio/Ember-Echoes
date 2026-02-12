@@ -30,6 +30,14 @@ const DEATH_RESPAWN_TIME: float = 5.0 # Seconds before player respawns after dea
 const AFK_MAX_SECONDS: int = 7200    # 2 hours max AFK reward
 const AFK_SAVE_PATH: String = "user://afk_timestamp.save"
 
+# ───── XP Scaling ─────
+# Formula: XP_BASE * level ^ XP_EXPONENT
+# Level 1 = 100, Level 5 = 2,500, Level 10 = 10,000, Level 50 = 250,000
+const XP_BASE: int = 100
+const XP_EXPONENT: float = 2.0
+# Damage XP: 1 XP per DAMAGE_XP_DIVISOR damage dealt
+const DAMAGE_XP_DIVISOR: float = 5.0
+
 # ───── Zone / Creature data (loaded from PlayFab Title Data) ─────
 # Array of zone dicts: [{name, mobs: [{id, name, level, hp, minAttack, maxAttack, defense, dodge, magicDef, xp, isBoss}]}]
 var zones: Array = []
@@ -56,7 +64,7 @@ var total_kills: int = 0
 var total_deaths: int = 0
 
 var current_xp: int = 0
-var xp_to_next_level: int = 110
+var xp_to_next_level: int = 100  # Recalculated on start_combat via _refresh_player_stats
 
 var combat_active: bool = false
 var is_fighting_mode: bool = true  # true = Fighting, false = Mining
@@ -83,6 +91,9 @@ var _player_m_atk: int = 0
 var _player_dodge: int = 0
 var _player_accuracy: int = 0
 
+var _progress_save_timer: Timer = null
+const PROGRESS_SAVE_INTERVAL: float = 60.0  # Save XP progress every 60 seconds
+
 func _ready():
 	tick_timer = Timer.new()
 	tick_timer.wait_time = TICK_INTERVAL
@@ -96,8 +107,20 @@ func _ready():
 	spawn_timer.timeout.connect(_on_spawn_timer)
 	add_child(spawn_timer)
 
+	# Periodic progress save timer (saves XP even without level-ups)
+	_progress_save_timer = Timer.new()
+	_progress_save_timer.wait_time = PROGRESS_SAVE_INTERVAL
+	_progress_save_timer.one_shot = false
+	_progress_save_timer.timeout.connect(_on_progress_save_timer)
+	add_child(_progress_save_timer)
+	_progress_save_timer.start()
+
 	# Recalculate stats when equipment changes
 	GameManager.equipment_changed.connect(_on_equipment_changed)
+
+func _on_progress_save_timer() -> void:
+	if combat_active and GameManager.active_character_id != "":
+		GameManager.sync_character_progress_to_server()
 
 func _on_equipment_changed() -> void:
 	_refresh_player_stats()
@@ -180,6 +203,9 @@ func start_combat() -> void:
 	if zones.is_empty():
 		push_warning("IdleCombatManager: No zones loaded, cannot start combat")
 		return
+	# Load saved XP from PlayFab (only on first combat start for this session)
+	if current_xp == 0 and GameManager._saved_current_xp > 0:
+		current_xp = GameManager._saved_current_xp
 	_refresh_player_stats()
 	player_hp = player_max_hp  # Full heal on combat start
 	if monster_queue.is_empty():
@@ -329,8 +355,14 @@ func _refresh_player_stats() -> void:
 	var weapon_speed = GameManager.get_weapon_speed()
 	attack_interval = max(0.3, 1.5 - (weapon_speed * 0.1))
 
-	# XP table
-	xp_to_next_level = 100 + (level * 10)
+	# XP table — polynomial curve: 100 * level^2
+	xp_to_next_level = _xp_for_level(level)
+
+# ───── XP Helpers ─────
+
+## Returns the total XP required to advance from the given level.
+static func _xp_for_level(level: int) -> int:
+	return int(XP_BASE * pow(max(1, level), XP_EXPONENT))
 
 # ───── Internal: Combat Tick ─────
 
@@ -406,6 +438,13 @@ func _player_attack() -> void:
 	)
 	mob["hp"] = max(0, mob["hp"] - player_damage)
 
+	# Award XP for damage dealt (1 XP per DAMAGE_XP_DIVISOR damage)
+	var damage_xp = int(player_damage / DAMAGE_XP_DIVISOR)
+	if damage_xp > 0:
+		current_xp += damage_xp
+		_check_level_up()
+		xp_gained.emit(damage_xp)
+
 	# Consume an arrow if arrows are equipped
 	if _arrow_atk_bonus > 0:
 		_consume_arrow()
@@ -429,6 +468,22 @@ func _consume_arrow() -> void:
 	else:
 		offhand_dict["amt"] = amt - 1
 
+func _check_level_up() -> void:
+	## Processes any pending level-ups. Call after adding XP.
+	var leveled_up := false
+	while current_xp >= xp_to_next_level:
+		current_xp -= xp_to_next_level
+		GameManager.active_character_level += 1
+		leveled_up = true
+		# Award attribute points on level-up (5 per level)
+		GameManager.active_character_stats["AvailableAttributePoints"] = \
+			GameManager.active_character_stats.get("AvailableAttributePoints", 0) + 5
+		_refresh_player_stats()
+		GameManager.character_stats_updated.emit()
+	if leveled_up:
+		# Save level, XP, and attribute points to PlayFab immediately on level-up
+		GameManager.sync_character_progress_to_server()
+
 func _on_mob_killed(mob: Dictionary) -> void:
 	# Remove from queue
 	monster_queue.erase(mob)
@@ -437,23 +492,18 @@ func _on_mob_killed(mob: Dictionary) -> void:
 	kills_this_hunt += 1
 	total_kills += 1
 
-	# Award XP
+	# Award monster kill XP
 	var xp_reward = mob.get("xp", 10)
 	current_xp += xp_reward
-	xp_gained.emit(xp_reward)
 
 	# Emit slain signal (LootManager will listen for loot rolling)
 	mob_slain.emit(mob)
 
-	# Check for level-up
-	while current_xp >= xp_to_next_level:
-		current_xp -= xp_to_next_level
-		GameManager.active_character_level += 1
-		# Award attribute points on level-up (5 per level)
-		GameManager.active_character_stats["AvailableAttributePoints"] = \
-			GameManager.active_character_stats.get("AvailableAttributePoints", 0) + 5
-		_refresh_player_stats()
-		GameManager.character_stats_updated.emit()
+	# Process level-ups BEFORE emitting xp_gained so the UI never shows >100%
+	_check_level_up()
+
+	# Now emit XP gained so the UI refreshes with the correct post-level-up values
+	xp_gained.emit(xp_reward)
 
 	# Check hunt completion
 	if kills_this_hunt >= hunt_target:
@@ -546,14 +596,22 @@ func _simulate_offline(elapsed_seconds: int) -> Dictionary:
 	var gold_mult = loot_mgr.gold_multiplier if loot_mgr else 8
 	var total_gold = total_kills * mob_xp * gold_mult
 
-	# Apply XP and level-ups
+	# Also estimate damage XP from offline kills
+	var avg_damage_per_kill = mob_hp  # Each mob takes ~mob_hp total damage to kill
+	var damage_xp = int((avg_damage_per_kill * total_kills) / DAMAGE_XP_DIVISOR)
+	total_xp += damage_xp
+
+	# Apply XP and level-ups (with attribute point awards)
 	current_xp += total_xp
 	while current_xp >= xp_to_next_level:
 		current_xp -= xp_to_next_level
 		GameManager.active_character_level += 1
-		xp_to_next_level = 100 + (GameManager.active_character_level * 10)
+		# Award attribute points on offline level-up (5 per level, same as online)
+		GameManager.active_character_stats["AvailableAttributePoints"] = \
+			GameManager.active_character_stats.get("AvailableAttributePoints", 0) + 5
+		xp_to_next_level = _xp_for_level(GameManager.active_character_level)
 
-	total_kills += total_kills  # stat tracking
+	self.total_kills += total_kills  # stat tracking (use self. to avoid shadowing local var)
 	kills_this_hunt = 0
 
 	# Roll loot for all kills — runtime lookup to avoid circular dependency
@@ -574,5 +632,8 @@ func _simulate_offline(elapsed_seconds: int) -> Dictionary:
 	print("IdleCombatManager: Offline rewards -- %d kills, %d XP, %d gold, %d items" % [
 		rewards["total_kills"], total_xp, total_gold, loot_items.size()
 	])
+
+	# Save progress after offline rewards (level-ups, XP)
+	GameManager.sync_character_progress_to_server()
 
 	return rewards

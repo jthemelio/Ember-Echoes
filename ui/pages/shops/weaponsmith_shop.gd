@@ -1,8 +1,8 @@
 # weaponsmith_shop.gd — Displays Normal quality weapons filtered by player class
-extends VBoxContainer
+extends MarginContainer
 
-@onready var gold_label: Label = $ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/GoldRow/GoldValue
-@onready var item_grid: GridContainer = $ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/ItemGrid
+@onready var gold_label: Label = $ScrollContent/ContentVBox/ShopHeader/Margin/VBox/GoldRow/GoldValue
+@onready var item_grid: GridContainer = $ScrollContent/ContentVBox/ShopHeader/Margin/VBox/ItemGrid
 
 # Class-specific weapon types
 const WEAPON_TYPES: Dictionary = {
@@ -15,6 +15,7 @@ const WEAPON_TYPES: Dictionary = {
 }
 
 var _shop_items: Array = []
+var _purchase_in_flight: bool = false  # Prevents rapid-fire purchases
 
 func _ready() -> void:
 	_refresh_gold()
@@ -78,6 +79,7 @@ func _create_shop_slot(item: Dictionary) -> void:
 	var btn = Button.new()
 	btn.custom_minimum_size = Vector2(0, 70)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.clip_text = true
 
 	var player_level = GameManager.active_character_level
 	if player_level < level_req:
@@ -85,21 +87,25 @@ func _create_shop_slot(item: Dictionary) -> void:
 
 	if item_type == "Arrow":
 		var max_stack = amount * 5
-		btn.text = "%s (x%d)\nLv%d  ATK +%d  Stack: %d\n%dg" % [display_name, amount, level_req, min_atk, max_stack, price]
+		btn.text = "%s (x%d)\nLv%d ATK+%d x%d\n%dg" % [display_name, amount, level_req, min_atk, max_stack, price]
 		btn.pressed.connect(_on_buy_arrow_pressed.bind(item_id, display_name, price, amount))
 	else:
-		btn.text = "%s\nLv%d  Atk %d-%d  Spd %d\n%dg" % [display_name, level_req, min_atk, max_atk, speed, price]
+		btn.text = "%s\nLv%d Atk %d-%d Spd %d\n%dg" % [display_name, level_req, min_atk, max_atk, speed, price]
 		btn.pressed.connect(_on_buy_pressed.bind(item_id, display_name, price))
 	slot.add_child(btn)
 
 	item_grid.add_child(slot)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
+	if _purchase_in_flight:
+		print("Weaponsmith: Purchase already in progress, please wait")
+		return
 	var gold = GameManager.active_user_currencies.get("GD", 0)
 	if gold < price:
 		print("Weaponsmith: Not enough gold for %s (need %d, have %d)" % [display_name, price, gold])
 		return
 
+	_purchase_in_flight = true
 	print("Weaponsmith: Purchasing %s for %d gold" % [display_name, price])
 	PlayFabManager.client.execute_cloud_script("purchaseShopItem", {
 		"characterId": GameManager.active_character_id,
@@ -116,6 +122,8 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 				log_entry.get("Message", ""),
 				log_entry.get("Data", "")
 			])
+
+		_purchase_in_flight = false
 
 		if fn_result is Dictionary and fn_result.get("success", false):
 			print("Weaponsmith: Purchase successful! Gold remaining: %s" % fn_result.get("goldRemaining", "?"))
@@ -145,11 +153,15 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 	)
 
 func _on_buy_arrow_pressed(item_id: String, display_name: String, price: int, amount: int) -> void:
+	if _purchase_in_flight:
+		print("Weaponsmith: Purchase already in progress, please wait")
+		return
 	var gold = GameManager.active_user_currencies.get("GD", 0)
 	if gold < price:
 		print("Weaponsmith: Not enough gold for %s (need %d, have %d)" % [display_name, price, gold])
 		return
 
+	_purchase_in_flight = true
 	print("Weaponsmith: Purchasing arrows %s for %d gold" % [display_name, price])
 	PlayFabManager.client.execute_cloud_script("purchaseShopItem", {
 		"characterId": GameManager.active_character_id,
@@ -166,6 +178,8 @@ func _on_buy_arrow_pressed(item_id: String, display_name: String, price: int, am
 				log_entry.get("Message", ""),
 				log_entry.get("Data", "")
 			])
+
+		_purchase_in_flight = false
 
 		if fn_result is Dictionary and fn_result.get("success", false):
 			print("Weaponsmith: Arrow purchase successful! Gold remaining: %s" % fn_result.get("goldRemaining", "?"))

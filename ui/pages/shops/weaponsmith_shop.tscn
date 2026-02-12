@@ -2,61 +2,70 @@
 
 [ext_resource type="Script" path="res://ui/pages/shops/weaponsmith_shop.gd" id="1_script"]
 
-[node name="WeaponsmithShop" type="VBoxContainer"]
-layout_mode = 2
+[node name="WeaponsmithShop" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
 script = ExtResource("1_script")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer"]
+[node name="ScrollContent" type="ScrollContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContent"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="ShopHeader" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+[node name="ShopHeader" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ShopHeader"]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ShopHeader"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ShopHeader/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="TitleLabel" type="Label" parent="ScrollContent/ContentVBox/ShopHeader/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Weaponsmith"
 
-[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="DescLabel" type="Label" parent="ScrollContent/ContentVBox/ShopHeader/Margin/VBox"]
 layout_mode = 2
 text = "Purchase weapons for your class. Only Normal quality available."
 autowrap_mode = 2
 
-[node name="GoldRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="GoldRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/ShopHeader/Margin/VBox"]
 layout_mode = 2
 
-[node name="GoldLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/GoldRow"]
+[node name="GoldLabel" type="Label" parent="ScrollContent/ContentVBox/ShopHeader/Margin/VBox/GoldRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Gold:"
 
-[node name="GoldValue" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/GoldRow"]
+[node name="GoldValue" type="Label" parent="ScrollContent/ContentVBox/ShopHeader/Margin/VBox/GoldRow"]
 layout_mode = 2
 text = "0"
 horizontal_alignment = 2
 
-[node name="ItemGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="ItemGrid" type="GridContainer" parent="ScrollContent/ContentVBox/ShopHeader/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 6

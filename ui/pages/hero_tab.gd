@@ -1,22 +1,22 @@
-extends ScrollContainer
+extends MarginContainer
 
-@onready var hp_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HPRow
-@onready var str_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/StrRow
-@onready var agi_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/AgiRow
-@onready var vit_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/VitRow
-@onready var spi_row = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/SpiRow
-@onready var name_label = $ScrollWrapper/S1_Profile_Equipment_Stats/Profile/CharName
+@onready var hp_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/HPRow
+@onready var str_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/StrRow
+@onready var agi_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/AgiRow
+@onready var vit_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/VitRow
+@onready var spi_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/SpiRow
+@onready var name_label = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/CharName
 
 # ─── Equipment Slots (InventorySlot instances) ───
 @onready var equip_slots: Dictionary = {
-	"Headgear": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/HeadgearSlot,
-	"Armor": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/ArmorSlot,
-	"Ring": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/RingSlot,
-	"Necklace": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/NecklaceSlot,
-	"Boots": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/BootsSlot,
-	"Weapon": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/WeaponSlot,
-	"Offhand": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/OffhandSlot,
-	"Backpack": $ScrollWrapper/S1_Profile_Equipment_Stats/Equipment/BackpackSlot,
+	"Headgear": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/HeadgearSlot,
+	"Armor": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/ArmorSlot,
+	"Ring": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/RingSlot,
+	"Necklace": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/NecklaceSlot,
+	"Boots": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/BootsSlot,
+	"Weapon": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/WeaponSlot,
+	"Offhand": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/OffhandSlot,
+	"Backpack": $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment/BackpackSlot,
 }
 
 # Slot label names shown when empty
@@ -32,23 +32,23 @@ const SLOT_LABELS := {
 }
 
 # --- Currency & Material Labels ---
-@onready var gold_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Gold
-@onready var echo_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/EchoToken
-@onready var comet_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Comets
-@onready var wyrmsphere_label = $ScrollWrapper/S2_Currencies/Header/VBoxContainer/WyrmSphere
+@onready var gold_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Gold
+@onready var echo_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/EchoToken
+@onready var comet_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Comets
+@onready var wyrmsphere_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/WyrmSphere
 @onready var ignis_labels = {
-	"I1": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis1,
-	"I2": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis2,
-	"I3": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis3,
-	"I4": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis4,
-	"I5": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis5,
-	"I6": $ScrollWrapper/S2_Currencies/Header/VBoxContainer/Ignis6
+	"I1": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis1,
+	"I2": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis2,
+	"I3": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis3,
+	"I4": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis4,
+	"I5": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis5,
+	"I6": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis6
 }
 
 # UI elements for bulk submission
-@onready var points_box = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer
-@onready var points_label = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer/PointsLabel
-@onready var ok_button = $ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer/OkButton
+@onready var points_box = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer
+@onready var points_label = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer/PointsLabel
+@onready var ok_button = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer/OkButton
 
 var pending_stats = {"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0}
 var total_pending_cost = 0

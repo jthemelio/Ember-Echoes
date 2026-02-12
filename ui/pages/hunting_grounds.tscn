@@ -5,52 +5,61 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_fight"]
 
-[node name="HuntingGrounds" type="VBoxContainer" unique_id=1845837456]
+[node name="HuntingGrounds" type="MarginContainer" unique_id=1845837456]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
 script = ExtResource("1_6jnp4")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=879840907]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer" unique_id=674268387]
+[node name="ScrollContent" type="ScrollContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
+
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContent" unique_id=674268387]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="IdleActivityPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=1501042164]
+[node name="IdleActivityPanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=1501042164]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/IdleActivityPanel" unique_id=1399204926]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/IdleActivityPanel" unique_id=1399204926]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin" unique_id=1111059961]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/IdleActivityPanel/Margin" unique_id=1111059961]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=554026047]
+[node name="TitleLabel" type="Label" parent="ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=554026047]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Idle Activity"
 
-[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=1593730356]
+[node name="DescLabel" type="Label" parent="ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=1593730356]
 layout_mode = 2
 text = "Select what your character should do. This activity will continue whether you are online, offline, or looking at other screens."
 autowrap_mode = 2
 
-[node name="ModeSwitcher" type="HBoxContainer" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=1321858353]
+[node name="ModeSwitcher" type="HBoxContainer" parent="ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox" unique_id=1321858353]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="FightingBtn" type="Button" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher" unique_id=711056404]
+[node name="FightingBtn" type="Button" parent="ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher" unique_id=711056404]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -59,7 +68,7 @@ button_pressed = true
 button_group = SubResource("ButtonGroup_fight")
 text = "Fighting"
 
-[node name="MiningBtn" type="Button" parent="ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher" unique_id=1302886742]
+[node name="MiningBtn" type="Button" parent="ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher" unique_id=1302886742]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -67,315 +76,317 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_fight")
 text = "Mining"
 
-[node name="ZonePanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=523918033]
+[node name="ZonePanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=523918033]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ZonePanel" unique_id=1957108357]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ZonePanel" unique_id=1957108357]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ZonePanel/Margin" unique_id=2108852229]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ZonePanel/Margin" unique_id=2108852229]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ZoneTitleLabel" type="Label" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=2132668843]
+[node name="ZoneTitleLabel" type="Label" parent="ScrollContent/ContentVBox/ZonePanel/Margin/VBox" unique_id=2132668843]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Zone Selection"
 
-[node name="ZoneLabel" type="Label" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=1332022212]
+[node name="ZoneLabel" type="Label" parent="ScrollContent/ContentVBox/ZonePanel/Margin/VBox" unique_id=1332022212]
 layout_mode = 2
 text = "Zone"
 
-[node name="ZoneDropdown" type="OptionButton" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=2035912412]
+[node name="ZoneDropdown" type="OptionButton" parent="ScrollContent/ContentVBox/ZonePanel/Margin/VBox" unique_id=2035912412]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="CreatureLabel" type="Label" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=1540513243]
+[node name="CreatureLabel" type="Label" parent="ScrollContent/ContentVBox/ZonePanel/Margin/VBox" unique_id=1540513243]
 layout_mode = 2
 text = "Creature"
 
-[node name="CreatureDropdown" type="OptionButton" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=674220360]
+[node name="CreatureDropdown" type="OptionButton" parent="ScrollContent/ContentVBox/ZonePanel/Margin/VBox" unique_id=674220360]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="ChangeZoneBtn" type="Button" parent="ScrollContainer/ContentVBox/ZonePanel/Margin/VBox" unique_id=2049144877]
+[node name="ChangeZoneBtn" type="Button" parent="ScrollContent/ContentVBox/ZonePanel/Margin/VBox" unique_id=2049144877]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Change Farming Zone"
 
-[node name="CombatPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=1437069844]
+[node name="CombatPanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=1437069844]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/CombatPanel" unique_id=2119892942]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/CombatPanel" unique_id=2119892942]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin" unique_id=486977421]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin" unique_id=486977421]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CombatTitle" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=837917390]
+[node name="CombatTitle" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=837917390]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Combat Status"
 
-[node name="ZoneInfoLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1228203257]
+[node name="ZoneInfoLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1228203257]
 layout_mode = 2
 text = "Currently fighting in Twin City"
 
-[node name="PlayerHPRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=914667092]
+[node name="PlayerHPRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=914667092]
 layout_mode = 2
 
-[node name="PlayerHPLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=1989231959]
+[node name="PlayerHPLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=1989231959]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Your HP"
 
-[node name="PlayerHPValue" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=344129008]
+[node name="PlayerHPValue" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=344129008]
 layout_mode = 2
 text = "0 / 0"
 horizontal_alignment = 2
 
-[node name="PlayerHPBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=790311567]
+[node name="PlayerHPBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=790311567]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 value = 100.0
 show_percentage = false
 
-[node name="AttackSpeedBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=286945977]
+[node name="AttackSpeedBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 5)
 layout_mode = 2
 max_value = 1.0
 show_percentage = false
 
-[node name="SummonRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=715498747]
+[node name="SummonRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="SummonLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1514054967]
+[node name="SummonLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Summon"
 
-[node name="Summon1Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=2134306249]
-custom_minimum_size = Vector2(44, 36)
+[node name="Summon1Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "+1"
 
-[node name="Summon5Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1009123250]
-custom_minimum_size = Vector2(44, 36)
+[node name="Summon5Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "+5"
 
-[node name="Summon10Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1880914191]
-custom_minimum_size = Vector2(44, 36)
+[node name="Summon10Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "+10"
 
-[node name="Summon25Btn" type="Button" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=605715100]
-custom_minimum_size = Vector2(44, 36)
+[node name="Summon25Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(36, 32)
 layout_mode = 2
 text = "+25"
 
-[node name="QueueCountLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow" unique_id=1422882968]
+[node name="QueueCountLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
 layout_mode = 2
-text = "Queue: 0/25"
 horizontal_alignment = 2
+text = "Q:0/25"
 
-[node name="HuntProgressLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=2000677006]
+[node name="HuntProgressLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
 layout_mode = 2
 text = "Current Hunt (0/25)"
 
-[node name="SpawnTimerBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1560864774]
+[node name="SpawnTimerBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 max_value = 1.0
 show_percentage = false
 
-[node name="MobNameRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=334960670]
+[node name="MobNameRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=334960670]
 layout_mode = 2
 
-[node name="MobNameLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=33905035]
+[node name="MobNameLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=33905035]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Pheasant"
 
-[node name="MobHPValue" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=671874778]
+[node name="MobHPValue" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=671874778]
 layout_mode = 2
 text = "0 / 0"
 horizontal_alignment = 2
 
-[node name="MobHPBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1594029404]
+[node name="MobHPBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1594029404]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 show_percentage = false
 
-[node name="QueueTitle" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=175587532]
+[node name="QueueTitle" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "Monster Queue"
 
-[node name="QueueGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=457020015]
+[node name="QueueGrid" type="GridContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 6
 columns = 2
 
-[node name="Spacer" type="Control" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1073525221]
+[node name="Spacer" type="Control" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1073525221]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="LevelRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1871786362]
+[node name="LevelRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1871786362]
 layout_mode = 2
 
-[node name="LevelLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/LevelRow" unique_id=550158095]
+[node name="LevelLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/LevelRow" unique_id=550158095]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Level 1"
 
-[node name="LevelPercent" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/LevelRow" unique_id=380547885]
+[node name="LevelPercent" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/LevelRow" unique_id=380547885]
 layout_mode = 2
 text = "0.00%"
 horizontal_alignment = 2
 
-[node name="XPBar" type="ProgressBar" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=118703309]
+[node name="XPBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=118703309]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 max_value = 110.0
 show_percentage = false
 
-[node name="XPLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1351245354]
+[node name="XPLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1351245354]
 layout_mode = 2
 text = "0 / 110 XP"
 horizontal_alignment = 1
 
-[node name="FooterRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox" unique_id=1480844000]
+[node name="FooterRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1480844000]
 layout_mode = 2
 
-[node name="KillTrackerLabel" type="Label" parent="ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/FooterRow" unique_id=278258689]
+[node name="KillTrackerLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/FooterRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Kills: 0 / 100  (Tier 1)"
 horizontal_alignment = 1
 
-[node name="InventoryPanel" type="PanelContainer" parent="ScrollContainer/ContentVBox" unique_id=1006860755]
+[node name="InventoryPanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=1006860755]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/InventoryPanel" unique_id=164560253]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/InventoryPanel" unique_id=164560253]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin" unique_id=677272070]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/InventoryPanel/Margin" unique_id=677272070]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="BagTitle" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=2096770820]
+[node name="BagTitle" type="Label" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=2096770820]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Main Bag (0/40)"
 
-[node name="BagDesc" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=10199472]
+[node name="BagDesc" type="Label" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=10199472]
 layout_mode = 2
 text = "Manage your collected items. Click an item to see details."
 autowrap_mode = 2
 
-[node name="BagButtonRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=217322990]
+[node name="BagButtonRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="SelectBagBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow" unique_id=83297624]
+[node name="SelectBagBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Select"
 
-[node name="SellBagBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow" unique_id=1766950616]
-visible = false
+[node name="SellBagBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Sell"
-
-[node name="CancelBagBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow" unique_id=714544720]
 visible = false
+
+[node name="CancelBagBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cancel"
+visible = false
 
-[node name="QualityFilterRow" type="HBoxContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=854593691]
+[node name="QualityFilterRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="FilterAllBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow" unique_id=1035263796]
+[node name="FilterAllBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow"]
 custom_minimum_size = Vector2(36, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "All"
 
-[node name="FilterNormalBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow" unique_id=541086237]
+[node name="FilterNormalBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow"]
 custom_minimum_size = Vector2(36, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FilterTemperedBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow" unique_id=1424711236]
+[node name="FilterTemperedBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow"]
 custom_minimum_size = Vector2(36, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FilterInfusedBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow" unique_id=1619147645]
+[node name="FilterInfusedBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow"]
 custom_minimum_size = Vector2(36, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FilterBrilliantBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow" unique_id=580292209]
+[node name="FilterBrilliantBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow"]
 custom_minimum_size = Vector2(36, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FilterRadiantBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow" unique_id=2108292542]
+[node name="FilterRadiantBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow"]
 custom_minimum_size = Vector2(36, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="BagGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1991163560]
+[node name="BagGrid" type="GridContainer" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1991163560]
 layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 5
 script = ExtResource("2_aqnn3")
+slot_count = 40
 
-[node name="WarehouseTitle" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=516761949]
+[node name="WarehouseTitle" type="Label" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=516761949]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Warehouse (0/40)"
 
-[node name="WarehouseDesc" type="Label" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=125482578]
+[node name="WarehouseDesc" type="Label" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=125482578]
 layout_mode = 2
 text = "Manage your collected items. Click an item to see details."
 autowrap_mode = 2
 
-[node name="SelectWarehouseBtn" type="Button" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1503934595]
+[node name="SelectWarehouseBtn" type="Button" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1503934595]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Select Items"
 
-[node name="WarehouseGrid" type="GridContainer" parent="ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1179767012]
+[node name="WarehouseGrid" type="GridContainer" parent="ScrollContent/ContentVBox/InventoryPanel/Margin/VBox" unique_id=1179767012]
 layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
 columns = 5
 script = ExtResource("2_aqnn3")
+slot_count = 40
 inventory_offset = 40

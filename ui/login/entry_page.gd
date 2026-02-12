@@ -72,7 +72,7 @@ func _on_login_pressed():
 		var device_id = OS.get_unique_id()
 		if device_id.is_empty():
 			device_id = "web_%d_%d" % [Time.get_ticks_msec(), randi()]
-		print("Attempting Silent Device Login... (id: ", device_id.length(), " chars)")
+		print("Attempting Silent Device Login... (id: ", device_id.length(), " chars, web: ", OS.has_feature("web"), ")")
 		PlayFabManager.client.login_with_custom_id(device_id, true, info_params)
 	else:
 		if password_text.length() < 6:
@@ -111,20 +111,28 @@ func show_link_account_reminder():
 
 func _on_api_error(error):
 	_login_timeout_timer.stop()
-	# The SDK passes an ApiErrorWrapper object, not a Dictionary.
-	# We check the 'error' property for the string "AccountNotFound"
-	if error.error == "AccountNotFound":
+
+	# Handle both ApiErrorWrapper objects and plain Dictionaries (from local validation)
+	var error_code = ""
+	var error_msg = "Unknown PlayFab Error"
+	if error is Dictionary:
+		error_code = error.get("error", "")
+		error_msg = error.get("errorMessage", error_msg)
+	else:
+		error_code = str(error.error) if error.error != null else ""
+		error_msg = error.errorMessage if error.errorMessage != null and str(error.errorMessage) != "" else error_msg
+
+	print("PlayFab Error: [%s] %s" % [error_code, error_msg])
+
+	if error_code == "AccountNotFound":
 		print("Account not found. Attempting to register...")
 		register_new_user()
 		return
-	
+
 	# Reset the UI so the player can try again
 	login_button.disabled = false
 	login_button.text = "Sign In / Register"
-	
-	# Access the errorMessage property directly from the ApiErrorWrapper
-	var msg = error.errorMessage if error.errorMessage != "" else "Unknown PlayFab Error"
-	print("PlayFab Error: ", msg)
+	print("Login failed: ", error_msg)
 
 func register_new_user():
 	var email = email_input.text.strip_edges()
@@ -139,9 +147,11 @@ func register_new_user():
 	PlayFabManager.client.register_email_password(temp_username, email, password, info_params)
 
 func _on_login_timeout():
+	print("Login timeout triggered. Button text: ", login_button.text)
 	if login_button.text == "Authenticating...":
 		login_button.disabled = false
-		login_button.text = "Timed out. Try again."
+		login_button.text = "Timed out. Tap to retry."
+		print("Login request timed out after 20s. Platform: web=", OS.has_feature("web"), " mobile=", OS.has_feature("mobile"))
 
 func _on_register_success(result):
 	print("SUCCESS! New account created: ", result.PlayFabId)

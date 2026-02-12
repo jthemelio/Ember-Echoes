@@ -3,6 +3,7 @@ extends Node
 signal character_stats_updated
 signal equipment_changed
 signal inventory_changed
+signal changelog_updated          # Emitted when new changelog entries are detected
 
 var active_character_stats: Dictionary = {}
 var active_user_currencies: Dictionary = {}
@@ -11,6 +12,7 @@ var active_character_name: String = ""
 var active_character_class: String = ""
 var active_character_level: int = 1
 var active_character_awakening: int = 0
+var _saved_current_xp: int = 0  # Loaded from PlayFab, passed to IdleCombatManager on combat start
 
 # ───── Internal Data Inventory (compact instance dicts) ─────
 # Each entry is: { "uid", "bid", "q", "plus", "skt", "ench", "dura" }
@@ -28,6 +30,20 @@ var equipped_items: Dictionary = {
 	"Offhand": null,    # Shield / Arrows / 2nd Weapon (Twin-Soul)
 	"Backpack": null,   # Future: inventory expansion
 }
+
+# ───── Settings / Preferences ─────
+var show_afk_summary: bool = true  # Toggle for AFK rewards popup display
+
+# ───── Lady Luck ─────
+# Free roll status is fetched by lady_luck_shop.gd when the tab opens.
+# LT and ET currency balances are available via active_user_currencies (loaded at login).
+
+# ───── Changelog System ─────
+# Array of dicts: [{v, date, title, changes[]}], newest first
+var changelog_entries: Array = []
+var last_seen_changelog_version: String = ""
+var _changelog_poll_timer: Timer = null
+const CHANGELOG_POLL_INTERVAL: float = 300.0  # 5 minutes
 
 # Maps item Type (from PlayFab CustomData) to equipment slot
 const TYPE_TO_SLOT: Dictionary = {
@@ -52,6 +68,7 @@ var _currency_ready: bool = false
 var _title_data_ready: bool = false
 var _inventory_ready: bool = false
 var _achievements_ready: bool = false
+var _changelog_ready: bool = false
 
 func start_game_with_character(data: Dictionary):
 	active_character_id = data.get("CharacterId", "")
@@ -65,6 +82,7 @@ func start_game_with_character(data: Dictionary):
 	_title_data_ready = false
 	_inventory_ready = false
 	_achievements_ready = false
+	_changelog_ready = false
 
 	print("GameManager: Starting login for ", active_character_name)
 
@@ -73,11 +91,16 @@ func start_game_with_character(data: Dictionary):
 		var stats_dict = result.get("data", {}).get("CharacterStatistics", {})
 		var new_stats = {"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0, "AvailableAttributePoints": 0}
 		for key in stats_dict.keys():
-			if new_stats.has(key): new_stats[key] = int(stats_dict[key])
+			if new_stats.has(key):
+				new_stats[key] = int(stats_dict[key])
+			elif key == "Level":
+				active_character_level = int(stats_dict[key])
+			elif key == "CurrentXP":
+				_saved_current_xp = int(stats_dict[key])
 
 		active_character_stats = new_stats
 		_stats_ready = true
-		print("GameManager: Stats received.")
+		print("GameManager: Stats received. Level: %d, XP: %d" % [active_character_level, _saved_current_xp])
 		_check_all_done()
 	)
 
@@ -92,9 +115,9 @@ func start_game_with_character(data: Dictionary):
 		_check_all_done()
 	)
 
-	# 3. Fetch Title Data (ZoneData, LootConfig, ItemCatalog)
+	# 3. Fetch Title Data (ZoneData, LootConfig, ItemCatalog, ChangeLog)
 	var title_request = GetTitleDataRequest.new()
-	title_request.Keys = ["ZoneData", "LootConfig", "ItemCatalog"]
+	title_request.Keys = ["ZoneData", "LootConfig", "ItemCatalog", "ChangeLog"]
 	PlayFabManager.client.get_title_data(title_request, func(result):
 		var td = result.get("data", {}).get("Data", {})
 		print("GameManager: Title Data received. Keys: ", td.keys())
@@ -119,6 +142,13 @@ func start_game_with_character(data: Dictionary):
 			if item_catalog is Dictionary:
 				ItemDatabase.load_catalog(item_catalog)
 				LootManager.load_item_catalog(item_catalog)
+
+		# Parse ChangeLog entries
+		if td.has("ChangeLog"):
+			var cl_json = JSON.parse_string(td["ChangeLog"])
+			if cl_json is Array:
+				changelog_entries = cl_json
+				print("GameManager: ChangeLog loaded. %d entries" % cl_json.size())
 
 		_title_data_ready = true
 		_check_all_done()
@@ -179,6 +209,20 @@ func start_game_with_character(data: Dictionary):
 		_check_all_done()
 	)
 
+	# 6. Fetch Account Settings (last seen changelog version)
+	PlayFabManager.client.execute_cloud_script("getAccountSettings", {}, func(result):
+		var fn_result = result.get("data", {}).get("FunctionResult", {})
+		if fn_result is Dictionary and fn_result.get("success", false):
+			last_seen_changelog_version = fn_result.get("lastSeenChangelog", "")
+			print("GameManager: Last seen changelog: '%s'" % last_seen_changelog_version)
+		else:
+			print("GameManager: No account settings found (new account?)")
+			last_seen_changelog_version = ""
+
+		_changelog_ready = true
+		_check_all_done()
+	)
+
 func _count_equipped() -> int:
 	var count = 0
 	for slot_name in equipped_items:
@@ -187,7 +231,9 @@ func _count_equipped() -> int:
 	return count
 
 func _check_all_done():
-	if _stats_ready and _currency_ready and _title_data_ready and _inventory_ready and _achievements_ready:
+	if _stats_ready and _currency_ready and _title_data_ready and _inventory_ready and _achievements_ready and _changelog_ready:
+		# Start the changelog live-poll timer
+		_start_changelog_poll()
 		var target_scene = "res://ui/pages/idleHome.tscn"
 		get_tree().call_deferred("change_scene_to_file", target_scene)
 
@@ -427,6 +473,82 @@ func consume_material(currency_code: String) -> bool:
 				return true
 	return false
 
+# ───── Changelog Helpers ─────
+
+func get_latest_changelog_version() -> String:
+	if changelog_entries.is_empty():
+		return ""
+	return changelog_entries[0].get("v", "")
+
+func has_unseen_changelog() -> bool:
+	var latest = get_latest_changelog_version()
+	if latest.is_empty():
+		return false
+	return latest != last_seen_changelog_version
+
+func get_unseen_changelog_entries() -> Array:
+	## Returns all entries newer than the last seen version.
+	if last_seen_changelog_version.is_empty():
+		# Never viewed -- show just the latest entry (not the entire history)
+		if changelog_entries.size() > 0:
+			return [changelog_entries[0]]
+		return []
+
+	var unseen: Array = []
+	for entry in changelog_entries:
+		if entry.get("v", "") == last_seen_changelog_version:
+			break
+		unseen.append(entry)
+	return unseen
+
+func mark_changelog_seen() -> void:
+	var latest = get_latest_changelog_version()
+	if latest.is_empty():
+		return
+	last_seen_changelog_version = latest
+	# Persist to PlayFab (account-wide)
+	PlayFabManager.client.execute_cloud_script("updateAccountSettings", {
+		"lastSeenChangelog": latest
+	}, func(result):
+		var fn_result = result.get("data", {}).get("FunctionResult", {})
+		if fn_result is Dictionary and fn_result.get("success", false):
+			print("GameManager: Changelog marked as seen (v%s)" % latest)
+		else:
+			push_warning("GameManager: Failed to save changelog seen status")
+	)
+
+func _start_changelog_poll() -> void:
+	if _changelog_poll_timer != null:
+		return  # Already running
+	_changelog_poll_timer = Timer.new()
+	_changelog_poll_timer.wait_time = CHANGELOG_POLL_INTERVAL
+	_changelog_poll_timer.one_shot = false
+	_changelog_poll_timer.timeout.connect(_poll_changelog)
+	add_child(_changelog_poll_timer)
+	_changelog_poll_timer.start()
+	print("GameManager: Changelog poll started (every %ds)" % int(CHANGELOG_POLL_INTERVAL))
+
+func _poll_changelog() -> void:
+	# Re-fetch only the ChangeLog key from Title Data
+	var request = GetTitleDataRequest.new()
+	request.Keys = ["ChangeLog"]
+	PlayFabManager.client.get_title_data(request, func(result):
+		var td = result.get("data", {}).get("Data", {})
+		if not td.has("ChangeLog"):
+			return
+		var cl_json = JSON.parse_string(td["ChangeLog"])
+		if not cl_json is Array:
+			return
+
+		var old_latest = get_latest_changelog_version()
+		changelog_entries = cl_json
+		var new_latest = get_latest_changelog_version()
+
+		if new_latest != old_latest and not new_latest.is_empty():
+			print("GameManager: New changelog detected! v%s -> v%s" % [old_latest, new_latest])
+			changelog_updated.emit()
+	)
+
 # ───── Server Sync ─────
 
 func sync_inventory_to_server() -> void:
@@ -440,4 +562,19 @@ func sync_inventory_to_server() -> void:
 			print("GameManager: Inventory synced to server")
 		else:
 			push_warning("GameManager: Inventory sync failed")
+	)
+
+func sync_character_progress_to_server() -> void:
+	## Saves Level, CurrentXP, and AvailableAttributePoints to PlayFab Character Statistics.
+	var xp_value = IdleCombatManager.current_xp if IdleCombatManager else 0
+	var stats_array = [
+		{"StatisticName": "Level", "Value": active_character_level},
+		{"StatisticName": "CurrentXP", "Value": xp_value},
+		{"StatisticName": "AvailableAttributePoints", "Value": int(active_character_stats.get("AvailableAttributePoints", 0))}
+	]
+	PlayFabManager.client.update_character_statistics(active_character_id, stats_array, func(result):
+		if result.get("data", null) != null:
+			print("GameManager: Progress synced (Level %d, XP %d)" % [active_character_level, xp_value])
+		else:
+			push_warning("GameManager: Progress sync failed: %s" % str(result))
 	)

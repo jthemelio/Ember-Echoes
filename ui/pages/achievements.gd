@@ -1,19 +1,19 @@
 # achievements.gd — Achievements page with Account/Character toggle.
 # Sub-tabs: Hunt Kills (with 5-tier progression per monster), Pets (account-wide drops).
-extends VBoxContainer
+extends MarginContainer
 
 # ─── Tab toggle (Account / Character) ───
-@onready var account_btn: Button = $ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox/TabSwitcher/AccountBtn
-@onready var character_btn: Button = $ScrollContainer/ContentVBox/HeaderPanel/Margin/VBox/TabSwitcher/CharacterBtn
+@onready var account_btn: Button = $ScrollContent/ContentVBox/HeaderPanel/Margin/VBox/TabSwitcher/AccountBtn
+@onready var character_btn: Button = $ScrollContent/ContentVBox/HeaderPanel/Margin/VBox/TabSwitcher/CharacterBtn
 
 # ─── Sub-tab buttons (underneath header, inside the Account or Character section) ───
-@onready var sub_tab_row: HBoxContainer = $ScrollContainer/ContentVBox/SubTabPanel/Margin/SubTabRow
-@onready var hunt_kills_btn: Button = $ScrollContainer/ContentVBox/SubTabPanel/Margin/SubTabRow/HuntKillsBtn
-@onready var pets_btn: Button = $ScrollContainer/ContentVBox/SubTabPanel/Margin/SubTabRow/PetsBtn
+@onready var sub_tab_row: HBoxContainer = $ScrollContent/ContentVBox/SubTabPanel/Margin/SubTabRow
+@onready var hunt_kills_btn: Button = $ScrollContent/ContentVBox/SubTabPanel/Margin/SubTabRow/HuntKillsBtn
+@onready var pets_btn: Button = $ScrollContent/ContentVBox/SubTabPanel/Margin/SubTabRow/PetsBtn
 
 # ─── Content area ───
-@onready var content_panel: PanelContainer = $ScrollContainer/ContentVBox/ContentPanel
-@onready var content_vbox: VBoxContainer = $ScrollContainer/ContentVBox/ContentPanel/Margin/ContentVBox
+@onready var content_panel: PanelContainer = $ScrollContent/ContentVBox/ContentPanel
+@onready var content_vbox: VBoxContainer = $ScrollContent/ContentVBox/ContentPanel/Margin/ContentVBox
 
 # State
 var _current_scope: String = "account"   # "account" or "character"
@@ -314,6 +314,7 @@ func _build_pets_view() -> void:
 		pet_label.text = pet_name
 		pet_label.add_theme_font_size_override("font_size", 12)
 		pet_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		pet_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		if obtained:
 			pet_label.add_theme_color_override("font_color", PET_OBTAINED_COLOR)
 		else:

@@ -1,33 +1,33 @@
 # artisan_shop.gd — Upgrade items by level, quality, or Ignis+
-extends VBoxContainer
+extends MarginContainer
 
 const InventorySlotScene = preload("res://ui/components/InventorySlot.tscn")
 
 # ─── UI References ───
-@onready var item_picker_grid: GridContainer = $ScrollContainer/ContentVBox/ItemPickerPanel/Margin/VBox/ItemPickerGrid
-@onready var level_btn: Button = $ScrollContainer/ContentVBox/UpgradeModeBar/LevelUpgradeBtn
-@onready var quality_btn: Button = $ScrollContainer/ContentVBox/UpgradeModeBar/QualityUpgradeBtn
-@onready var ignis_btn: Button = $ScrollContainer/ContentVBox/UpgradeModeBar/IgnisPlusBtn
+@onready var item_picker_grid: GridContainer = $ScrollContent/ContentVBox/ItemPickerPanel/Margin/VBox/ItemPickerGrid
+@onready var level_btn: Button = $ScrollContent/ContentVBox/UpgradeModeBar/LevelUpgradeBtn
+@onready var quality_btn: Button = $ScrollContent/ContentVBox/UpgradeModeBar/QualityUpgradeBtn
+@onready var ignis_btn: Button = $ScrollContent/ContentVBox/UpgradeModeBar/IgnisPlusBtn
 
 # Upgrade panel
-@onready var source_slot: PanelContainer = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/SourceSlot
-@onready var source_label: Label = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/SourceSlot/SourceLabel
-@onready var material_slot: PanelContainer = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/MaterialSlot
-@onready var material_label: Label = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/MaterialSlot/MaterialLabel
-@onready var result_slot: PanelContainer = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/ResultSlot
-@onready var result_label: Label = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/ResultSlot/ResultLabel
-@onready var info_label: Label = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/InfoLabel
-@onready var success_label: Label = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/SuccessLabel
-@onready var upgrade_btn: Button = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/UpgradeBtn
-@onready var result_message: Label = $ScrollContainer/ContentVBox/UpgradePanel/Margin/VBox/ResultMessageLabel
+@onready var source_slot: PanelContainer = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/SourceSlot
+@onready var source_label: Label = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/SourceSlot/SourceLabel
+@onready var material_slot: PanelContainer = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/MaterialSlot
+@onready var material_label: Label = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/MaterialSlot/MaterialLabel
+@onready var result_slot: PanelContainer = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/ResultSlot
+@onready var result_label: Label = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SlotRow/ResultSlot/ResultLabel
+@onready var info_label: Label = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/InfoLabel
+@onready var success_label: Label = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/SuccessLabel
+@onready var upgrade_btn: Button = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/UpgradeBtn
+@onready var result_message: Label = $ScrollContent/ContentVBox/UpgradePanel/Margin/VBox/ResultMessageLabel
 
 # Material popup
-@onready var material_popup: PanelContainer = $ScrollContainer/ContentVBox/MaterialPopup
-@onready var popup_title: Label = $ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/PopupTitle
-@onready var popup_icon_label: Label = $ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow/MaterialIcon/IconLabel
-@onready var popup_count_label: Label = $ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow/MaterialCount
-@onready var select_material_btn: Button = $ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/BtnRow/SelectMaterialBtn
-@onready var cancel_material_btn: Button = $ScrollContainer/ContentVBox/MaterialPopup/Margin/VBox/BtnRow/CancelMaterialBtn
+@onready var material_popup: PanelContainer = $ScrollContent/ContentVBox/MaterialPopup
+@onready var popup_title: Label = $ScrollContent/ContentVBox/MaterialPopup/Margin/VBox/PopupTitle
+@onready var popup_icon_label: Label = $ScrollContent/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow/MaterialIcon/IconLabel
+@onready var popup_count_label: Label = $ScrollContent/ContentVBox/MaterialPopup/Margin/VBox/MaterialRow/MaterialCount
+@onready var select_material_btn: Button = $ScrollContent/ContentVBox/MaterialPopup/Margin/VBox/BtnRow/SelectMaterialBtn
+@onready var cancel_material_btn: Button = $ScrollContent/ContentVBox/MaterialPopup/Margin/VBox/BtnRow/CancelMaterialBtn
 
 # ─── State ───
 enum UpgradeMode { LEVEL, QUALITY, IGNIS }

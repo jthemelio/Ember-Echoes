@@ -1,67 +1,67 @@
 # hunting_grounds.gd — View layer for the Idle / Hunting Grounds tab.
 # Pure MVC view: reads state from IdleCombatManager and GameManager, writes nothing back.
-extends VBoxContainer
+extends MarginContainer
 
 # Runtime reference to IdleCombatManager (avoids compile-time autoload resolution issues)
 @onready var icm: Node = get_node("/root/IdleCombatManager")
 
 # ─── Section 1: Idle Activity ───
-@onready var fighting_btn: Button = $ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher/FightingBtn
-@onready var mining_btn: Button = $ScrollContainer/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher/MiningBtn
+@onready var fighting_btn: Button = $ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher/FightingBtn
+@onready var mining_btn: Button = $ScrollContent/ContentVBox/IdleActivityPanel/Margin/VBox/ModeSwitcher/MiningBtn
 
 # ─── Section 2: Zone Selection ───
-@onready var zone_dropdown: OptionButton = $ScrollContainer/ContentVBox/ZonePanel/Margin/VBox/ZoneDropdown
-@onready var creature_dropdown: OptionButton = $ScrollContainer/ContentVBox/ZonePanel/Margin/VBox/CreatureDropdown
-@onready var change_zone_btn: Button = $ScrollContainer/ContentVBox/ZonePanel/Margin/VBox/ChangeZoneBtn
+@onready var zone_dropdown: OptionButton = $ScrollContent/ContentVBox/ZonePanel/Margin/VBox/ZoneDropdown
+@onready var creature_dropdown: OptionButton = $ScrollContent/ContentVBox/ZonePanel/Margin/VBox/CreatureDropdown
+@onready var change_zone_btn: Button = $ScrollContent/ContentVBox/ZonePanel/Margin/VBox/ChangeZoneBtn
 
 # ─── Section 3: Combat Status ───
-@onready var zone_info_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/ZoneInfoLabel
-@onready var player_hp_value: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow/PlayerHPValue
-@onready var player_hp_bar: ProgressBar = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/PlayerHPBar
-@onready var attack_speed_bar: ProgressBar = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/AttackSpeedBar
-@onready var hunt_progress_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/HuntProgressLabel
-@onready var spawn_timer_bar: ProgressBar = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SpawnTimerBar
+@onready var zone_info_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/ZoneInfoLabel
+@onready var player_hp_value: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow/PlayerHPValue
+@onready var player_hp_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPBar
+@onready var attack_speed_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/AttackSpeedBar
+@onready var hunt_progress_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/HuntProgressLabel
+@onready var spawn_timer_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SpawnTimerBar
 
 # Summon buttons
-@onready var summon_1_btn: Button = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon1Btn
-@onready var summon_5_btn: Button = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon5Btn
-@onready var summon_10_btn: Button = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon10Btn
-@onready var summon_25_btn: Button = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon25Btn
-@onready var queue_count_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/SummonRow/QueueCountLabel
+@onready var summon_1_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon1Btn
+@onready var summon_5_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon5Btn
+@onready var summon_10_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon10Btn
+@onready var summon_25_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon25Btn
+@onready var queue_count_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/QueueCountLabel
 
 # Primary target
-@onready var mob_name_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobNameRow/MobNameLabel
-@onready var mob_hp_value: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobNameRow/MobHPValue
-@onready var mob_hp_bar: ProgressBar = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/MobHPBar
-@onready var queue_grid: GridContainer = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/QueueGrid
+@onready var mob_name_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow/MobNameLabel
+@onready var mob_hp_value: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow/MobHPValue
+@onready var mob_hp_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobHPBar
+@onready var queue_grid: GridContainer = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/QueueGrid
 
 # Level / XP
-@onready var level_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/LevelRow/LevelLabel
-@onready var level_percent: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/LevelRow/LevelPercent
-@onready var xp_bar: ProgressBar = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/XPBar
-@onready var xp_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/XPLabel
+@onready var level_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/LevelRow/LevelLabel
+@onready var level_percent: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/LevelRow/LevelPercent
+@onready var xp_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/XPBar
+@onready var xp_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/XPLabel
 
 # Footer -- Monster kill tracker
-@onready var kill_tracker_label: Label = $ScrollContainer/ContentVBox/CombatPanel/Margin/VBox/FooterRow/KillTrackerLabel
+@onready var kill_tracker_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/FooterRow/KillTrackerLabel
 
 # ─── Section 4: Inventory ───
-@onready var bag_title: Label = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagTitle
-@onready var bag_grid: GridContainer = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagGrid
-@onready var warehouse_title: Label = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/WarehouseTitle
-@onready var warehouse_grid: GridContainer = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/WarehouseGrid
+@onready var bag_title: Label = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagTitle
+@onready var bag_grid: GridContainer = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagGrid
+@onready var warehouse_title: Label = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/WarehouseTitle
+@onready var warehouse_grid: GridContainer = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/WarehouseGrid
 
 # Bag buttons
-@onready var select_bag_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/SelectBagBtn
-@onready var sell_bag_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/SellBagBtn
-@onready var cancel_bag_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/CancelBagBtn
+@onready var select_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/SelectBagBtn
+@onready var sell_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/SellBagBtn
+@onready var cancel_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/CancelBagBtn
 
 # Quality filter buttons
-@onready var filter_all_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterAllBtn
-@onready var filter_normal_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterNormalBtn
-@onready var filter_tempered_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterTemperedBtn
-@onready var filter_infused_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterInfusedBtn
-@onready var filter_brilliant_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterBrilliantBtn
-@onready var filter_radiant_btn: Button = $ScrollContainer/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterRadiantBtn
+@onready var filter_all_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterAllBtn
+@onready var filter_normal_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterNormalBtn
+@onready var filter_tempered_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterTemperedBtn
+@onready var filter_infused_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterInfusedBtn
+@onready var filter_brilliant_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterBrilliantBtn
+@onready var filter_radiant_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterRadiantBtn
 
 # Select/sell state
 var _select_mode: bool = false
@@ -282,7 +282,7 @@ func _refresh_combat_ui() -> void:
 	hunt_progress_label.text = "Current Hunt (%d/%d)" % [icm.kills_this_hunt, icm.hunt_target]
 
 	# Queue count
-	queue_count_label.text = "Queue: %d/%d" % [icm.monster_queue.size(), icm.MAX_QUEUE_SIZE]
+	queue_count_label.text = "Q:%d/%d" % [icm.monster_queue.size(), icm.MAX_QUEUE_SIZE]
 
 	# Death state: show respawn timer
 	if icm.is_dead:

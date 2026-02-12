@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://xcad25hmn1yn" path="res://ui/components/CurrencySlotRow.tscn" id="5_2tbbl"]
 [ext_resource type="PackedScene" uid="uid://ceia2diutw1sk" path="res://ui/components/InventorySlot.tscn" id="6_eqslot"]
 
-[node name="HeroTab" type="ScrollContainer" unique_id=229612391]
+[node name="HeroTab" type="MarginContainer" unique_id=229612391]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,160 +15,196 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
 script = ExtResource("1_nqu77")
 
-[node name="ScrollWrapper" type="VBoxContainer" parent="." unique_id=1701138636]
+[node name="ScrollContent" type="ScrollContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
 
-[node name="S1_Profile_Equipment_Stats" type="VBoxContainer" parent="ScrollWrapper" unique_id=1041294370]
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContent" unique_id=1701138636]
 layout_mode = 2
-theme_override_constants/separation = 20
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
 
-[node name="Profile" type="VBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats" unique_id=1988677648]
+[node name="ProfileCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
 
-[node name="CharName" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile" unique_id=1046846194]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ProfileCard"]
 layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ProfileCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CharName" type="Label" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox" unique_id=1046846194]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Character Name"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile" unique_id=207080736]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox" unique_id=207080736]
 layout_mode = 2
 
-[node name="LevelLabel" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile/HBoxContainer" unique_id=1665319057]
+[node name="LevelLabel" type="Label" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/HBoxContainer" unique_id=1665319057]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Level 1"
 
-[node name="ClassLabel" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Profile/HBoxContainer" unique_id=1240066281]
+[node name="ClassLabel" type="Label" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/HBoxContainer" unique_id=1240066281]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Novice Marksman"
 horizontal_alignment = 2
 
-[node name="Equipment" type="GridContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats" unique_id=877860440]
+[node name="Equipment" type="GridContainer" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox" unique_id=877860440]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 4
 
-[node name="HeadgearSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="HeadgearSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="ArmorSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="ArmorSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="RingSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="RingSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="NecklaceSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="NecklaceSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="BootsSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="BootsSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="WeaponSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="WeaponSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="OffhandSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="OffhandSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="BackpackSlot" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Equipment" instance=ExtResource("6_eqslot")]
+[node name="BackpackSlot" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment" instance=ExtResource("6_eqslot")]
 layout_mode = 2
 
-[node name="Stats" type="VBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats" unique_id=85582998]
+[node name="StatsCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
 
-[node name="HPRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=167415794 instance=ExtResource("1_g5t2h")]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/StatsCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/StatsCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HPRow" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=167415794 instance=ExtResource("1_g5t2h")]
 layout_mode = 2
 script = ExtResource("2_nqu77")
 
-[node name="StrRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1302286274 instance=ExtResource("2_hccm8")]
+[node name="StrRow" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=1302286274 instance=ExtResource("2_hccm8")]
 layout_mode = 2
 
-[node name="AgiRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1231962323 instance=ExtResource("2_hccm8")]
+[node name="AgiRow" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=1231962323 instance=ExtResource("2_hccm8")]
 layout_mode = 2
 stat_name_display = "Agility"
 
-[node name="VitRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=1179989950 instance=ExtResource("2_hccm8")]
+[node name="VitRow" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=1179989950 instance=ExtResource("2_hccm8")]
 layout_mode = 2
 stat_name_display = "Vitality"
 
-[node name="SpiRow" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=5546439 instance=ExtResource("2_hccm8")]
+[node name="SpiRow" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=5546439 instance=ExtResource("2_hccm8")]
 layout_mode = 2
 stat_name_display = "Spirit"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats" unique_id=2080013914]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=2080013914]
 layout_mode = 2
 
-[node name="PointsLabel" type="Label" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer" unique_id=943238778]
+[node name="PointsLabel" type="Label" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer" unique_id=943238778]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OkButton" type="Button" parent="ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer" unique_id=5536964]
+[node name="OkButton" type="Button" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer" unique_id=5536964]
 custom_minimum_size = Vector2(25, 0)
 layout_mode = 2
 text = "Ok"
 
-[node name="S2_Currencies" type="VBoxContainer" parent="ScrollWrapper" unique_id=1355746981]
+[node name="CurrenciesCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
 
-[node name="Header" type="VBoxContainer" parent="ScrollWrapper/S2_Currencies" unique_id=326905446]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/CurrenciesCard"]
 layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
-[node name="Currencies" type="Label" parent="ScrollWrapper/S2_Currencies/Header" unique_id=184471168]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CurrenciesTitle" type="Label" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "Currencies"
 
-[node name="Description" type="Label" parent="ScrollWrapper/S2_Currencies/Header" unique_id=750563423]
+[node name="CurrenciesDesc" type="Label" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox"]
 layout_mode = 2
 text = "Your account-wide currencies and materials"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollWrapper/S2_Currencies/Header" unique_id=1524528321]
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox" unique_id=1524528321]
 layout_mode = 2
 
-[node name="Gold" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1990436388 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Gold" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1990436388 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 
-[node name="EchoToken" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1782847859 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="EchoToken" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1782847859 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "ET"
 
-[node name="Comets" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1015996013 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Comets" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1015996013 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "CM"
 
-[node name="WyrmSphere" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=490692987 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="WyrmSphere" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=490692987 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "WS"
 
-[node name="Ignis1" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=934122705 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Ignis1" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=934122705 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "I1"
 
-[node name="Ignis2" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1069220813 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Ignis2" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1069220813 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "I2"
 
-[node name="Ignis3" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1596337947 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Ignis3" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1596337947 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "I3"
 
-[node name="Ignis4" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=538156146 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Ignis4" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=538156146 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "I4"
 
-[node name="Ignis5" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1441499773 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Ignis5" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1441499773 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "I5"
 
-[node name="Ignis6" parent="ScrollWrapper/S2_Currencies/Header/VBoxContainer" unique_id=1121503516 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
+[node name="Ignis6" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1121503516 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2
 currency_code = "I6"
 
-[node name="Promotions" type="VBoxContainer" parent="ScrollWrapper" unique_id=491009529]
-layout_mode = 2
-
-[connection signal="pressed" from="ScrollWrapper/S1_Profile_Equipment_Stats/Stats/HBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]
+[connection signal="pressed" from="ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer/OkButton" to="." method="_on_ok_button_pressed"]

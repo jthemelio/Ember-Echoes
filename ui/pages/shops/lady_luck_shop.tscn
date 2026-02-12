@@ -1,47 +1,305 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
 
-[node name="LadyLuckShop" type="VBoxContainer"]
+[ext_resource type="Script" path="res://ui/pages/shops/lady_luck_shop.gd" id="1_script"]
+
+[node name="LadyLuckShop" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_bottom = 12
+script = ExtResource("1_script")
+
+[node name="ScrollContent" type="ScrollContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="ContentVBox" type="VBoxContainer" parent="ScrollContainer"]
+[node name="ContentVBox" type="VBoxContainer" parent="ScrollContent"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="ShopHeader" type="PanelContainer" parent="ScrollContainer/ContentVBox"]
+[node name="HeaderCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="ScrollContainer/ContentVBox/ShopHeader"]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/HeaderCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContainer/ContentVBox/ShopHeader/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/HeaderCard/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
-[node name="TitleLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="TitleLabel" type="Label" parent="ScrollContent/ContentVBox/HeaderCard/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Lady Luck"
 
-[node name="DescLabel" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="DescLabel" type="Label" parent="ScrollContent/ContentVBox/HeaderCard/Margin/VBox"]
 layout_mode = 2
-text = "Test your fortune with mystery boxes and lucky draws. Coming soon!"
+text = "Test your fortune! Pay first, then pick a chest to claim your prize. All 9 chests will reveal what could have been yours!"
 autowrap_mode = 2
 
-[node name="ComingSoon" type="Label" parent="ScrollContainer/ContentVBox/ShopHeader/Margin/VBox"]
+[node name="BalanceCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/BalanceCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TicketRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="TicketLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TicketRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Lottery Tickets"
+
+[node name="TicketValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TicketRow"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="EchoRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="EchoLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/EchoRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Echo Points"
+
+[node name="EchoValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/EchoRow"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="TimerRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox"]
+layout_mode = 2
+
+[node name="TimerLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TimerRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Free Roll"
+
+[node name="TimerValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TimerRow"]
+layout_mode = 2
+text = "Loading..."
+horizontal_alignment = 2
+
+[node name="ChestCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ChestCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ChestLabel" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox"]
+layout_mode = 2
+text = "Pay to reveal 9 chests"
+horizontal_alignment = 1
+
+[node name="ChestGrid" type="GridContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Chest1" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest1"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest2" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest2"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest3" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest3"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest4" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest4"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest5" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest5"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest6" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest6"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest7" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest7"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest8" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest8"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="Chest9" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest9"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+text = "?"
+
+[node name="PaymentCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/PaymentCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/PaymentCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="FreeRollBtn" type="Button" parent="ScrollContent/ContentVBox/PaymentCard/Margin/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+disabled = true
+text = "Free Roll (Loading...)"
+
+[node name="TicketBtn" type="Button" parent="ScrollContent/ContentVBox/PaymentCard/Margin/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+disabled = true
+text = "Use Lottery Ticket (1 LT)"
+
+[node name="EchoBtn" type="Button" parent="ScrollContent/ContentVBox/PaymentCard/Margin/VBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+disabled = true
+text = "Use Echo Points (50 ET)"
+
+[node name="ResultCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ResultCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ResultCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ResultTitle" type="Label" parent="ScrollContent/ContentVBox/ResultCard/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="RewardName" type="Label" parent="ScrollContent/ContentVBox/ResultCard/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Coming Soon"
 horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="RewardDesc" type="Label" parent="ScrollContent/ContentVBox/ResultCard/Margin/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="PetBonusLabel" type="Label" parent="ScrollContent/ContentVBox/ResultCard/Margin/VBox"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="RollAgainBtn" type="Button" parent="ScrollContent/ContentVBox/ResultCard/Margin/VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Roll Again"

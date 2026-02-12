@@ -156,21 +156,35 @@ func _on_character_data_received(data: Dictionary, slot_index: int):
 func _fetch_character_slot_and_display_with_callback(char_entity, on_complete: Callable):
 	var char_id = char_entity.CharacterId
 	
-	PlayFabManager.client.get_character_data(char_id, func(result):
-		var char_data = result.data.Data 
-		if char_data.has("SlotIndex"):
-			var slot_idx = char_data.SlotIndex.Value.to_int()
-			if slot_idx < grid.get_child_count():
-				var target_slot = grid.get_child(slot_idx)
+	# Use a dictionary to share state between async callbacks (avoids lambda capture issues)
+	var state = {"slot_index": -1, "char_level": 1, "data_done": false, "stats_done": false}
+	
+	var _try_finish = func():
+		if state.data_done and state.stats_done:
+			if state.slot_index >= 0 and state.slot_index < grid.get_child_count():
+				var target_slot = grid.get_child(state.slot_index)
 				target_slot.update_slot_display({
 					"CharacterName": char_entity.CharacterName,
 					"Class": char_entity.CharacterType,
 					"CharacterId": char_id,
-					"Level": 1
+					"Level": state.char_level
 				})
-		
-		# Important: Notify the loop that this request is done
-		on_complete.call()
+			on_complete.call()
+	
+	PlayFabManager.client.get_character_data(char_id, func(result):
+		var char_data = result.get("data", {}).get("Data", {})
+		if char_data.has("SlotIndex"):
+			state.slot_index = char_data.SlotIndex.Value.to_int()
+		state.data_done = true
+		_try_finish.call()
+	)
+	
+	PlayFabManager.client.get_character_statistics(char_id, func(result):
+		var stats_dict = result.get("data", {}).get("CharacterStatistics", {})
+		if stats_dict.has("Level"):
+			state.char_level = int(stats_dict["Level"])
+		state.stats_done = true
+		_try_finish.call()
 	)
 	
 func _on_character_delete_requested(char_id: String):

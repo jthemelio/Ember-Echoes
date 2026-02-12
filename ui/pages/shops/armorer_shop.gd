@@ -1,9 +1,9 @@
 # armorer_shop.gd — Displays Normal quality armor filtered by player class
 # Headgear, Body Armor, Boots, Rings, Necklaces
-extends VBoxContainer
+extends MarginContainer
 
-@onready var gold_label: Label = $ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/GoldRow/GoldValue
-@onready var item_grid: GridContainer = $ScrollContainer/ContentVBox/ShopHeader/Margin/VBox/ItemGrid
+@onready var gold_label: Label = $ScrollContent/ContentVBox/ShopHeader/Margin/VBox/GoldRow/GoldValue
+@onready var item_grid: GridContainer = $ScrollContent/ContentVBox/ShopHeader/Margin/VBox/ItemGrid
 
 # Class-specific body armor types
 const ARMOR_BODY: Dictionary = {
@@ -21,6 +21,7 @@ const ARMOR_HEAD: Dictionary = {
 const UNIVERSAL_TYPES: Array = ["Boots", "Ring", "Necklace"]
 
 var _shop_items: Array = []
+var _purchase_in_flight: bool = false  # Prevents rapid-fire purchases
 
 func _ready() -> void:
 	_refresh_gold()
@@ -91,6 +92,7 @@ func _create_shop_slot(item: Dictionary) -> void:
 	var btn = Button.new()
 	btn.custom_minimum_size = Vector2(0, 60)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.clip_text = true
 
 	var player_level = GameManager.active_character_level
 	if player_level < level_req:
@@ -103,11 +105,15 @@ func _create_shop_slot(item: Dictionary) -> void:
 	item_grid.add_child(slot)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
+	if _purchase_in_flight:
+		print("Armorer: Purchase already in progress, please wait")
+		return
 	var gold = GameManager.active_user_currencies.get("GD", 0)
 	if gold < price:
 		print("Armorer: Not enough gold for %s (need %d, have %d)" % [display_name, price, gold])
 		return
 
+	_purchase_in_flight = true
 	print("Armorer: Purchasing %s for %d gold" % [display_name, price])
 	PlayFabManager.client.execute_cloud_script("purchaseShopItem", {
 		"characterId": GameManager.active_character_id,
@@ -125,6 +131,8 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 				log_entry.get("Message", ""),
 				log_entry.get("Data", "")
 			])
+
+		_purchase_in_flight = false
 
 		if fn_result is Dictionary and fn_result.get("success", false):
 			print("Armorer: Purchase successful! Gold remaining: %s" % fn_result.get("goldRemaining", "?"))
