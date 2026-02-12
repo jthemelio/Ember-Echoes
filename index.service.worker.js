@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1770933979|4754462';
+const CACHE_VERSION = '1770934751|4622396';
 /** @type {string} */
 const CACHE_PREFIX = 'Ember Echoes-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
