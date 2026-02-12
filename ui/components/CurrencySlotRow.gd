@@ -33,10 +33,10 @@ func update_display():
 	# Material codes read from inventory, everything else from currencies
 	if MATERIAL_BID_MAP.has(currency_code):
 		var bid = MATERIAL_BID_MAP[currency_code]
-		value_label.text = str(GameManager.get_material_count(bid))
+		value_label.text = GameManager.format_gold(GameManager.get_material_count(bid))
 	else:
-		var amount = GameManager.active_user_currencies.get(currency_code, 0)
-		value_label.text = str(amount)
+		var amount = int(GameManager.active_user_currencies.get(currency_code, 0))
+		value_label.text = GameManager.format_gold(amount)
 
 const CODE_TO_NAME = {
 	"GD": "Gold",

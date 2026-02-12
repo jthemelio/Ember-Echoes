@@ -39,7 +39,7 @@ func show_rewards(rewards: Dictionary) -> void:
 		kills_label.text = "Monsters slain: %d" % total_kills
 
 	xp_label.text = "XP earned: %d" % rewards.get("total_xp", 0)
-	gold_label.text = "Gold earned: %d" % rewards.get("total_gold", 0)
+	gold_label.text = "Gold earned: %s" % GameManager.format_gold(int(rewards.get("total_gold", 0)))
 
 	var loot_items = rewards.get("loot_items", [])
 	if loot_items.size() > 0:

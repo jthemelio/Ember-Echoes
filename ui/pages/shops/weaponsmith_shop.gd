@@ -22,8 +22,8 @@ func _ready() -> void:
 	_populate_shop()
 
 func _refresh_gold() -> void:
-	var gold = GameManager.active_user_currencies.get("GD", 0)
-	gold_label.text = str(gold)
+	var gold = int(GameManager.active_user_currencies.get("GD", 0))
+	gold_label.text = GameManager.format_gold(gold)
 
 func _populate_shop() -> void:
 	for child in item_grid.get_children():
@@ -57,8 +57,34 @@ func _populate_shop() -> void:
 		return a_lvl < b_lvl
 	)
 
+	# Group by type with subheadings
+	var groups: Dictionary = {}
 	for item in _shop_items:
-		_create_shop_slot(item)
+		var t = item.get("CustomData", {}).get("Type", "Other")
+		if not groups.has(t):
+			groups[t] = []
+		groups[t].append(item)
+
+	# Display weapons first, then arrows
+	var type_order = allowed_types.duplicate()
+	for type_name in type_order:
+		if not groups.has(type_name):
+			continue
+		_create_type_heading(type_name)
+		for item in groups[type_name]:
+			_create_shop_slot(item)
+
+func _create_type_heading(type_name: String) -> void:
+	var heading = Label.new()
+	heading.text = type_name + "s" if type_name != "Arrow" else "Arrows"
+	heading.add_theme_font_size_override("font_size", 16)
+	heading.add_theme_color_override("font_color", Color(0.9, 0.8, 0.5))
+	heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	item_grid.add_child(heading)
+	var spacer = Control.new()
+	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	item_grid.add_child(spacer)
 
 func _create_shop_slot(item: Dictionary) -> void:
 	var cd = item.get("CustomData", {})
@@ -67,17 +93,10 @@ func _create_shop_slot(item: Dictionary) -> void:
 	var price = int(cd.get("Price", 0))
 	var item_id = item.get("ItemId", "")
 	var item_type = cd.get("Type", "")
-	var min_atk = int(cd.get("MinAtk", 0))
-	var max_atk = int(cd.get("MaxAtk", 0))
-	var speed = int(cd.get("Speed", 0))
 	var amount = int(cd.get("Amount", 1))
 
-	var slot = VBoxContainer.new()
-	slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	slot.add_theme_constant_override("separation", 2)
-
 	var btn = Button.new()
-	btn.custom_minimum_size = Vector2(0, 70)
+	btn.custom_minimum_size = Vector2(0, 48)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	btn.clip_text = true
 
@@ -86,15 +105,13 @@ func _create_shop_slot(item: Dictionary) -> void:
 		btn.modulate = Color(0.6, 0.6, 0.6, 1.0)
 
 	if item_type == "Arrow":
-		var max_stack = amount * 5
-		btn.text = "%s (x%d)\nLv%d ATK+%d x%d\n%dg" % [display_name, amount, level_req, min_atk, max_stack, price]
+		btn.text = "%s (x%d)\nLv%d - %sg" % [display_name, amount, level_req, GameManager.format_gold(price)]
 		btn.pressed.connect(_on_buy_arrow_pressed.bind(item_id, display_name, price, amount))
 	else:
-		btn.text = "%s\nLv%d Atk %d-%d Spd %d\n%dg" % [display_name, level_req, min_atk, max_atk, speed, price]
+		btn.text = "%s\nLv%d - %sg" % [display_name, level_req, GameManager.format_gold(price)]
 		btn.pressed.connect(_on_buy_pressed.bind(item_id, display_name, price))
-	slot.add_child(btn)
 
-	item_grid.add_child(slot)
+	item_grid.add_child(btn)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 	if _purchase_in_flight:

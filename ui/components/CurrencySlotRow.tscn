@@ -8,6 +8,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_kf2xw")
 
 [node name="Icon" type="TextureRect" parent="." unique_id=337174298]

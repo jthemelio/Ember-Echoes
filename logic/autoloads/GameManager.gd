@@ -499,6 +499,21 @@ func _currency_code_to_bid(code: String) -> String:
 		"I6": return "ignis_plus_6"
 	return ""
 
+# ───── Number Formatting ─────
+
+static func format_gold(amount) -> String:
+	## Formats a number with commas and no decimals. e.g. 1234567 → "1,234,567"
+	var n = int(amount)
+	var s = str(n)
+	var result = ""
+	var count = 0
+	for i in range(s.length() - 1, -1, -1):
+		if count > 0 and count % 3 == 0:
+			result = "," + result
+		result = s[i] + result
+		count += 1
+	return result
+
 # ───── Changelog Helpers ─────
 
 func get_latest_changelog_version() -> String:

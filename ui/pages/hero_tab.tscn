@@ -30,6 +30,7 @@ vertical_scroll_mode = 3
 
 [node name="ContentVBox" type="VBoxContainer" parent="ScrollContent" unique_id=1701138636]
 layout_mode = 2
+mouse_filter = 1
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
@@ -39,6 +40,7 @@ mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ProfileCard"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
@@ -46,29 +48,35 @@ theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ProfileCard/Margin"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/separation = 12
 
 [node name="CharName" type="Label" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox" unique_id=1046846194]
 layout_mode = 2
+mouse_filter = 2
 theme_override_font_sizes/font_size = 20
 text = "Character Name"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox" unique_id=207080736]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="LevelLabel" type="Label" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/HBoxContainer" unique_id=1665319057]
 layout_mode = 2
+mouse_filter = 2
 size_flags_horizontal = 3
 text = "Level 1"
 
 [node name="ClassLabel" type="Label" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox/HBoxContainer" unique_id=1240066281]
 layout_mode = 2
+mouse_filter = 2
 size_flags_horizontal = 3
 text = "Novice Marksman"
 horizontal_alignment = 2
 
 [node name="Equipment" type="GridContainer" parent="ScrollContent/ContentVBox/ProfileCard/Margin/VBox" unique_id=877860440]
 layout_mode = 2
+mouse_filter = 1
 size_flags_horizontal = 4
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
@@ -104,6 +112,7 @@ mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/StatsCard"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
@@ -111,6 +120,7 @@ theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/StatsCard/Margin"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/separation = 4
 
 [node name="HPRow" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=167415794 instance=ExtResource("1_g5t2h")]
@@ -134,9 +144,11 @@ stat_name_display = "Spirit"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox" unique_id=2080013914]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="PointsLabel" type="Label" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer" unique_id=943238778]
 layout_mode = 2
+mouse_filter = 2
 size_flags_horizontal = 3
 
 [node name="OkButton" type="Button" parent="ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer" unique_id=5536964]
@@ -150,6 +162,7 @@ mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/CurrenciesCard"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
@@ -157,19 +170,23 @@ theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin"]
 layout_mode = 2
+mouse_filter = 1
 theme_override_constants/separation = 6
 
 [node name="CurrenciesTitle" type="Label" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_font_sizes/font_size = 20
 text = "Currencies"
 
 [node name="CurrenciesDesc" type="Label" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox"]
 layout_mode = 2
+mouse_filter = 2
 text = "Your account-wide currencies and materials"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox" unique_id=1524528321]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Gold" parent="ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer" unique_id=1990436388 groups=["currency_slots"] instance=ExtResource("5_2tbbl")]
 layout_mode = 2

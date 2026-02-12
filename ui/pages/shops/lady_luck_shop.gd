@@ -429,15 +429,7 @@ func _generate_uid() -> String:
 	return "ll_%d_%d" % [Time.get_unix_time_from_system(), randi() % 99999]
 
 func _format_number(n: int) -> String:
-	var s = str(n)
-	var result_str = ""
-	var count = 0
-	for i in range(s.length() - 1, -1, -1):
-		if count > 0 and count % 3 == 0:
-			result_str = "," + result_str
-		result_str = s[i] + result_str
-		count += 1
-	return result_str
+	return GameManager.format_gold(n)
 
 func _currency_display_name(code: String) -> String:
 	match code:
