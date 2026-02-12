@@ -198,6 +198,7 @@ func _refresh_material_palette() -> void:
 
 func _create_material_tile(mat_bid: String, count: int) -> PanelContainer:
 	var tile = PanelContainer.new()
+	tile.mouse_filter = Control.MOUSE_FILTER_PASS
 	tile.custom_minimum_size = Vector2(72, 60)
 
 	var style = StyleBoxFlat.new()

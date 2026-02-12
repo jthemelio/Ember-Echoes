@@ -153,6 +153,7 @@ func _build_monster_entry(mob_name: String, ach_mgr: Node) -> void:
 
 	# Monster panel
 	var panel = PanelContainer.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_PASS
 	content_vbox.add_child(panel)
 
 	var margin = MarginContainer.new()
@@ -296,6 +297,7 @@ func _build_pets_view() -> void:
 		var obtained = ach_mgr.pets_obtained.has(pet_name)
 
 		var pet_panel = PanelContainer.new()
+		pet_panel.mouse_filter = Control.MOUSE_FILTER_PASS
 		pet_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		pet_grid.add_child(pet_panel)
 

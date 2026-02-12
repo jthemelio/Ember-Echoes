@@ -33,6 +33,7 @@ theme_override_constants/separation = 12
 
 [node name="IdleActivityPanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=1501042164]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/IdleActivityPanel" unique_id=1399204926]
 layout_mode = 2
@@ -78,6 +79,7 @@ text = "Mining"
 
 [node name="ZonePanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=523918033]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ZonePanel" unique_id=1957108357]
 layout_mode = 2
@@ -118,6 +120,7 @@ text = "Change Farming Zone"
 
 [node name="CombatPanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=1437069844]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/CombatPanel" unique_id=2119892942]
 layout_mode = 2
@@ -277,6 +280,7 @@ horizontal_alignment = 1
 
 [node name="InventoryPanel" type="PanelContainer" parent="ScrollContent/ContentVBox" unique_id=1006860755]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/InventoryPanel" unique_id=164560253]
 layout_mode = 2

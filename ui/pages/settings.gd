@@ -209,6 +209,7 @@ func _add_updates_card(parent: VBoxContainer) -> void:
 
 func _make_card() -> PanelContainer:
 	var card = PanelContainer.new()
+	card.mouse_filter = Control.MOUSE_FILTER_PASS
 	var style = StyleBoxFlat.new()
 	style.bg_color = CARD_BG
 	style.set_corner_radius_all(CARD_RADIUS)

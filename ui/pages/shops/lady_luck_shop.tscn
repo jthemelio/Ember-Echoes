@@ -30,6 +30,7 @@ theme_override_constants/separation = 12
 
 [node name="HeaderCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/HeaderCard"]
 layout_mode = 2
@@ -54,6 +55,7 @@ autowrap_mode = 2
 
 [node name="BalanceCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/BalanceCard"]
 layout_mode = 2
@@ -107,6 +109,7 @@ horizontal_alignment = 2
 
 [node name="ChestCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ChestCard"]
 layout_mode = 2
@@ -232,6 +235,7 @@ text = "?"
 
 [node name="PaymentCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/PaymentCard"]
 layout_mode = 2
@@ -265,6 +269,7 @@ text = "Use Echo Points (50 ET)"
 [node name="ResultCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 visible = false
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ResultCard"]
 layout_mode = 2

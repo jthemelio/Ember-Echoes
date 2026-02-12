@@ -35,6 +35,7 @@ theme_override_constants/separation = 12
 
 [node name="ProfileCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ProfileCard"]
 layout_mode = 2
@@ -99,6 +100,7 @@ layout_mode = 2
 
 [node name="StatsCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/StatsCard"]
 layout_mode = 2
@@ -144,6 +146,7 @@ text = "Ok"
 
 [node name="CurrenciesCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/CurrenciesCard"]
 layout_mode = 2

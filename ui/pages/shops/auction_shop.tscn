@@ -27,6 +27,7 @@ theme_override_constants/separation = 12
 
 [node name="ShopHeader" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ShopHeader"]
 layout_mode = 2
