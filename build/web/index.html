@@ -15,7 +15,7 @@
 
 		body {
 			color: white;
-			background-color: #2A2118;
+			background-color: #1E1610;
 			overflow: hidden;
 			touch-action: none;
 		}
@@ -23,8 +23,10 @@
 		#canvas {
 			display: block;
 			padding: 0;
-			border: 0;
 			margin: 0 auto;
+			border: 1px solid rgba(255,255,255,0.08);
+			box-shadow: 0 0 40px rgba(0,0,0,0.5);
+			border-radius: 4px;
 		}
 
 			#canvas:focus {
@@ -119,7 +121,7 @@
 			// ── Canvas sizing: phone-frame on desktop, full-screen on mobile ──
 			(function () {
 				var canvas = document.getElementById('canvas');
-				var MAX_W = 500; // max CSS-pixel width on desktop
+				var MAX_W = 900; // max CSS-pixel width on desktop
 				function resize() {
 					var vw = window.innerWidth;
 					var vh = window.innerHeight;

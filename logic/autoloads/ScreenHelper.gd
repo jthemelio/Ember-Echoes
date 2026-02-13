@@ -9,7 +9,7 @@ signal viewport_mode_changed(is_desktop: bool)
 const DESKTOP_THRESHOLD := 900
 
 ## Maximum content width on desktop in virtual pixels (keeps UI from stretching)
-const MAX_CONTENT_WIDTH := 850.0
+const MAX_CONTENT_WIDTH := 620.0
 
 ## UI scale factor applied on desktop (fonts, buttons, spacing)
 ## At 800px content width (vs 450px mobile), we're already ~1.8x wider.
@@ -79,11 +79,11 @@ func _vp_width() -> float:
 		return window_w / sc
 	return 450.0
 
-## Desktop mode disabled — canvas is CSS-constrained to phone aspect ratio,
-## so the engine always sees a mobile-like viewport.  No GDScript responsive
-## hacks needed.
+## Returns true when the virtual viewport is wider than a phone layout.
+## Canvas is CSS-constrained (max 900px), so on desktop the virtual VP
+## is ~667px vs ~450px on mobile.  Threshold of 550 cleanly separates them.
 func is_desktop() -> bool:
-	return false
+	return _vp_width() > 550
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:
