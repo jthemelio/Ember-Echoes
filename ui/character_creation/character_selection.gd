@@ -29,7 +29,7 @@ func _ready() -> void:
 	PlayFabManager.client.api_error.connect(_on_playfab_error)
 
 func load_slots_from_playfab():
-	var label = loading_overlay.get_node_or_null("CenterContainer/Label")
+	var label = _get_loading_label()
 	if label and label.text == "":
 		label.text = "Loading characters..."
 	
@@ -62,7 +62,7 @@ func load_slots_from_playfab():
 func _finish_loading():
 	loading_overlay.hide()
 	# Reset text so the next operation can set it fresh
-	var label = loading_overlay.get_node_or_null("CenterContainer/Label")
+	var label = _get_loading_label()
 	if label:
 		label.text = ""
 # Called by your Toggle Button
@@ -125,8 +125,8 @@ func open_creation_popup(slot_index: int):
 
 func _on_character_data_received(data: Dictionary, slot_index: int):
 	# 1. Update the loading overlay to provide feedback to the user
-	var label = loading_overlay.get_node_or_null("CenterContainer/Label")
-	if label: 
+	var label = _get_loading_label()
+	if label:
 		label.text = "Initializing Character..."
 	loading_overlay.show()
 	
@@ -203,7 +203,7 @@ func _on_character_delete_requested(char_id: String):
 
 # Move your actual deletion logic into this helper function
 func _execute_actual_deletion(char_id: String):
-	var label = loading_overlay.get_node_or_null("CenterContainer/Label")
+	var label = _get_loading_label()
 	if label:
 		label.text = "Deleting Character..."
 	
@@ -226,3 +226,10 @@ func _on_playfab_error(error):
 	print("!!! PLAYFAB ERROR !!!")
 	print("Error: ", error.error)
 	print("Message: ", error.errorMessage)
+
+func _get_loading_label() -> Label:
+	# Try new path first (styled panel), fall back to old path
+	var label = loading_overlay.get_node_or_null("CenterContainer/Panel/Margin/Label")
+	if label == null:
+		label = loading_overlay.get_node_or_null("CenterContainer/Label")
+	return label

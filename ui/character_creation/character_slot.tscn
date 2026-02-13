@@ -2,42 +2,91 @@
 
 [ext_resource type="Script" uid="uid://c53gn3d2icns8" path="res://ui/character_creation/character_slot.gd" id="1_yjk7r"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vrjln"]
-bg_color = Color(0.6711447, 0.583947, 0.4895562, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6649935, 0.23841089, 0.06824615, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_slot"]
+bg_color = Color(0.07, 0.07, 0.09, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 0.6)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-shadow_color = Color(0.7179772, 0.18638411, 0.14755273, 0.6)
-shadow_size = 5
+content_margin_left = 12
+content_margin_top = 10
+content_margin_right = 12
+content_margin_bottom = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.10, 0.10, 0.13, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12
+content_margin_top = 10
+content_margin_right = 12
+content_margin_bottom = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+bg_color = Color(0.12, 0.11, 0.08, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 12
+content_margin_top = 10
+content_margin_right = 12
+content_margin_bottom = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_delete"]
+bg_color = Color(0.5, 0.12, 0.12, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_delete_hover"]
+bg_color = Color(0.7, 0.15, 0.15, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="CharacterSlot" type="Control" unique_id=1676626075]
-custom_minimum_size = Vector2(300, 100)
+custom_minimum_size = Vector2(280, 80)
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_yjk7r")
 
 [node name="Button" type="Button" parent="." unique_id=191043415]
-custom_minimum_size = Vector2(300, 100)
+custom_minimum_size = Vector2(280, 80)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -50.0
-offset_right = 150.0
-offset_bottom = 50.0
+offset_left = -140.0
+offset_top = -40.0
+offset_right = 140.0
+offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_vrjln")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_vrjln")
+theme_override_styles/normal = SubResource("StyleBoxFlat_slot")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Button" unique_id=944403147]
 layout_mode = 1
@@ -46,10 +95,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 12
 
 [node name="TextureRect" type="TextureRect" parent="Button/HBoxContainer" unique_id=633043536]
-custom_minimum_size = Vector2(60, 60)
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -60,25 +109,38 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
+theme_override_constants/separation = 4
 
 [node name="NameLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer" unique_id=479491673]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.93, 0.85, 1)
 horizontal_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Button/HBoxContainer/VBoxContainer" unique_id=1043086573]
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="LevelLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1722976274]
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 
 [node name="ClassLabel" type="Label" parent="Button/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=995262491]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.75, 0.65, 0.4, 1)
 horizontal_alignment = 2
 
 [node name="DeleteButton" type="Button" parent="Button/HBoxContainer" unique_id=813646487]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(1, 0.6, 0.6, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_delete")
+theme_override_styles/hover = SubResource("StyleBoxFlat_delete_hover")
 text = "X"
 
 [node name="CreateLabel" type="Label" parent="Button" unique_id=274764347]
@@ -88,6 +150,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
 text = "Create new character"
 horizontal_alignment = 1
 vertical_alignment = 1

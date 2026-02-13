@@ -2,53 +2,91 @@
 
 [ext_resource type="Script" uid="uid://ci6fl7vxmee0u" path="res://ui/character_creation/character_creation_popup.gd" id="1_mhjcc"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mhjcc"]
-bg_color = Color(0, 0, 0, 0.84313726)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.05, 0.05, 0.07, 0.92)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_of3vp"]
-bg_color = Color(0, 0, 0, 0.84313726)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_input"]
+bg_color = Color(0.12, 0.12, 0.14, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.45, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10
+content_margin_right = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i5n5e"]
-bg_color = Color(0, 0, 0, 0.84313726)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_class"]
+bg_color = Color(0.08, 0.08, 0.10, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 0.4)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12
+content_margin_top = 10
+content_margin_right = 12
+content_margin_bottom = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tl3x3"]
-bg_color = Color(0, 0, 0, 0.84313726)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_class_hover"]
+bg_color = Color(0.12, 0.11, 0.08, 0.95)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12
+content_margin_top = 10
+content_margin_right = 12
+content_margin_bottom = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_class_pressed"]
+bg_color = Color(0.15, 0.13, 0.06, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12
+content_margin_top = 10
+content_margin_right = 12
+content_margin_bottom = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cancel"]
+bg_color = Color(0.18, 0.18, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.5, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="CharacterCreationPopup" type="Control" unique_id=944728642]
 layout_mode = 3
@@ -66,7 +104,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(1, 1, 1, 0.5176471)
+color = Color(0, 0, 0, 0.6)
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=681745285]
 layout_mode = 1
@@ -77,60 +115,185 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="CenterContainer" unique_id=1671213717]
-custom_minimum_size = Vector2(350, 400)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
 [node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer" unique_id=1285658908]
 layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer" unique_id=714639618]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 14
 
 [node name="Label" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=934613278]
 layout_mode = 2
-text = "Create new character"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
+text = "Create Character"
 horizontal_alignment = 1
 
 [node name="InsertName" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=937870967]
-custom_minimum_size = Vector2(150, 40)
+custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
+theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
+theme_override_constants/caret_width = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_input")
+placeholder_text = "Character Name"
 alignment = 1
+caret_blink = true
 
-[node name="Marksman" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=726013934]
-custom_minimum_size = Vector2(150, 40)
+[node name="ClassLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_mhjcc")
-text = "Marksman"
-
-[node name="Twin-Soul" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1081925869]
-custom_minimum_size = Vector2(150, 40)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_of3vp")
-text = "Twin-Soul"
-
-[node name="Wuxia" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2101523104]
-custom_minimum_size = Vector2(150, 40)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_i5n5e")
-text = "Wuxia"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Choose a class"
+horizontal_alignment = 1
 
 [node name="Juggernaut" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1808440773]
-custom_minimum_size = Vector2(150, 40)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_tl3x3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_class")
+theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
+text = ""
+alignment = 0
+
+[node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Juggernaut"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="ClassName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Juggernaut/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
 text = "Juggernaut"
 
-[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman" to="." method="_on_marksman_pressed"]
-[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul" to="." method="_on_twin_soul_pressed"]
-[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia" to="." method="_on_wuxia_pressed"]
+[node name="ClassDesc" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Juggernaut/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Unyielding frontline defender. Absorbs punishment with unmatched resilience."
+autowrap_mode = 2
+
+[node name="Wuxia" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2101523104]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_class")
+theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
+text = ""
+alignment = 0
+
+[node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="ClassName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
+text = "Wuxia"
+
+[node name="ClassDesc" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Arcane caster who commands elemental forces. At level 40, choose the path of Ember Lord or Spirit Mender."
+autowrap_mode = 2
+
+[node name="Twin-Soul" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1081925869]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_class")
+theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
+text = ""
+alignment = 0
+
+[node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="ClassName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
+text = "Twin-Soul"
+
+[node name="ClassDesc" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Dual-wielding warrior who strikes with relentless fury, overwhelming foes with rapid consecutive blows."
+autowrap_mode = 2
+
+[node name="Marksman" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=726013934]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_class")
+theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
+text = ""
+alignment = 0
+
+[node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="ClassName" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
+text = "Marksman"
+
+[node name="ClassDesc" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+text = "Precision bow specialist who deals devastating damage from afar with lethal accuracy."
+autowrap_mode = 2
+
+[node name="CancelBtn" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_cancel")
+text = "Cancel"
+
 [connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Juggernaut" to="." method="_on_juggernaut_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia" to="." method="_on_wuxia_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul" to="." method="_on_twin_soul_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman" to="." method="_on_marksman_pressed"]
+[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/CancelBtn" to="." method="_on_cancel_pressed"]

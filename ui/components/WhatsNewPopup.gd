@@ -1,10 +1,10 @@
 # WhatsNewPopup.gd — Overlay popup that displays unseen changelog entries.
 # Instantiate, call show_unseen_entries(), and add to the scene tree.
-extends PanelContainer
+extends Control
 
-@onready var title_label: Label = $Margin/VBox/TitleLabel
-@onready var content_vbox: VBoxContainer = $Margin/VBox/ScrollArea/ContentVBox
-@onready var got_it_btn: Button = $Margin/VBox/GotItBtn
+@onready var title_label: Label = $CenterContainer/Card/Margin/VBox/TitleLabel
+@onready var content_vbox: VBoxContainer = $CenterContainer/Card/Margin/VBox/ScrollArea/ContentVBox
+@onready var got_it_btn: Button = $CenterContainer/Card/Margin/VBox/GotItBtn
 
 const VERSION_COLOR := Color(0.4, 0.8, 1.0)
 const TITLE_COLOR := Color(1.0, 0.9, 0.4)

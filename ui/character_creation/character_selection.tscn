@@ -1,8 +1,32 @@
 [gd_scene format=3 uid="uid://cutevgils2vum"]
 
 [ext_resource type="Script" uid="uid://u6cc56s513nc" path="res://ui/character_creation/character_selection.gd" id="1_c3n0d"]
-[ext_resource type="Texture2D" uid="uid://c0ehtjk8ldhmu" path="res://assets/textures/MobileEntryBg.png" id="1_nu1bw"]
+[ext_resource type="Texture2D" uid="uid://4y2h0afsrans" path="res://assets/textures/MobileUserBg.png" id="1_bg"]
 [ext_resource type="PackedScene" uid="uid://by5ijd14vgmpy" path="res://ui/character_creation/character_slot.tscn" id="2_2iywv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.05, 0.05, 0.07, 0.82)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_loading"]
+bg_color = Color(0.03, 0.03, 0.05, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.9529412, 0.78431374, 0.28627452, 0.5)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="CharacterSelection" type="Control" unique_id=1093166137]
 layout_mode = 3
@@ -14,18 +38,18 @@ grow_vertical = 2
 script = ExtResource("1_c3n0d")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1442942906]
-modulate = Color(0.32915837, 0.3291584, 0.3291584, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_nu1bw")
+texture = ExtResource("1_bg")
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=656559101]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,43 +73,64 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
+mouse_filter = 2
 
-[node name="GridContainer" type="GridContainer" parent="CenterContainer" unique_id=232533621]
-unique_name_in_owner = true
+[node name="CardCenter" type="CenterContainer" parent="CenterContainer"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -350.0
-offset_right = 150.0
-offset_bottom = 350.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="CenterContainer/CardCenter"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/CardCenter/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/CardCenter/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/CardCenter/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
+text = "Select Character"
+horizontal_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/CardCenter/Card/Margin/VBox" unique_id=232533621]
+unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/h_separation = 0
-theme_override_constants/v_separation = 20
+theme_override_constants/v_separation = 10
 
-[node name="CharacterSlot" parent="CenterContainer/GridContainer" unique_id=1676626075 instance=ExtResource("2_2iywv")]
+[node name="CharacterSlot" parent="CenterContainer/CardCenter/Card/Margin/VBox/GridContainer" unique_id=1676626075 instance=ExtResource("2_2iywv")]
 layout_mode = 2
 
-[node name="CharacterSlot2" parent="CenterContainer/GridContainer" unique_id=584753920 instance=ExtResource("2_2iywv")]
+[node name="CharacterSlot2" parent="CenterContainer/CardCenter/Card/Margin/VBox/GridContainer" unique_id=584753920 instance=ExtResource("2_2iywv")]
 layout_mode = 2
 
-[node name="CharacterSlot3" parent="CenterContainer/GridContainer" unique_id=1773627401 instance=ExtResource("2_2iywv")]
+[node name="CharacterSlot3" parent="CenterContainer/CardCenter/Card/Margin/VBox/GridContainer" unique_id=1773627401 instance=ExtResource("2_2iywv")]
 layout_mode = 2
 
-[node name="CharacterSlot4" parent="CenterContainer/GridContainer" unique_id=645159390 instance=ExtResource("2_2iywv")]
+[node name="CharacterSlot4" parent="CenterContainer/CardCenter/Card/Margin/VBox/GridContainer" unique_id=645159390 instance=ExtResource("2_2iywv")]
 layout_mode = 2
 
-[node name="CharacterSlot5" parent="CenterContainer/GridContainer" unique_id=2016725876 instance=ExtResource("2_2iywv")]
+[node name="CharacterSlot5" parent="CenterContainer/CardCenter/Card/Margin/VBox/GridContainer" unique_id=2016725876 instance=ExtResource("2_2iywv")]
 layout_mode = 2
 
-[node name="CharacterSlot6" parent="CenterContainer/GridContainer" unique_id=1987746524 instance=ExtResource("2_2iywv")]
+[node name="CharacterSlot6" parent="CenterContainer/CardCenter/Card/Margin/VBox/GridContainer" unique_id=1987746524 instance=ExtResource("2_2iywv")]
 layout_mode = 2
 
 [node name="LoadingOverlay" type="ColorRect" parent="." unique_id=1779962938]
@@ -97,7 +142,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.7058824)
+color = Color(0, 0, 0, 0.6)
 
 [node name="CenterContainer" type="CenterContainer" parent="LoadingOverlay" unique_id=1231316737]
 layout_mode = 1
@@ -107,7 +152,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="LoadingOverlay/CenterContainer" unique_id=192572268]
+[node name="Panel" type="PanelContainer" parent="LoadingOverlay/CenterContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_loading")
+
+[node name="Margin" type="MarginContainer" parent="LoadingOverlay/CenterContainer/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
+
+[node name="Label" type="Label" parent="LoadingOverlay/CenterContainer/Panel/Margin" unique_id=192572268]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.88, 0.65, 1)
+theme_override_font_sizes/font_size = 14
 text = "Loading characters..."
+horizontal_alignment = 1

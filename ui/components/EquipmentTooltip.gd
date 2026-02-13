@@ -140,13 +140,13 @@ const TOOLTIP_BORDER_COLORS = {
 }
 
 func _update_ui(data: ItemData):
-	# 1. Setup Quality Colors (Matching your InventorySlot system)
+	# 1. Setup Quality Colors (matching border tier palette)
 	var quality_colors = {
-		"Normal": "#ffffff", 
-		"Tempered": "#00ff00", 
-		"Infused": "#0080ff", 
-		"Brilliant": "#a033cc", 
-		"Radiant": "#ffcc00"
+		"Normal": "#ffffff",
+		"Tempered": "#e8c99b",
+		"Infused": "#c8d0dc",
+		"Brilliant": "#a8d8f0",
+		"Radiant": "#f0b87a"
 	}
 	var q_color = quality_colors.get(data.quality.capitalize(), "#ffffff")
 	
