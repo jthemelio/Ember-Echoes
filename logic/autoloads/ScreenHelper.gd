@@ -9,7 +9,7 @@ signal viewport_mode_changed(is_desktop: bool)
 const DESKTOP_THRESHOLD := 900
 
 ## Maximum content width on desktop in virtual pixels (keeps UI from stretching)
-const MAX_CONTENT_WIDTH := 800.0
+const MAX_CONTENT_WIDTH := 850.0
 
 ## UI scale factor applied on desktop (fonts, buttons, spacing)
 ## At 800px content width (vs 450px mobile), we're already ~1.8x wider.
@@ -54,12 +54,9 @@ func _vp_width() -> float:
 			return window_w / sc
 	return 450.0  # fallback to base project width
 
-## Returns true when the window is wide enough to be a desktop browser
+## Returns true when the virtual viewport is wide enough for desktop layout
 func is_desktop() -> bool:
-	# Desktop layout temporarily disabled — forces mobile layout everywhere.
-	# Re-enable by uncommenting the line below when ready to revisit desktop support.
-	# return _vp_width() > DESKTOP_THRESHOLD
-	return false
+	return _vp_width() > DESKTOP_THRESHOLD
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:
