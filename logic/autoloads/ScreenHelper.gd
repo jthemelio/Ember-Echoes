@@ -25,10 +25,11 @@ func _ready() -> void:
 
 func _initial_check() -> void:
 	_was_desktop = is_desktop()
-	var phys_w = DisplayServer.window_get_size().x
-	var virt_w = _vp_width()
-	print("ScreenHelper: physical_w=%d  virtual_w=%d  threshold=%d  is_desktop=%s  side_margin=%.0f" % [
-		phys_w, int(virt_w), DESKTOP_THRESHOLD, str(_was_desktop), get_side_margin()])
+	var ds = DisplayServer.window_get_size()
+	var root = get_tree().root
+	var cs = root.content_scale_size if root else Vector2i.ZERO
+	print("ScreenHelper INIT: DS=%s  root.size=%s  content_scale=%s  vp_w=%.0f  is_desktop=%s" % [
+		str(ds), str(root.size) if root else "null", str(cs), _vp_width(), str(_was_desktop)])
 
 func _on_viewport_resized() -> void:
 	var now_desktop = is_desktop()
@@ -36,27 +37,53 @@ func _on_viewport_resized() -> void:
 		_was_desktop = now_desktop
 		viewport_mode_changed.emit(now_desktop)
 
+## Returns the physical window/canvas width using DisplayServer (most reliable).
+func _window_width() -> float:
+	var ds = DisplayServer.window_get_size()
+	if ds.x > 0:
+		return float(ds.x)
+	var root = get_tree().root if get_tree() else null
+	if root and root.size.x > 0:
+		return float(root.size.x)
+	return 450.0
+
+## Returns the physical window/canvas height using DisplayServer.
+func _window_height() -> float:
+	var ds = DisplayServer.window_get_size()
+	if ds.y > 0:
+		return float(ds.y)
+	var root = get_tree().root if get_tree() else null
+	if root and root.size.y > 0:
+		return float(root.size.y)
+	return 800.0
+
 ## Returns the virtual viewport width (UI / Control coordinate system).
 ## With canvas_items + expand stretch, the virtual VP is wider or taller
-## than the base content_scale_size.  root.size is the *canvas* size
-## (physical pixels on web), which differs from the virtual VP that
-## Controls actually use for layout.  We compute the virtual width here.
+## than the base content_scale_size (450x800 from project settings).
+## We compute it from the physical window size and stretch formula.
 func _vp_width() -> float:
+	var window_w := _window_width()
+	var window_h := _window_height()
+	# Base viewport from project settings (fallback if content_scale_size is zero)
+	var base_w := 450.0
+	var base_h := 800.0
 	var root = get_tree().root if get_tree() else null
-	if not root:
-		return 450.0
-	var window_w := float(root.size.x)
-	var window_h := float(root.size.y)
-	var base := root.content_scale_size          # e.g. Vector2i(450, 800)
-	if base.x > 0 and base.y > 0:
-		var sc := minf(window_w / base.x, window_h / base.y)
-		if sc > 0.0:
-			return window_w / sc
-	return 450.0  # fallback to base project width
+	if root:
+		var cs := root.content_scale_size
+		if cs.x > 0:
+			base_w = float(cs.x)
+		if cs.y > 0:
+			base_h = float(cs.y)
+	var sc := minf(window_w / base_w, window_h / base_h)
+	if sc > 0.0:
+		return window_w / sc
+	return 450.0
 
-## Returns true when the virtual viewport is wide enough for desktop layout
+## Returns true when the physical window is wide enough for desktop layout.
+## Uses the actual window width (not virtual VP) so detection is intuitive:
+## a wide browser window = desktop, regardless of aspect ratio.
 func is_desktop() -> bool:
-	return _vp_width() > DESKTOP_THRESHOLD
+	return _window_width() > DESKTOP_THRESHOLD
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:
