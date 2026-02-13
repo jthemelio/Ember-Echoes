@@ -24,11 +24,7 @@
 			display: block;
 			padding: 0;
 			border: 0;
-			/* Full height always, capped width on desktop, centered */
-			height: 100vh !important;
-			width: 100vw !important;
-			max-width: 500px !important;
-			margin: 0 auto !important;
+			margin: 0 auto;
 		}
 
 			#canvas:focus {
@@ -117,6 +113,28 @@
 
 		<script src="$GODOT_URL"></script>
 		<script>
+			// ── Canvas sizing: phone-frame on desktop, full-screen on mobile ──
+			(function () {
+				var canvas = document.getElementById('canvas');
+				var MAX_W = 500; // max CSS-pixel width on desktop
+				function resize() {
+					var vw = window.innerWidth;
+					var vh = window.innerHeight;
+					var dpr = window.devicePixelRatio || 1;
+					// Display width: full viewport on mobile, capped on desktop
+					var cssW = Math.min(vw, MAX_W);
+					var cssH = vh;
+					// Set CSS display size
+					canvas.style.width = cssW + 'px';
+					canvas.style.height = cssH + 'px';
+					// Set internal rendering resolution (what Godot sees)
+					canvas.width = Math.round(cssW * dpr);
+					canvas.height = Math.round(cssH * dpr);
+				}
+				resize();
+				window.addEventListener('resize', resize);
+			})();
+
 			const GODOT_CONFIG = $GODOT_CONFIG;
 			const GODOT_THREADS_ENABLED = $GODOT_THREADS_ENABLED;
 			const engine = new Engine(GODOT_CONFIG);
