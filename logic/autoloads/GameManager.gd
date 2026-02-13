@@ -528,7 +528,8 @@ func _currency_code_to_bid(code: String) -> String:
 # ───── Number Formatting ─────
 
 static func format_gold(amount) -> String:
-	## Formats a number with short suffixes. e.g. 1500 → "1.5k", 2500000 → "2.5M"
+	## Formats a number with k suffixes. e.g. 1500 → "1.5k", 2500000 → "2.5kk"
+	## Max cash: 999,999,999 (999.9kk)
 	var n = int(amount)
 	if n < 0:
 		return "-" + format_gold(-n)
@@ -539,16 +540,11 @@ static func format_gold(amount) -> String:
 		if k == int(k):
 			return "%dk" % int(k)
 		return "%.1fk" % k
-	elif n < 1_000_000_000:
-		var m = n / 1_000_000.0
-		if m == int(m):
-			return "%dM" % int(m)
-		return "%.1fM" % m
 	else:
-		var b = n / 1_000_000_000.0
-		if b == int(b):
-			return "%dB" % int(b)
-		return "%.1fB" % b
+		var kk = n / 1_000_000.0
+		if kk == int(kk):
+			return "%dkk" % int(kk)
+		return "%.1fkk" % kk
 
 # ───── Changelog Helpers ─────
 
