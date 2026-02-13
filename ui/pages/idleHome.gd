@@ -77,22 +77,22 @@ func _on_window_resized() -> void:
 func _adapt_layout() -> void:
 	# Constrain page content to MAX_CONTENT_WIDTH when the viewport is wide.
 	# This keeps the sandy background full-width while centering white cards.
-	# Works independently of is_desktop() so it applies on any wide viewport.
+	# IMPORTANT: use the *virtual* viewport width (ScreenHelper._vp_width()),
+	# NOT root.size.x.  root.size is the canvas/window size in physical pixels,
+	# while margins are applied in virtual-VP coordinates (after stretch scaling).
 	if not _page_margin:
 		return
 
-	var vp_w = get_tree().root.size.x if get_tree() and get_tree().root else 450.0
+	var vp_w = ScreenHelper._vp_width()   # virtual VP width (Control coordinates)
 	var max_w = ScreenHelper.MAX_CONTENT_WIDTH
 
 	if vp_w > max_w:
 		var margin = int((vp_w - max_w) / 2.0)
 		_page_margin.add_theme_constant_override("margin_left", margin)
 		_page_margin.add_theme_constant_override("margin_right", margin)
-		print("_adapt_layout: vp_w=%.0f  max_w=%.0f  margin=%d  content=%.0f" % [vp_w, max_w, margin, vp_w - margin * 2])
 	else:
 		_page_margin.add_theme_constant_override("margin_left", 0)
 		_page_margin.add_theme_constant_override("margin_right", 0)
-		print("_adapt_layout: vp_w=%.0f (mobile, no margins)" % vp_w)
 
 # ═══════════════════════════════════════════════════
 #                  GLOBAL THEME

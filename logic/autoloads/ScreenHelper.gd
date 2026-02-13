@@ -36,10 +36,22 @@ func _on_viewport_resized() -> void:
 		_was_desktop = now_desktop
 		viewport_mode_changed.emit(now_desktop)
 
-## Returns the virtual viewport width (UI coordinate system)
+## Returns the virtual viewport width (UI / Control coordinate system).
+## With canvas_items + expand stretch, the virtual VP is wider or taller
+## than the base content_scale_size.  root.size is the *canvas* size
+## (physical pixels on web), which differs from the virtual VP that
+## Controls actually use for layout.  We compute the virtual width here.
 func _vp_width() -> float:
-	if get_tree() and get_tree().root:
-		return get_tree().root.size.x
+	var root = get_tree().root if get_tree() else null
+	if not root:
+		return 450.0
+	var window_w := float(root.size.x)
+	var window_h := float(root.size.y)
+	var base := root.content_scale_size          # e.g. Vector2i(450, 800)
+	if base.x > 0 and base.y > 0:
+		var sc := minf(window_w / base.x, window_h / base.y)
+		if sc > 0.0:
+			return window_w / sc
 	return 450.0  # fallback to base project width
 
 ## Returns true when the window is wide enough to be a desktop browser

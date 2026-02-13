@@ -25,6 +25,10 @@
 				margin: 0;
 				padding: 0;
 				border: 0;
+				/* Safety: ensure canvas display never exceeds viewport even if
+				   Godot sets inline width/height from devicePixelRatio */
+				width: 100vw !important;
+				height: 100vh !important;
 			}
 
 			#canvas:focus {
@@ -110,48 +114,6 @@
 			<progress id="status-progress"></progress>
 			<div id="status-notice"></div>
 		</div>
-
-		<script>
-			/**
-			 * Custom canvas resize handler.
-			 * With canvas_resize_policy=0 (None), Godot does NOT resize the canvas.
-			 * We handle it ourselves so the canvas always fills the viewport without
-			 * overflow, and Godot's stretch mode (canvas_items + expand) adapts the
-			 * virtual viewport to whatever size we set here.
-			 */
-			(function () {
-				var canvas = document.getElementById('canvas');
-
-				function resizeCanvas() {
-					// Use CSS pixels for display size (never overflows the viewport)
-					var w = window.innerWidth;
-					var h = window.innerHeight;
-
-					// Set the canvas rendering resolution.
-					// Multiply by devicePixelRatio for crisp rendering on high-DPI.
-					var dpr = window.devicePixelRatio || 1;
-					canvas.width = Math.round(w * dpr);
-					canvas.height = Math.round(h * dpr);
-
-					// Set the CSS display size to exactly fill the viewport
-					canvas.style.width = w + 'px';
-					canvas.style.height = h + 'px';
-				}
-
-				// Size on initial load
-				resizeCanvas();
-
-				// Re-size whenever the browser window changes
-				window.addEventListener('resize', resizeCanvas);
-
-				// Also handle orientation changes on mobile
-				if (screen.orientation) {
-					screen.orientation.addEventListener('change', function () {
-						setTimeout(resizeCanvas, 100);
-					});
-				}
-			}());
-		</script>
 
 		<script src="$GODOT_URL"></script>
 		<script>
