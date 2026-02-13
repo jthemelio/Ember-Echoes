@@ -85,12 +85,14 @@ func _adapt_layout() -> void:
 	var max_w = ScreenHelper.MAX_CONTENT_WIDTH
 
 	if vp_w > max_w:
-		var margin = (vp_w - max_w) / 2.0
-		_page_margin.add_theme_constant_override("margin_left", int(margin))
-		_page_margin.add_theme_constant_override("margin_right", int(margin))
+		var margin = int((vp_w - max_w) / 2.0)
+		_page_margin.add_theme_constant_override("margin_left", margin)
+		_page_margin.add_theme_constant_override("margin_right", margin)
+		print("_adapt_layout: vp_w=%.0f  max_w=%.0f  margin=%d  content=%.0f" % [vp_w, max_w, margin, vp_w - margin * 2])
 	else:
 		_page_margin.add_theme_constant_override("margin_left", 0)
 		_page_margin.add_theme_constant_override("margin_right", 0)
+		print("_adapt_layout: vp_w=%.0f (mobile, no margins)" % vp_w)
 
 # ═══════════════════════════════════════════════════
 #                  GLOBAL THEME
