@@ -13,23 +13,26 @@
 				height: 100%;
 			}
 
-			body {
-				color: white;
-				background-color: black;
-				overflow: hidden;
-				touch-action: none;
-			}
+		body {
+			color: white;
+			background-color: #2A2118;
+			overflow: hidden;
+			touch-action: none;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
-			#canvas {
-				display: block;
-				margin: 0;
-				padding: 0;
-				border: 0;
-				/* Safety: ensure canvas display never exceeds viewport even if
-				   Godot sets inline width/height from devicePixelRatio */
-				width: 100vw !important;
-				height: 100vh !important;
-			}
+		#canvas {
+			display: block;
+			margin: 0 auto;
+			padding: 0;
+			border: 0;
+			height: 100vh !important;
+			/* On mobile the width is the full screen; on desktop cap at phone-like ratio */
+			width: 100vw;
+			max-width: min(100vw, calc(100vh * 9 / 16));
+		}
 
 			#canvas:focus {
 				outline: none;

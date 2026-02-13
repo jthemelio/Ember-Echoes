@@ -79,11 +79,11 @@ func _vp_width() -> float:
 		return window_w / sc
 	return 450.0
 
-## Returns true when the physical window is wide enough for desktop layout.
-## Uses the actual window width (not virtual VP) so detection is intuitive:
-## a wide browser window = desktop, regardless of aspect ratio.
+## Desktop mode disabled — canvas is CSS-constrained to phone aspect ratio,
+## so the engine always sees a mobile-like viewport.  No GDScript responsive
+## hacks needed.
 func is_desktop() -> bool:
-	return _window_width() > DESKTOP_THRESHOLD
+	return false
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:
