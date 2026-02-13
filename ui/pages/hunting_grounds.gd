@@ -422,6 +422,8 @@ func _on_filter_pressed(quality: String) -> void:
 	if bag_grid:
 		bag_grid.quality_filter = quality
 		bag_grid.refresh_grid()
+		# Highlight matching items when a quality filter is active
+		_apply_filter_highlights(quality)
 	# Update visual state of filter buttons
 	filter_all_btn.disabled = (quality == "")
 	filter_normal_btn.disabled = (quality == "Normal")
@@ -429,6 +431,20 @@ func _on_filter_pressed(quality: String) -> void:
 	filter_infused_btn.disabled = (quality == "Infused")
 	filter_brilliant_btn.disabled = (quality == "Brilliant")
 	filter_radiant_btn.disabled = (quality == "Radiant")
+
+func _apply_filter_highlights(quality: String) -> void:
+	if not bag_grid:
+		return
+	for slot in bag_grid.get_children():
+		if quality == "" or slot.item_data == null:
+			# No filter or empty slot: reset to normal
+			slot.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		elif slot.item_data.quality == quality:
+			# Matching quality: highlight like select mode
+			slot.modulate = Color(1.0, 1.0, 0.5, 1.0)
+		else:
+			# Non-matching: dim it
+			slot.modulate = Color(0.5, 0.5, 0.5, 0.6)
 
 # ─── Select / Sell Mode ───
 

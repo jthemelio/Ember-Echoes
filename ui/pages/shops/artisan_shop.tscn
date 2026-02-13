@@ -36,13 +36,13 @@ mouse_filter = 1
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/Header"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_bottom = 16
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/Header/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 
 [node name="TitleLabel" type="Label" parent="ScrollContent/ContentVBox/Header/Margin/VBox"]
 layout_mode = 2
@@ -67,7 +67,7 @@ theme_override_constants/margin_bottom = 12
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ItemPickerPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="PickerLabel" type="Label" parent="ScrollContent/ContentVBox/ItemPickerPanel/Margin/VBox"]
 layout_mode = 2
@@ -188,7 +188,7 @@ theme_override_constants/margin_bottom = 12
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/MaterialPalette/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="PaletteLabel" type="Label" parent="ScrollContent/ContentVBox/MaterialPalette/Margin/VBox"]
 layout_mode = 2

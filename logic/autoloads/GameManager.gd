@@ -528,17 +528,27 @@ func _currency_code_to_bid(code: String) -> String:
 # ───── Number Formatting ─────
 
 static func format_gold(amount) -> String:
-	## Formats a number with commas and no decimals. e.g. 1234567 → "1,234,567"
+	## Formats a number with short suffixes. e.g. 1500 → "1.5k", 2500000 → "2.5M"
 	var n = int(amount)
-	var s = str(n)
-	var result = ""
-	var count = 0
-	for i in range(s.length() - 1, -1, -1):
-		if count > 0 and count % 3 == 0:
-			result = "," + result
-		result = s[i] + result
-		count += 1
-	return result
+	if n < 0:
+		return "-" + format_gold(-n)
+	if n < 1000:
+		return str(n)
+	elif n < 1_000_000:
+		var k = n / 1000.0
+		if k == int(k):
+			return "%dk" % int(k)
+		return "%.1fk" % k
+	elif n < 1_000_000_000:
+		var m = n / 1_000_000.0
+		if m == int(m):
+			return "%dM" % int(m)
+		return "%.1fM" % m
+	else:
+		var b = n / 1_000_000_000.0
+		if b == int(b):
+			return "%dB" % int(b)
+		return "%.1fB" % b
 
 # ───── Changelog Helpers ─────
 

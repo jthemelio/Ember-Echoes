@@ -436,10 +436,12 @@ func _player_attack() -> void:
 		_player_min_atk + bonus_min, _player_max_atk + bonus_max, _player_p_atk,
 		mob.get("defense", 0), 0
 	)
+	# Cap effective damage at mob's remaining HP (no overkill XP)
+	var effective_damage = min(player_damage, mob["hp"])
 	mob["hp"] = max(0, mob["hp"] - player_damage)
 
-	# Award XP for damage dealt (1 XP per DAMAGE_XP_DIVISOR damage)
-	var damage_xp = int(player_damage / DAMAGE_XP_DIVISOR)
+	# Award XP for effective damage dealt (1 XP per DAMAGE_XP_DIVISOR damage)
+	var damage_xp = int(effective_damage / DAMAGE_XP_DIVISOR)
 	if damage_xp > 0:
 		current_xp += damage_xp
 		_check_level_up()
