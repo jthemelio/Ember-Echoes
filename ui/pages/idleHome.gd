@@ -5,23 +5,24 @@ const WhatsNewPopupScene = preload("res://ui/components/WhatsNewPopup.tscn")
 
 # Reference the actual nodes in your PageContainer (tabs handle own padding/scroll)
 @onready var main_layout: VBoxContainer = $MainLayout
-@onready var page_container = $MainLayout/PageContainer
-@onready var hero_tab = $MainLayout/PageContainer/HeroTab
-@onready var hunting_tab = $MainLayout/PageContainer/HuntingTab
+@onready var _page_margin: MarginContainer = $MainLayout/PageMargin
+@onready var page_container = $MainLayout/PageMargin/PageContainer
+@onready var hero_tab = $MainLayout/PageMargin/PageContainer/HeroTab
+@onready var hunting_tab = $MainLayout/PageMargin/PageContainer/HuntingTab
 
 # Shop tabs
-@onready var armorer_tab = $MainLayout/PageContainer/ArmorerTab
-@onready var weaponsmith_tab = $MainLayout/PageContainer/WeaponsmithTab
-@onready var consumables_tab = $MainLayout/PageContainer/ConsumablesTab
-@onready var artisan_tab = $MainLayout/PageContainer/ArtisanTab
-@onready var auction_tab = $MainLayout/PageContainer/AuctionTab
-@onready var lady_luck_tab = $MainLayout/PageContainer/LadyLuckTab
+@onready var armorer_tab = $MainLayout/PageMargin/PageContainer/ArmorerTab
+@onready var weaponsmith_tab = $MainLayout/PageMargin/PageContainer/WeaponsmithTab
+@onready var consumables_tab = $MainLayout/PageMargin/PageContainer/ConsumablesTab
+@onready var artisan_tab = $MainLayout/PageMargin/PageContainer/ArtisanTab
+@onready var auction_tab = $MainLayout/PageMargin/PageContainer/AuctionTab
+@onready var lady_luck_tab = $MainLayout/PageMargin/PageContainer/LadyLuckTab
 
 # Achievements tab
-@onready var achievements_tab = $MainLayout/PageContainer/AchievementsTab
+@onready var achievements_tab = $MainLayout/PageMargin/PageContainer/AchievementsTab
 
 # Settings tab
-@onready var settings_tab = $MainLayout/PageContainer/SettingsTab
+@onready var settings_tab = $MainLayout/PageMargin/PageContainer/SettingsTab
 
 # Shop popup
 @onready var shop_popup: PanelContainer = $ShopPopup
@@ -74,18 +75,21 @@ func _on_window_resized() -> void:
 	_adapt_layout()
 
 func _adapt_layout() -> void:
-	# Page tabs: constrain to MAX_CONTENT_WIDTH and center on desktop.
-	# Background, NavBar, and overall layout stay full-width.
-	var max_w := ScreenHelper.MAX_CONTENT_WIDTH
+	# Constrain page content to MAX_CONTENT_WIDTH on desktop by wrapping
+	# the PageContainer in side padding via its MarginContainer wrapper.
+	# This is more reliable across platforms (especially web exports)
+	# than SIZE_SHRINK_CENTER on each child.
+	if not _page_margin:
+		return
 
-	if ScreenHelper.is_desktop():
-		for child in page_container.get_children():
-			child.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-			child.custom_minimum_size.x = max_w
+	var margin = ScreenHelper.get_side_margin()
+
+	if ScreenHelper.is_desktop() and margin > 0:
+		_page_margin.add_theme_constant_override("margin_left", int(margin))
+		_page_margin.add_theme_constant_override("margin_right", int(margin))
 	else:
-		for child in page_container.get_children():
-			child.size_flags_horizontal = Control.SIZE_FILL
-			child.custom_minimum_size.x = 0
+		_page_margin.add_theme_constant_override("margin_left", 0)
+		_page_margin.add_theme_constant_override("margin_right", 0)
 
 # ═══════════════════════════════════════════════════
 #                  GLOBAL THEME

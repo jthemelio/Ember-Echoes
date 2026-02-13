@@ -25,8 +25,10 @@ func _ready() -> void:
 
 func _initial_check() -> void:
 	_was_desktop = is_desktop()
-	print("ScreenHelper: window=%d  viewport=%d  is_desktop=%s" % [
-		DisplayServer.window_get_size().x, _vp_width(), str(_was_desktop)])
+	var phys_w = DisplayServer.window_get_size().x
+	var virt_w = _vp_width()
+	print("ScreenHelper: physical_w=%d  virtual_w=%d  threshold=%d  is_desktop=%s  side_margin=%.0f" % [
+		phys_w, int(virt_w), DESKTOP_THRESHOLD, str(_was_desktop), get_side_margin()])
 
 func _on_viewport_resized() -> void:
 	var now_desktop = is_desktop()
@@ -42,8 +44,14 @@ func _vp_width() -> float:
 
 ## Returns true when the window is wide enough to be a desktop browser
 func is_desktop() -> bool:
-	# Use physical window size — always reliable, even during init
-	return DisplayServer.window_get_size().x > DESKTOP_THRESHOLD
+	# Use the VIRTUAL viewport width — the only metric that's consistent
+	# across F5 editor, web exports, and mobile devices.
+	# With canvas_items + expand stretch mode:
+	#   - Mobile portrait (base 450x800): virtual width stays ~450  -> false
+	#   - Desktop/browser (wide window):  virtual width expands 1000+ -> true
+	# DisplayServer.window_get_size() is unreliable: it can return physical
+	# device pixels on mobile (1080+) which falsely triggers desktop mode.
+	return _vp_width() > DESKTOP_THRESHOLD
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:

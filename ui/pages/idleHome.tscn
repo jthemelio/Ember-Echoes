@@ -31,47 +31,52 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="PageContainer" type="VBoxContainer" parent="MainLayout" unique_id=1820643591]
+[node name="PageMargin" type="MarginContainer" parent="MainLayout"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HeroTab" parent="MainLayout/PageContainer" unique_id=229612391 instance=ExtResource("2_4xnaw")]
+[node name="PageContainer" type="VBoxContainer" parent="MainLayout/PageMargin" unique_id=1820643591]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HeroTab" parent="MainLayout/PageMargin/PageContainer" unique_id=229612391 instance=ExtResource("2_4xnaw")]
 layout_mode = 2
 
-[node name="HuntingTab" parent="MainLayout/PageContainer" unique_id=106764822 instance=ExtResource("3_vehlf")]
+[node name="HuntingTab" parent="MainLayout/PageMargin/PageContainer" unique_id=106764822 instance=ExtResource("3_vehlf")]
 visible = false
 layout_mode = 2
 
-[node name="ArmorerTab" parent="MainLayout/PageContainer" unique_id=2094992583 instance=ExtResource("5_armorer")]
+[node name="ArmorerTab" parent="MainLayout/PageMargin/PageContainer" unique_id=2094992583 instance=ExtResource("5_armorer")]
 visible = false
 layout_mode = 2
 
-[node name="WeaponsmithTab" parent="MainLayout/PageContainer" unique_id=1830072438 instance=ExtResource("6_weapon")]
+[node name="WeaponsmithTab" parent="MainLayout/PageMargin/PageContainer" unique_id=1830072438 instance=ExtResource("6_weapon")]
 visible = false
 layout_mode = 2
 
-[node name="ConsumablesTab" parent="MainLayout/PageContainer" unique_id=1926760689 instance=ExtResource("7_consum")]
+[node name="ConsumablesTab" parent="MainLayout/PageMargin/PageContainer" unique_id=1926760689 instance=ExtResource("7_consum")]
 visible = false
 layout_mode = 2
 
-[node name="ArtisanTab" parent="MainLayout/PageContainer" unique_id=1695967521 instance=ExtResource("8_artisan")]
+[node name="ArtisanTab" parent="MainLayout/PageMargin/PageContainer" unique_id=1695967521 instance=ExtResource("8_artisan")]
 visible = false
 layout_mode = 2
 
-[node name="AuctionTab" parent="MainLayout/PageContainer" unique_id=1572363821 instance=ExtResource("9_auction")]
+[node name="AuctionTab" parent="MainLayout/PageMargin/PageContainer" unique_id=1572363821 instance=ExtResource("9_auction")]
 visible = false
 layout_mode = 2
 
-[node name="LadyLuckTab" parent="MainLayout/PageContainer" unique_id=1982240551 instance=ExtResource("10_luck")]
+[node name="LadyLuckTab" parent="MainLayout/PageMargin/PageContainer" unique_id=1982240551 instance=ExtResource("10_luck")]
 visible = false
 layout_mode = 2
 
-[node name="AchievementsTab" parent="MainLayout/PageContainer" unique_id=8272634 instance=ExtResource("11_achieve")]
+[node name="AchievementsTab" parent="MainLayout/PageMargin/PageContainer" unique_id=8272634 instance=ExtResource("11_achieve")]
 visible = false
 layout_mode = 2
 
-[node name="SettingsTab" parent="MainLayout/PageContainer" unique_id=1262031780 instance=ExtResource("12_settings")]
+[node name="SettingsTab" parent="MainLayout/PageMargin/PageContainer" unique_id=1262031780 instance=ExtResource("12_settings")]
 visible = false
 
 [node name="NavBar" type="PanelContainer" parent="MainLayout" unique_id=489164190]
