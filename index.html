@@ -2,13 +2,15 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<title>Ember Echoes</title>
 		<style>
-			html, body, #canvas {
+			html, body {
 				margin: 0;
 				padding: 0;
 				border: 0;
+				width: 100%;
+				height: 100%;
 			}
 
 			body {
@@ -20,10 +22,9 @@
 
 			#canvas {
 				display: block;
-				/* FIX: Constrain the canvas to the viewport so it never overflows,
-				   even if Godot's JS sets inline width/height via devicePixelRatio */
-				width: 100vw !important;
-				height: 100vh !important;
+				margin: 0;
+				padding: 0;
+				border: 0;
 			}
 
 			#canvas:focus {
@@ -113,9 +114,51 @@
 			<div id="status-notice"></div>
 		</div>
 
+		<script>
+			/**
+			 * Custom canvas resize handler.
+			 * With canvas_resize_policy=0 (None), Godot does NOT resize the canvas.
+			 * We handle it ourselves so the canvas always fills the viewport without
+			 * overflow, and Godot's stretch mode (canvas_items + expand) adapts the
+			 * virtual viewport to whatever size we set here.
+			 */
+			(function () {
+				var canvas = document.getElementById('canvas');
+
+				function resizeCanvas() {
+					// Use CSS pixels for display size (never overflows the viewport)
+					var w = window.innerWidth;
+					var h = window.innerHeight;
+
+					// Set the canvas rendering resolution.
+					// Multiply by devicePixelRatio for crisp rendering on high-DPI.
+					var dpr = window.devicePixelRatio || 1;
+					canvas.width = Math.round(w * dpr);
+					canvas.height = Math.round(h * dpr);
+
+					// Set the CSS display size to exactly fill the viewport
+					canvas.style.width = w + 'px';
+					canvas.style.height = h + 'px';
+				}
+
+				// Size on initial load
+				resizeCanvas();
+
+				// Re-size whenever the browser window changes
+				window.addEventListener('resize', resizeCanvas);
+
+				// Also handle orientation changes on mobile
+				if (screen.orientation) {
+					screen.orientation.addEventListener('change', function () {
+						setTimeout(resizeCanvas, 100);
+					});
+				}
+			}());
+		</script>
+
 		<script src="index.js"></script>
 		<script>
-			const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":true,"fileSizes":{"index.pck":9713328,"index.wasm":37686550},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+			const GODOT_CONFIG = {"args":[],"canvasResizePolicy":0,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":true,"fileSizes":{"index.pck":9713328,"index.wasm":37686550},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 			const GODOT_THREADS_ENABLED = false;
 			const engine = new Engine(GODOT_CONFIG);
 
