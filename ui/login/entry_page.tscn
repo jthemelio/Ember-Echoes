@@ -90,39 +90,33 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Card" type="PanelContainer" parent="LoginPanel"]
-custom_minimum_size = Vector2(280, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
 [node name="Margin" type="MarginContainer" parent="LoginPanel/Card"]
 layout_mode = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 28
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
 
 [node name="VBox" type="VBoxContainer" parent="LoginPanel/Card/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="TitleLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Ember Echoes"
-horizontal_alignment = 1
+theme_override_constants/separation = 10
 
 [node name="SubtitleLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 text = "Welcome, adventurer"
 horizontal_alignment = 1
 
 [node name="GuestBtn" type="Button" parent="LoginPanel/Card/Margin/VBox"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_guest")
 text = "Play as Guest"
 
@@ -136,7 +130,7 @@ size_flags_horizontal = 3
 
 [node name="OrLabel" type="Label" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
 text = "or sign in"
 
@@ -145,23 +139,23 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="EmailInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
 theme_override_constants/caret_width = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 placeholder_text = "Email"
 caret_blink = true
 
 [node name="PasswordInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
 theme_override_constants/caret_width = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 placeholder_text = "Password"
 caret_blink = true
@@ -172,18 +166,18 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="SignInBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_signin")
 text = "Sign In"
 
 [node name="RegisterBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_register")
 text = "Register"
 
