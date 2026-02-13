@@ -287,19 +287,29 @@ func _ensure_attack_bar_tween() -> void:
 func _restart_attack_bar_tween() -> void:
 	if _attack_bar_tween:
 		_attack_bar_tween.kill()
+		_attack_bar_tween = null
+	# Don't animate the attack bar if combat isn't running
+	if not icm.combat_active or icm.is_dead:
+		attack_speed_bar.value = 0.0
+		return
 	_last_attack_interval = icm.attack_interval
 	attack_speed_bar.max_value = 1.0
 	attack_speed_bar.value = 0.0
 	_attack_bar_tween = create_tween().set_loops()
-	_attack_bar_tween.tween_property(attack_speed_bar, "value", 1.0, icm.attack_interval).from(0.0)
+	_attack_bar_tween.tween_property(attack_speed_bar, "value", 1.0, icm.attack_interval).from(0.0).set_trans(Tween.TRANS_LINEAR)
 
 func _restart_spawn_bar_tween() -> void:
 	if _spawn_bar_tween:
 		_spawn_bar_tween.kill()
+		_spawn_bar_tween = null
+	# Don't animate spawn bar if combat isn't running
+	if not icm.combat_active or icm.is_dead:
+		spawn_timer_bar.value = 0.0
+		return
 	spawn_timer_bar.max_value = 1.0
 	spawn_timer_bar.value = 0.0
 	_spawn_bar_tween = create_tween().set_loops()
-	_spawn_bar_tween.tween_property(spawn_timer_bar, "value", 1.0, icm.SPAWN_INTERVAL).from(0.0)
+	_spawn_bar_tween.tween_property(spawn_timer_bar, "value", 1.0, icm.SPAWN_INTERVAL).from(0.0).set_trans(Tween.TRANS_LINEAR)
 
 func _stop_spawn_bar_tween() -> void:
 	if _spawn_bar_tween:
@@ -636,14 +646,11 @@ func _on_move_pressed() -> void:
 	if indices_to_move.is_empty():
 		return
 
-	# Move items: remove from bag positions and append to end (warehouse)
-	# Work in reverse to preserve indices during removal
+	# Move items: null out bag slots (DON'T remove_at, which shifts warehouse items)
 	var items_to_move: Array = []
-	indices_to_move.sort()
-	indices_to_move.reverse()
 	for idx in indices_to_move:
 		items_to_move.append(inv[idx])
-		inv.remove_at(idx)
+		inv[idx] = null  # Clear the bag slot, warehouse stays in place
 
 	# Ensure inventory has at least 40 entries (bag region) before warehouse
 	while inv.size() < 40:

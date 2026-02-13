@@ -58,7 +58,7 @@ func load_loot_config(config: Dictionary) -> void:
 
 func load_item_catalog(catalog: Dictionary) -> void:
 	_all_items.clear()
-	for category_key in ["armor", "weapons"]:
+	for category_key in ["armor", "weapons", "misc"]:
 		var items = catalog.get(category_key, [])
 		_all_items.append_array(items)
 	print("LootManager: Catalog loaded (%d total items)" % _all_items.size())
@@ -145,9 +145,9 @@ func _roll_loot(mob_level: int) -> void:
 		# Only consider Normal quality as base pool (avoid duplicate rolls from Tempered variants)
 		if item_quality != "Normal":
 			continue
-		# Exclude materials (Comets, Wyrm Spheres) -- they have their own drop system
+		# Exclude non-droppable types from mob loot
 		var item_type = cd.get("Type", "")
-		if item_type == "Material":
+		if item_type in ["Material", "Arrow", "MoneyBag", "Consumable", "Scroll", "Chest"]:
 			continue
 		if abs(item_level - mob_level) <= level_range:
 			eligible.append(item)

@@ -213,6 +213,10 @@ func start_combat() -> void:
 	if zones.is_empty():
 		push_warning("IdleCombatManager: No zones loaded, cannot start combat")
 		return
+	# Always refresh stats so HP displays correctly even if combat is blocked
+	_refresh_player_stats()
+	player_hp = player_max_hp  # Full heal on combat start
+	combat_tick_updated.emit()
 	# Marksman cannot fight without arrows
 	if _is_marksman_without_arrows():
 		out_of_arrows.emit()
@@ -221,8 +225,6 @@ func start_combat() -> void:
 	# Load saved XP from PlayFab (only on first combat start for this session)
 	if current_xp == 0 and GameManager._saved_current_xp > 0:
 		current_xp = GameManager._saved_current_xp
-	_refresh_player_stats()
-	player_hp = player_max_hp  # Full heal on combat start
 	if monster_queue.is_empty():
 		_spawn_mob_to_queue()
 	combat_active = true
@@ -247,6 +249,10 @@ func set_mode_fighting(fighting: bool) -> void:
 		stop_combat()
 
 func summon_monsters(count: int) -> void:
+	# Block summoning if Marksman has no arrows
+	if _is_marksman_without_arrows():
+		out_of_arrows.emit()
+		return
 	var to_add = min(count, MAX_QUEUE_SIZE - monster_queue.size())
 	for i in range(to_add):
 		_spawn_mob_to_queue()

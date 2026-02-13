@@ -432,7 +432,7 @@ func _create_skill_row(skill: Dictionary, unlocked: bool, is_equipped: bool) -> 
 	meta_lbl.add_theme_color_override("font_color", Color(0.55, 0.55, 0.55))
 	info_vbox.add_child(meta_lbl)
 
-	# Action button (right side)
+	# Action button (right side) — fixed width so it doesn't shift with text
 	if unlocked:
 		var btn = Button.new()
 		if is_equipped:
@@ -441,7 +441,9 @@ func _create_skill_row(skill: Dictionary, unlocked: bool, is_equipped: bool) -> 
 		else:
 			btn.text = "Equip"
 			btn.pressed.connect(func(): SkillManager.equip_skill(skill.get("id", "")); _refresh_skills_card())
-		btn.custom_minimum_size = Vector2(70, 30)
+		btn.custom_minimum_size = Vector2(80, 36)
+		btn.size_flags_horizontal = Control.SIZE_SHRINK_END
+		btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		hbox.add_child(btn)
 	else:
 		var lock_lbl = Label.new()
