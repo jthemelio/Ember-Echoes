@@ -69,12 +69,10 @@ func scaled_font(base_size: int) -> int:
 func scaled_min_height(base_height: float) -> float:
 	return base_height * get_ui_scale()
 
-## Returns the effective content width (capped on desktop, full on mobile)
+## Returns the effective content width (always capped to MAX_CONTENT_WIDTH on wide viewports)
 func get_content_width() -> float:
 	var vp_w = _vp_width()
-	if is_desktop():
-		return min(vp_w, MAX_CONTENT_WIDTH)
-	return vp_w
+	return min(vp_w, MAX_CONTENT_WIDTH)
 
 ## Returns desktop grid column count, or mobile fallback
 func grid_columns(mobile_cols: int, desktop_cols: int) -> int:

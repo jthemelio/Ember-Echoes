@@ -75,16 +75,17 @@ func _on_window_resized() -> void:
 	_adapt_layout()
 
 func _adapt_layout() -> void:
-	# Constrain page content to MAX_CONTENT_WIDTH on desktop by wrapping
-	# the PageContainer in side padding via its MarginContainer wrapper.
-	# This is more reliable across platforms (especially web exports)
-	# than SIZE_SHRINK_CENTER on each child.
+	# Constrain page content to MAX_CONTENT_WIDTH when the viewport is wide.
+	# This keeps the sandy background full-width while centering white cards.
+	# Works independently of is_desktop() so it applies on any wide viewport.
 	if not _page_margin:
 		return
 
-	var margin = ScreenHelper.get_side_margin()
+	var vp_w = get_tree().root.size.x if get_tree() and get_tree().root else 450.0
+	var max_w = ScreenHelper.MAX_CONTENT_WIDTH
 
-	if ScreenHelper.is_desktop() and margin > 0:
+	if vp_w > max_w:
+		var margin = (vp_w - max_w) / 2.0
 		_page_margin.add_theme_constant_override("margin_left", int(margin))
 		_page_margin.add_theme_constant_override("margin_right", int(margin))
 	else:

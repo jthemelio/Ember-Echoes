@@ -23,7 +23,7 @@ script = ExtResource("1_6jnp4")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-horizontal_scroll_mode = 3
+horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
 
 [node name="ContentVBox" type="VBoxContainer" parent="ScrollContent" unique_id=674268387]
