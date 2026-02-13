@@ -24,11 +24,7 @@
 			display: block;
 			padding: 0;
 			border: 0;
-			/* Full height always, capped width on desktop, centered */
-			height: 100vh !important;
-			width: 100vw !important;
-			max-width: 500px !important;
-			margin: 0 auto !important;
+			margin: 0 auto;
 		}
 
 			#canvas:focus {
@@ -120,7 +116,29 @@
 
 		<script src="index.js"></script>
 		<script>
-			const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":true,"fileSizes":{"index.pck":14729640,"index.wasm":35740641},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
+			// ── Canvas sizing: phone-frame on desktop, full-screen on mobile ──
+			(function () {
+				var canvas = document.getElementById('canvas');
+				var MAX_W = 500; // max CSS-pixel width on desktop
+				function resize() {
+					var vw = window.innerWidth;
+					var vh = window.innerHeight;
+					var dpr = window.devicePixelRatio || 1;
+					// Display width: full viewport on mobile, capped on desktop
+					var cssW = Math.min(vw, MAX_W);
+					var cssH = vh;
+					// Set CSS display size
+					canvas.style.width = cssW + 'px';
+					canvas.style.height = cssH + 'px';
+					// Set internal rendering resolution (what Godot sees)
+					canvas.width = Math.round(cssW * dpr);
+					canvas.height = Math.round(cssH * dpr);
+				}
+				resize();
+				window.addEventListener('resize', resize);
+			})();
+
+			const GODOT_CONFIG = {"args":[],"canvasResizePolicy":0,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":true,"fileSizes":{"index.pck":14729640,"index.wasm":35740641},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4,"serviceWorker":"index.service.worker.js"};
 			const GODOT_THREADS_ENABLED = false;
 			const engine = new Engine(GODOT_CONFIG);
 
