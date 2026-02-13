@@ -26,12 +26,8 @@ var _phase: int = Phase.IDLE
 @onready var free_roll_btn: Button = $ScrollContent/ContentVBox/PaymentCard/Margin/VBox/FreeRollBtn
 @onready var ticket_btn: Button = $ScrollContent/ContentVBox/PaymentCard/Margin/VBox/TicketBtn
 @onready var echo_btn: Button = $ScrollContent/ContentVBox/PaymentCard/Margin/VBox/EchoBtn
-@onready var result_card: PanelContainer = $ScrollContent/ContentVBox/ResultCard
-@onready var result_title: Label = $ScrollContent/ContentVBox/ResultCard/Margin/VBox/ResultTitle
-@onready var reward_name_label: Label = $ScrollContent/ContentVBox/ResultCard/Margin/VBox/RewardName
-@onready var reward_desc: Label = $ScrollContent/ContentVBox/ResultCard/Margin/VBox/RewardDesc
-@onready var pet_bonus_label: Label = $ScrollContent/ContentVBox/ResultCard/Margin/VBox/PetBonusLabel
-@onready var roll_again_btn: Button = $ScrollContent/ContentVBox/ResultCard/Margin/VBox/RollAgainBtn
+const RewardPopupScene = preload("res://ui/components/LadyLuckRewardPopup.tscn")
+var _reward_popup = null
 
 # ─── State ───
 var _free_roll_available: bool = false
@@ -50,7 +46,6 @@ func _ready() -> void:
 	free_roll_btn.pressed.connect(_on_free_roll_pressed)
 	ticket_btn.pressed.connect(_on_ticket_pressed)
 	echo_btn.pressed.connect(_on_echo_pressed)
-	roll_again_btn.pressed.connect(_on_roll_again_pressed)
 
 	for i in range(chest_grid.get_child_count()):
 		var chest = chest_grid.get_child(i)
@@ -81,7 +76,6 @@ func _set_phase(new_phase: int) -> void:
 		Phase.IDLE:
 			_reset_chests_locked()
 			chest_label.text = "Pay to reveal 9 chests"
-			result_card.visible = false
 		Phase.PAYING:
 			chest_label.text = "Processing payment..."
 		Phase.PICKING:
@@ -246,7 +240,7 @@ func _flip_chest(index: int) -> void:
 
 func _on_reveal_complete(chosen_reward: Dictionary, lucky_pet) -> void:
 	_set_phase(Phase.DONE)
-	_show_result(chosen_reward, lucky_pet)
+	_show_reward_popup(chosen_reward, lucky_pet)
 
 # ─── Reward Processing ───
 # Gold amounts for money bag items (looked up by id)
@@ -310,43 +304,24 @@ func _process_reward(reward: Dictionary) -> void:
 	GameManager.sync_inventory_to_server()
 	print("LadyLuck: Won item %s (q:%s skt:%d)" % [reward.get("name", reward_id), quality, sockets])
 
-# ─── Result Display ───
+# ─── Reward Popup ───
 
-func _show_result(reward: Dictionary, lucky_pet) -> void:
-	result_card.visible = true
-	var reward_id = reward.get("id", "")
-	var r_name = reward.get("name", "Unknown Reward")
+func _show_reward_popup(reward: Dictionary, lucky_pet) -> void:
+	# Clean up any previous popup
+	if _reward_popup and is_instance_valid(_reward_popup):
+		_reward_popup.queue_free()
+		_reward_popup = null
 
-	result_title.text = "You Won!"
-	result_title.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
-	reward_name_label.text = r_name
+	_reward_popup = RewardPopupScene.instantiate()
+	get_tree().root.add_child(_reward_popup)
+	_reward_popup.reward_claimed.connect(_on_reward_claimed)
+	_reward_popup.show_reward(reward, lucky_pet)
 
-	# Determine display based on the reward id / properties
-	if reward_id.begins_with("money_bag_"):
-		var gold = MONEY_BAG_GOLD.get(reward_id, 0)
-		reward_desc.text = "%s gold bag added to your inventory! Right-click to claim." % _format_number(gold)
-		reward_name_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
-	elif reward.has("sockets") and int(reward.get("sockets", 0)) > 0:
-		var quality = reward.get("quality", "Normal")
-		var sockets = int(reward.get("sockets", 0))
-		reward_desc.text = "%s quality with %d sockets! Added to your inventory." % [quality, sockets]
-		reward_name_label.add_theme_color_override("font_color", Color(0.6, 0.2, 0.8))
-	elif reward.has("quality") and reward.get("quality", "") != "Normal":
-		reward_desc.text = "%s quality item added to your inventory!" % reward.get("quality", "")
-		reward_name_label.add_theme_color_override("font_color", Color(0.8, 0.4, 1.0))
-	elif reward_id.begins_with("ignis_") or reward_id.begins_with("comet_") or reward_id.begins_with("wyrm_"):
-		reward_desc.text = "Upgrade material added to your collection!"
-		reward_name_label.add_theme_color_override("font_color", Color(0.4, 0.8, 1.0))
-	else:
-		reward_desc.text = "A rare item has been added to your inventory!"
-		reward_name_label.add_theme_color_override("font_color", Color(0.8, 0.4, 1.0))
-
-	if lucky_pet != null and lucky_pet is String and lucky_pet != "":
-		pet_bonus_label.visible = true
-		pet_bonus_label.text = "BONUS: Lucky Pet '%s' obtained!" % lucky_pet
-		pet_bonus_label.add_theme_color_override("font_color", Color(1.0, 0.4, 0.7))
-	else:
-		pet_bonus_label.visible = false
+func _on_reward_claimed() -> void:
+	if _reward_popup and is_instance_valid(_reward_popup):
+		_reward_popup.queue_free()
+		_reward_popup = null
+	_on_roll_again_pressed()
 
 # ─── Chest Interaction ───
 

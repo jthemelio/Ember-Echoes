@@ -80,14 +80,19 @@ func set_item(data: ItemData):
 	# 1. Configure quality border glow
 	_configure_border(data.quality)
 
-	# Reset any warehouse empty style override
-	remove_theme_stylebox_override("panel")
-
-	# Set panel tint: soft grey for Normal, white for others
+	# Set panel background per quality tier:
+	# Normal: soft grey, Non-Normal: dark so lightning/glow effects pop
+	self_modulate = Color.WHITE
 	if data.quality == "Normal":
-		self_modulate = Color(0.88, 0.87, 0.85, 1.0)
+		var normal_style = StyleBoxFlat.new()
+		normal_style.bg_color = Color(0.88, 0.87, 0.85, 1.0)
+		normal_style.set_corner_radius_all(6)
+		add_theme_stylebox_override("panel", normal_style)
 	else:
-		self_modulate = Color.WHITE
+		var dark_style = StyleBoxFlat.new()
+		dark_style.bg_color = Color(0.10, 0.10, 0.12, 1.0)
+		dark_style.set_corner_radius_all(6)
+		add_theme_stylebox_override("panel", dark_style)
 	
 	# 2. Update Icon via VisualResolver
 	icon.texture = VisualResolver.load_icon(data.item_id)

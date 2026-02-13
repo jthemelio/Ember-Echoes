@@ -21,7 +21,7 @@ script = ExtResource("1_script")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
+horizontal_scroll_mode = 3
 vertical_scroll_mode = 3
 
 [node name="ContentVBox" type="VBoxContainer" parent="ScrollContent"]
@@ -76,8 +76,8 @@ text = "Select Item"
 [node name="ItemPickerGrid" type="GridContainer" parent="ScrollContent/ContentVBox/ItemPickerPanel/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 4
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 5
 
 [node name="UpgradePanel" type="PanelContainer" parent="ScrollContent/ContentVBox"]
@@ -197,8 +197,8 @@ text = "Drag a material to the upgrade slot"
 [node name="MaterialGrid" type="GridContainer" parent="ScrollContent/ContentVBox/MaterialPalette/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 6
-theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 4
 
 [node name="IgnisCompose" type="PanelContainer" parent="ScrollContent/ContentVBox"]
@@ -229,8 +229,8 @@ autowrap_mode = 2
 [node name="IgnisGrid" type="GridContainer" parent="ScrollContent/ContentVBox/IgnisCompose/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 6
-theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 3
 
 [node name="ComposeMessage" type="Label" parent="ScrollContent/ContentVBox/IgnisCompose/Margin/VBox"]
@@ -266,8 +266,8 @@ autowrap_mode = 2
 [node name="ScrollGrid" type="GridContainer" parent="ScrollContent/ContentVBox/ScrollConvert/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 6
-theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 2
 
 [node name="ConvertMessage" type="Label" parent="ScrollContent/ContentVBox/ScrollConvert/Margin/VBox"]

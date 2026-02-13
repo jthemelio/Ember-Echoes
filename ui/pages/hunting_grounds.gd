@@ -119,13 +119,13 @@ func _ready() -> void:
 	move_bag_btn.pressed.connect(_on_move_pressed)
 	cancel_bag_btn.pressed.connect(_on_cancel_select)
 
-	# Quality filter buttons -- colored borders, no text except "All"
+	# Quality filter buttons -- colored blocks matching the tier border colors
 	_setup_filter_button(filter_all_btn, "", Color.WHITE)
-	_setup_filter_button(filter_normal_btn, "Normal", Color.WHITE)
-	_setup_filter_button(filter_tempered_btn, "Tempered", Color(0.0, 1.0, 0.0))
-	_setup_filter_button(filter_infused_btn, "Infused", Color(0.0, 0.5, 1.0))
-	_setup_filter_button(filter_brilliant_btn, "Brilliant", Color(0.6, 0.2, 0.8))
-	_setup_filter_button(filter_radiant_btn, "Radiant", Color(1.0, 0.8, 0.0))
+	_setup_filter_button(filter_normal_btn, "Normal", Color(0.55, 0.55, 0.58))
+	_setup_filter_button(filter_tempered_btn, "Tempered", Color(0.910, 0.788, 0.608))
+	_setup_filter_button(filter_infused_btn, "Infused", Color(0.784, 0.816, 0.863))
+	_setup_filter_button(filter_brilliant_btn, "Brilliant", Color(0.659, 0.847, 0.941))
+	_setup_filter_button(filter_radiant_btn, "Radiant", Color(0.941, 0.722, 0.478))
 
 	# ── Kick off combat on first load ──
 	icm.start_combat()
@@ -410,12 +410,30 @@ func _refresh_kill_tracker() -> void:
 # ─── Quality Filter Buttons ───
 
 func _setup_filter_button(btn: Button, quality: String, color: Color) -> void:
-	# Style: colored outline, no text (except "All")
+	# Style: solid colored background, no text (except "All")
 	if quality != "":
 		btn.text = ""
 		btn.custom_minimum_size = Vector2(30, 30)
-		# Use modulate for the color hint
-		btn.modulate = color
+	# Create a colored StyleBoxFlat for the button
+	var style = StyleBoxFlat.new()
+	style.bg_color = color
+	style.set_corner_radius_all(4)
+	style.content_margin_left = 4
+	style.content_margin_right = 4
+	style.content_margin_top = 2
+	style.content_margin_bottom = 2
+	btn.add_theme_stylebox_override("normal", style)
+	# Slightly brighter for hover
+	var hover_style = style.duplicate()
+	hover_style.bg_color = color.lightened(0.2)
+	btn.add_theme_stylebox_override("hover", hover_style)
+	# Dimmer for pressed/disabled (active filter)
+	var pressed_style = style.duplicate()
+	pressed_style.bg_color = color.darkened(0.3)
+	pressed_style.border_color = Color.WHITE
+	pressed_style.set_border_width_all(2)
+	btn.add_theme_stylebox_override("pressed", pressed_style)
+	btn.add_theme_stylebox_override("disabled", pressed_style)
 	btn.pressed.connect(_on_filter_pressed.bind(quality))
 
 func _on_filter_pressed(quality: String) -> void:

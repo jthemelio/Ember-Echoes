@@ -4,41 +4,62 @@
 [ext_resource type="Texture2D" uid="uid://4y2h0afsrans" path="res://assets/textures/MobileUserBg.png" id="2_i5s6q"]
 [ext_resource type="Texture2D" uid="uid://c0ehtjk8ldhmu" path="res://assets/textures/MobileEntryBg.png" id="3_uj0lx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0jb1h"]
-bg_color = Color(0, 0, 0, 0.84313726)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+bg_color = Color(0.05, 0.05, 0.07, 0.88)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i5s6q"]
-bg_color = Color(0, 0, 0, 0.84313726)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_input"]
+bg_color = Color(0.12, 0.12, 0.14, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.45, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10
+content_margin_right = 10
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e4i2w"]
-bg_color = Color(0, 0, 0, 0.84313726)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.9529412, 0.78431374, 0.28627452, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guest"]
+bg_color = Color(0.75, 0.58, 0.12, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_signin"]
+bg_color = Color(0.18, 0.18, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.5, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_register"]
+bg_color = Color(0.18, 0.18, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.5, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
 [node name="EntryPage" type="Control" unique_id=2044182461]
 layout_mode = 3
@@ -47,7 +68,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 4
 script = ExtResource("1_0jb1h")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=630482835]
@@ -61,7 +81,7 @@ texture = ExtResource("2_i5s6q")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="LoginPanel" type="Control" parent="." unique_id=435126814]
+[node name="LoginPanel" type="CenterContainer" parent="." unique_id=435126814]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,51 +89,109 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="LoginPanel" unique_id=387450917]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -7.0
-offset_right = -7.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 20
-alignment = 1
-
-[node name="CustomIDInput" type="LineEdit" parent="LoginPanel/VBoxContainer" unique_id=1434367088]
-custom_minimum_size = Vector2(225, 40)
+[node name="Card" type="PanelContainer" parent="LoginPanel"]
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
+
+[node name="Margin" type="MarginContainer" parent="LoginPanel/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="LoginPanel/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TitleLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Ember Echoes"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+text = "Welcome, adventurer"
+horizontal_alignment = 1
+
+[node name="GuestBtn" type="Button" parent="LoginPanel/Card/Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_guest")
+text = "Play as Guest"
+
+[node name="SeparatorRow" type="HBoxContainer" parent="LoginPanel/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LineLeft" type="HSeparator" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OrLabel" type="Label" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
+text = "or sign in"
+
+[node name="LineRight" type="HSeparator" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EmailInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
 theme_override_constants/caret_width = 2
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_0jb1h")
-placeholder_text = "E-mail"
-alignment = 1
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_input")
+placeholder_text = "Email"
 caret_blink = true
 
-[node name="PasswordInput" type="LineEdit" parent="LoginPanel/VBoxContainer" unique_id=1278901718]
-visible = false
-custom_minimum_size = Vector2(225, 40)
+[node name="PasswordInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
 theme_override_colors/caret_color = Color(1, 0.9, 0.5, 1)
 theme_override_constants/caret_width = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_i5s6q")
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 placeholder_text = "Password"
-alignment = 1
 caret_blink = true
 secret = true
 
-[node name="LoginButton" type="Button" parent="LoginPanel/VBoxContainer" unique_id=1545918363]
-custom_minimum_size = Vector2(225, 40)
+[node name="ButtonRow" type="HBoxContainer" parent="LoginPanel/Card/Margin/VBox"]
 layout_mode = 2
-size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_e4i2w")
+theme_override_constants/separation = 10
+
+[node name="SignInBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_signin")
+text = "Sign In"
+
+[node name="RegisterBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_register")
+text = "Register"
+
+[node name="StatusLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="SplashOverlay" type="TextureRect" parent="." unique_id=2110692922]
 visible = false
@@ -127,5 +205,3 @@ size_flags_vertical = 3
 texture = ExtResource("3_uj0lx")
 expand_mode = 1
 stretch_mode = 5
-
-[connection signal="text_changed" from="LoginPanel/VBoxContainer/CustomIDInput" to="." method="_on_custom_id_input_text_changed"]
