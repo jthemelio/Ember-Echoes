@@ -103,6 +103,9 @@ func _get_quality_success_chance(target_quality: String) -> float:
 # ─── Lifecycle ───
 
 func _ready() -> void:
+	# Desktop responsive: adapt grid columns
+	_adapt_for_desktop()
+
 	# Upgrade button
 	upgrade_btn.pressed.connect(_on_upgrade_pressed)
 	clear_btn.pressed.connect(_on_clear_material)
@@ -119,6 +122,18 @@ func _ready() -> void:
 	_refresh_upgrade_panel()
 	_refresh_ignis_compose()
 	_refresh_scroll_convert()
+
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	if item_picker_grid:
+		item_picker_grid.columns = ScreenHelper.grid_columns(5, 7)
+	if material_grid:
+		material_grid.columns = ScreenHelper.grid_columns(4, 5)
+	if ignis_grid:
+		ignis_grid.columns = ScreenHelper.grid_columns(3, 4)
+	if scroll_grid:
+		scroll_grid.columns = ScreenHelper.grid_columns(2, 3)
 
 # ═══════════════════════════════════════════
 # Item Picker

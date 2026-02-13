@@ -42,7 +42,14 @@ var _chosen_index: int = -1
 
 # ─── Lifecycle ───
 
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	if chest_grid:
+		chest_grid.columns = ScreenHelper.grid_columns(3, 4)
+
 func _ready() -> void:
+	_adapt_for_desktop()
 	free_roll_btn.pressed.connect(_on_free_roll_pressed)
 	ticket_btn.pressed.connect(_on_ticket_pressed)
 	echo_btn.pressed.connect(_on_echo_pressed)

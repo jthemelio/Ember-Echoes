@@ -130,10 +130,34 @@ func _ready() -> void:
 	# ── Kick off combat on first load ──
 	icm.start_combat()
 
+	# ── Desktop responsive: adapt grid columns and sizing ──
+	_adapt_for_desktop()
+
 	# ── Initial UI sync ──
 	_refresh_all_ui()
 	_restart_attack_bar_tween()
 	_restart_spawn_bar_tween()
+
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	# Inventory grids: 5 -> 7 columns on desktop
+	if bag_grid:
+		bag_grid.columns = ScreenHelper.grid_columns(5, 7)
+	if warehouse_grid:
+		warehouse_grid.columns = ScreenHelper.grid_columns(5, 7)
+	# Queue grid: 2 -> 3 columns
+	if queue_grid:
+		queue_grid.columns = ScreenHelper.grid_columns(2, 3)
+	# Scale filter buttons
+	var s = ScreenHelper.get_ui_scale()
+	for btn in [filter_all_btn, filter_normal_btn, filter_tempered_btn, filter_infused_btn, filter_brilliant_btn, filter_radiant_btn]:
+		if btn and btn.custom_minimum_size != Vector2.ZERO:
+			btn.custom_minimum_size = Vector2(btn.custom_minimum_size.x * s, btn.custom_minimum_size.y * s)
+	# Scale summon buttons
+	for btn in [summon_1_btn, summon_5_btn, summon_10_btn, summon_25_btn]:
+		if btn:
+			btn.custom_minimum_size.y = ScreenHelper.scaled_min_height(btn.custom_minimum_size.y) if btn.custom_minimum_size.y > 0 else 0
 
 func _process(_delta: float) -> void:
 	pass  # Attack bar is tween-driven, no per-frame update needed

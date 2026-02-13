@@ -69,8 +69,9 @@ func show_centered(data: ItemData, context: String = ""):
 func _show_positioned_center():
 	var viewport_size = get_viewport_rect().size
 	var tooltip_size = get_combined_minimum_size()
-	# Clamp tooltip width so it doesn't exceed 90% of viewport
-	var max_w = viewport_size.x * 0.9
+	# On desktop, constrain tooltip to 50% of viewport width; on mobile, 90%
+	var max_pct = 0.50 if ScreenHelper.is_desktop() else 0.90
+	var max_w = viewport_size.x * max_pct
 	if tooltip_size.x > max_w:
 		custom_minimum_size.x = max_w
 		size.x = max_w

@@ -41,6 +41,46 @@ func _ready():
 	_login_timeout_timer.timeout.connect(_on_login_timeout)
 	add_child(_login_timeout_timer)
 
+	# Desktop responsive: scale login card
+	_adapt_for_desktop()
+
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	var card = $LoginPanel/Card
+	if card:
+		card.custom_minimum_size.x = 320
+	# Scale font sizes
+	var s = ScreenHelper.get_ui_scale()
+	var subtitle = $LoginPanel/Card/Margin/VBox/SubtitleLabel
+	if subtitle:
+		subtitle.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(11))
+	if guest_btn:
+		guest_btn.custom_minimum_size.y = ScreenHelper.scaled_min_height(38)
+		guest_btn.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(14))
+	if email_input:
+		email_input.custom_minimum_size.y = ScreenHelper.scaled_min_height(34)
+		email_input.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(12))
+	if password_input:
+		password_input.custom_minimum_size.y = ScreenHelper.scaled_min_height(34)
+		password_input.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(12))
+	if sign_in_btn:
+		sign_in_btn.custom_minimum_size.y = ScreenHelper.scaled_min_height(34)
+		sign_in_btn.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(12))
+	if register_btn:
+		register_btn.custom_minimum_size.y = ScreenHelper.scaled_min_height(34)
+		register_btn.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(12))
+	if status_label:
+		status_label.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(11))
+	# Scale margin padding
+	var margin = $LoginPanel/Card/Margin
+	if margin:
+		var m = int(18 * s)
+		margin.add_theme_constant_override("margin_left", m)
+		margin.add_theme_constant_override("margin_top", m)
+		margin.add_theme_constant_override("margin_right", m)
+		margin.add_theme_constant_override("margin_bottom", m)
+
 func _input(event):
 	# Dismiss splash on tap (mouse or touch; mobile Safari sends touch, not mouse)
 	var is_tap = (event is InputEventMouseButton and event.pressed) or (event is InputEventScreenTouch and event.pressed)

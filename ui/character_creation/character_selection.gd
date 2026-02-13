@@ -28,6 +28,29 @@ func _ready() -> void:
 	load_slots_from_playfab()
 	PlayFabManager.client.api_error.connect(_on_playfab_error)
 
+	# Desktop responsive: scale character selection card
+	_adapt_for_desktop()
+
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	var card = get_node_or_null("CenterContainer/CardCenter/Card")
+	if card:
+		card.custom_minimum_size.x = 400
+	var title = get_node_or_null("CenterContainer/CardCenter/Card/Margin/VBox/TitleLabel")
+	if title:
+		title.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(18))
+	# Scale slot sizes
+	if grid:
+		for slot in grid.get_children():
+			slot.custom_minimum_size.x = 340
+	# Scale margin
+	var margin = get_node_or_null("CenterContainer/CardCenter/Card/Margin")
+	if margin:
+		var m = int(16 * ScreenHelper.get_ui_scale())
+		margin.add_theme_constant_override("margin_left", m)
+		margin.add_theme_constant_override("margin_right", m)
+
 func load_slots_from_playfab():
 	var label = _get_loading_label()
 	if label and label.text == "":

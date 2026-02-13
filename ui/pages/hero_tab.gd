@@ -82,8 +82,19 @@ func _ready():
 	equipment_grid.resized.connect(_enforce_square_equip_slots)
 	call_deferred("_enforce_square_equip_slots")
 
+	# Desktop responsive: adapt grid columns
+	_adapt_for_desktop()
+
 	# Since GameManager now pre-fetches during login, we usually don't need to fetch here
 	update_hero_ui()
+
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	# Equipment grid: 4 columns is fine on desktop since we cap content width,
+	# but we can go to 5 if there's room
+	if equipment_grid:
+		equipment_grid.columns = ScreenHelper.grid_columns(4, 4)
 
 func update_hero_ui():
 	var invested = GameManager.active_character_stats

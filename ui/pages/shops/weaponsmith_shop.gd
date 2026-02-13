@@ -18,8 +18,15 @@ var _shop_items: Array = []
 var _purchase_in_flight: bool = false  # Prevents rapid-fire purchases
 
 func _ready() -> void:
+	_adapt_for_desktop()
 	_refresh_gold()
 	_populate_shop()
+
+func _adapt_for_desktop() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	if item_grid:
+		item_grid.columns = ScreenHelper.grid_columns(2, 3)
 
 func _refresh_gold() -> void:
 	var gold = int(GameManager.active_user_currencies.get("GD", 0))

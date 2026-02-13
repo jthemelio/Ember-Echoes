@@ -232,10 +232,29 @@ func _count_equipped() -> int:
 
 func _check_all_done():
 	if _stats_ready and _currency_ready and _title_data_ready and _inventory_ready and _achievements_ready and _changelog_ready:
+		# Seed starting items for brand-new characters (empty bag + level 1)
+		_seed_starting_items()
+
 		# Start the changelog live-poll timer
 		_start_changelog_poll()
 		var target_scene = "res://ui/pages/idleHome.tscn"
 		get_tree().call_deferred("change_scene_to_file", target_scene)
+
+func _seed_starting_items() -> void:
+	# Only seed if this looks like a fresh character: empty inventory and level 1
+	var has_real_items = false
+	for entry in active_user_inventory:
+		if entry != null and entry is Dictionary and entry.has("bid"):
+			has_real_items = true
+			break
+	if has_real_items or active_character_level > 1:
+		return
+
+	# Grant a Normal Jacket as the starting armor
+	var jacket = ItemDatabase.create_instance_dict("Jacket_Normal", "Normal")
+	active_user_inventory.append(jacket)
+	print("GameManager: Seeded starting item — Jacket (Normal)")
+	sync_inventory_to_server()
 
 # ───── Equipment API ─────
 

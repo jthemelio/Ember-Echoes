@@ -4,6 +4,7 @@ const AfkRewardsPopupScene = preload("res://ui/components/AfkRewardsPopup.tscn")
 const WhatsNewPopupScene = preload("res://ui/components/WhatsNewPopup.tscn")
 
 # Reference the actual nodes in your PageContainer (tabs handle own padding/scroll)
+@onready var main_layout: VBoxContainer = $MainLayout
 @onready var page_container = $MainLayout/PageContainer
 @onready var hero_tab = $MainLayout/PageContainer/HeroTab
 @onready var hunting_tab = $MainLayout/PageContainer/HuntingTab
@@ -28,6 +29,12 @@ const WhatsNewPopupScene = preload("res://ui/components/WhatsNewPopup.tscn")
 func _ready() -> void:
 	# ── Apply global visual theme ──
 	_apply_game_theme()
+
+	# ── Desktop responsive layout (deferred so viewport size is stable) ──
+	call_deferred("_adapt_layout")
+	ScreenHelper.viewport_mode_changed.connect(_on_viewport_mode_changed)
+	get_tree().root.size_changed.connect(_on_window_resized)
+
 	# Start with the Hero tab visible
 	_show_tab(hero_tab)
 
@@ -57,6 +64,29 @@ func _ready() -> void:
 	GameManager.changelog_updated.connect(_on_changelog_updated)
 
 # ═══════════════════════════════════════════════════
+#              DESKTOP RESPONSIVE LAYOUT
+# ═══════════════════════════════════════════════════
+
+func _on_viewport_mode_changed(_is_desktop: bool) -> void:
+	_adapt_layout()
+
+func _on_window_resized() -> void:
+	_adapt_layout()
+
+func _adapt_layout() -> void:
+	if not main_layout:
+		return
+	# Constrain MainLayout width by changing anchors (more robust than offsets)
+	main_layout.anchor_left = ScreenHelper.get_content_anchor_left()
+	main_layout.anchor_right = ScreenHelper.get_content_anchor_right()
+	# Reset offsets so anchors fully control positioning
+	main_layout.offset_left = 0
+	main_layout.offset_right = 0
+
+	# Reposition ShopPopup relative to content area on desktop
+	_adapt_shop_popup()
+
+# ═══════════════════════════════════════════════════
 #                  GLOBAL THEME
 # ═══════════════════════════════════════════════════
 
@@ -64,30 +94,34 @@ func _apply_game_theme() -> void:
 	# Warm cream background for the entire game
 	RenderingServer.set_default_clear_color(Color("#F5F0EB"))
 
+	var s := ScreenHelper.get_ui_scale()
 	var game_theme = Theme.new()
 
 	# ── PanelContainer -> white cards with rounded corners + subtle shadow ──
 	var card_style = StyleBoxFlat.new()
 	card_style.bg_color = Color.WHITE
-	card_style.set_corner_radius_all(12)
+	card_style.set_corner_radius_all(int(12 * s))
 	card_style.border_color = Color("#E8E3DE")
 	card_style.set_border_width_all(1)
 	card_style.shadow_color = Color(0, 0, 0, 0.04)
-	card_style.shadow_size = 3
+	card_style.shadow_size = int(3 * s)
 	card_style.shadow_offset = Vector2(0, 1)
 	game_theme.set_stylebox("panel", "PanelContainer", card_style)
 
 	# ── Label -> dark text by default ──
 	game_theme.set_color("font_color", "Label", Color("#2D2D2D"))
+	game_theme.set_font_size("font_size", "Label", ScreenHelper.scaled_font(14))
 
 	# ── Button -> subtle rounded default (individual scenes can override for primary) ──
+	var btn_margin_h = int(12 * s)
+	var btn_margin_v = int(8 * s)
 	var btn_normal = StyleBoxFlat.new()
 	btn_normal.bg_color = Color("#ECECEC")
-	btn_normal.set_corner_radius_all(8)
-	btn_normal.content_margin_left = 12
-	btn_normal.content_margin_right = 12
-	btn_normal.content_margin_top = 8
-	btn_normal.content_margin_bottom = 8
+	btn_normal.set_corner_radius_all(int(8 * s))
+	btn_normal.content_margin_left = btn_margin_h
+	btn_normal.content_margin_right = btn_margin_h
+	btn_normal.content_margin_top = btn_margin_v
+	btn_normal.content_margin_bottom = btn_margin_v
 	game_theme.set_stylebox("normal", "Button", btn_normal)
 	var btn_hover = btn_normal.duplicate()
 	btn_hover.bg_color = Color("#E0E0E0")
@@ -102,6 +136,7 @@ func _apply_game_theme() -> void:
 	game_theme.set_color("font_hover_color", "Button", Color("#1A1A1A"))
 	game_theme.set_color("font_pressed_color", "Button", Color("#1A1A1A"))
 	game_theme.set_color("font_disabled_color", "Button", Color("#AAAAAA"))
+	game_theme.set_font_size("font_size", "Button", ScreenHelper.scaled_font(14))
 
 	# ── ProgressBar -> terracotta fill on cream background ──
 	var pb_bg = StyleBoxFlat.new()
@@ -120,17 +155,18 @@ func _apply_game_theme() -> void:
 	# ── OptionButton -> rounded dropdown ──
 	var opt_normal = StyleBoxFlat.new()
 	opt_normal.bg_color = Color.WHITE
-	opt_normal.set_corner_radius_all(8)
+	opt_normal.set_corner_radius_all(int(8 * s))
 	opt_normal.border_color = Color("#D0CBC6")
 	opt_normal.set_border_width_all(1)
-	opt_normal.content_margin_left = 12
-	opt_normal.content_margin_right = 12
-	opt_normal.content_margin_top = 8
-	opt_normal.content_margin_bottom = 8
+	opt_normal.content_margin_left = btn_margin_h
+	opt_normal.content_margin_right = btn_margin_h
+	opt_normal.content_margin_top = btn_margin_v
+	opt_normal.content_margin_bottom = btn_margin_v
 	game_theme.set_stylebox("normal", "OptionButton", opt_normal)
 	var opt_hover = opt_normal.duplicate()
 	opt_hover.bg_color = Color("#F8F5F2")
 	game_theme.set_stylebox("hover", "OptionButton", opt_hover)
+	game_theme.set_font_size("font_size", "OptionButton", ScreenHelper.scaled_font(14))
 
 	# ── HSeparator ──
 	var sep_style = StyleBoxFlat.new()
@@ -138,32 +174,50 @@ func _apply_game_theme() -> void:
 	sep_style.content_margin_top = 0
 	sep_style.content_margin_bottom = 0
 	game_theme.set_stylebox("separator", "HSeparator", sep_style)
-	game_theme.set_constant("separation", "HSeparator", 8)
+	game_theme.set_constant("separation", "HSeparator", int(8 * s))
+
+	# ── LineEdit ──
+	game_theme.set_font_size("font_size", "LineEdit", ScreenHelper.scaled_font(13))
 
 	# Apply to root — all children inherit this theme
 	self.theme = game_theme
 
 	# ── Override NavBar to be a flat bar (no rounded corners, top border only) ──
 	var nav_bar: PanelContainer = $MainLayout/NavBar
+	var nav_pad = int(8 * s)
 	var nav_style = StyleBoxFlat.new()
 	nav_style.bg_color = Color.WHITE
 	nav_style.border_color = Color("#E8E3DE")
 	nav_style.border_width_top = 1
-	nav_style.content_margin_top = 6
-	nav_style.content_margin_bottom = 6
-	nav_style.content_margin_left = 8
-	nav_style.content_margin_right = 8
+	nav_style.content_margin_top = int(6 * s)
+	nav_style.content_margin_bottom = int(6 * s)
+	nav_style.content_margin_left = nav_pad
+	nav_style.content_margin_right = nav_pad
 	nav_bar.add_theme_stylebox_override("panel", nav_style)
-	# Shrink navbar button font so "Settings" doesn't clip
+	# Scale navbar height and button font for desktop
+	nav_bar.custom_minimum_size.y = ScreenHelper.scaled_min_height(70)
+	var nav_font = ScreenHelper.scaled_font(13)
 	for btn in $MainLayout/NavBar/NavButtons.get_children():
 		if btn is Button:
-			btn.add_theme_font_size_override("font_size", 13)
+			btn.add_theme_font_size_override("font_size", nav_font)
 
 	# ── Style ShopPopup with more prominent shadow ──
 	var popup_style = card_style.duplicate()
-	popup_style.shadow_size = 8
+	popup_style.shadow_size = int(8 * s)
 	popup_style.shadow_color = Color(0, 0, 0, 0.12)
 	shop_popup.add_theme_stylebox_override("panel", popup_style)
+
+func _adapt_shop_popup() -> void:
+	if not ScreenHelper.is_desktop():
+		return
+	# On desktop, position the shop popup relative to the constrained content area
+	var side = ScreenHelper.get_side_margin()
+	var vp_w = get_viewport_rect().size.x
+	# Convert content-relative anchors (10%-50%) to viewport-relative
+	var content_left = side
+	var content_w = ScreenHelper.get_content_width()
+	shop_popup.anchor_left = (content_left + content_w * 0.1) / vp_w
+	shop_popup.anchor_right = (content_left + content_w * 0.5) / vp_w
 
 func _show_tab(target_tab: Control):
 	# Hide popup when switching tabs

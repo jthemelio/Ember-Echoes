@@ -25,6 +25,7 @@ ItemDatabase="*res://logic/autoloads/ItemDatabase.gd"
 IdleCombatManager="*res://logic/autoloads/IdleCombatManager.gd"
 LootManager="*res://logic/autoloads/LootManager.gd"
 AchievementManager="*res://logic/autoloads/AchievementManager.gd"
+ScreenHelper="*res://logic/autoloads/ScreenHelper.gd"
 
 [display]
 

@@ -129,7 +129,7 @@ func _build_hunt_kills_view() -> void:
 		# Zone header
 		var zone_header = Label.new()
 		zone_header.text = zone_name
-		zone_header.add_theme_font_size_override("font_size", 18)
+		zone_header.add_theme_font_size_override("font_size", ScreenHelper.scaled_font(18))
 		zone_header.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 		content_vbox.add_child(zone_header)
 
@@ -222,6 +222,15 @@ func _build_monster_entry(mob_name: String, ach_mgr: Node) -> void:
 		progress.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		tier_vbox.add_child(progress)
 
+		# Reward label (what this tier grants)
+		var reward_name = AchievementManager.TIER_REWARD_NAMES[i] if i < AchievementManager.TIER_REWARD_NAMES.size() else "Wyrm Sphere"
+		var reward_lbl = Label.new()
+		reward_lbl.text = reward_name
+		reward_lbl.add_theme_font_size_override("font_size", 9)
+		reward_lbl.add_theme_color_override("font_color", Color(0.5, 0.7, 0.9))
+		reward_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tier_vbox.add_child(reward_lbl)
+
 		# Claim button or status
 		if is_claimable:
 			var claim_btn = Button.new()
@@ -284,7 +293,7 @@ func _build_pets_view() -> void:
 
 	# Grid of all possible pets
 	var pet_grid = GridContainer.new()
-	pet_grid.columns = 3
+	pet_grid.columns = ScreenHelper.grid_columns(3, 4)
 	pet_grid.add_theme_constant_override("h_separation", 8)
 	pet_grid.add_theme_constant_override("v_separation", 8)
 	pet_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL

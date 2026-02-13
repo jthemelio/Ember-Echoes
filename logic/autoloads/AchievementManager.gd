@@ -11,6 +11,10 @@ signal pet_obtained(pet_name: String)
 const KILL_TIERS := [100, 500, 1000, 2000, 5000]
 const RARE_BONUS_PER_TIER := [0.01, 0.02, 0.03, 0.05, 0.08]  # +1%, +2%, +3%, +5%, +8% rare spawn bonus
 
+# Reward item per tier: first two tiers give Comets, remaining give Wyrm Spheres
+const TIER_REWARDS := ["Comet", "Comet", "Wyrm_Sphere", "Wyrm_Sphere", "Wyrm_Sphere"]
+const TIER_REWARD_NAMES := ["Comet", "Comet", "Wyrm Sphere", "Wyrm Sphere", "Wyrm Sphere"]
+
 # ───── Pet Drop ─────
 const PET_DROP_CHANCE: float = 1.0 / 4000.0  # 1 in 4000
 
@@ -120,19 +124,31 @@ func claim_tier(monster_name: String, tier_index: int) -> void:
 	_dirty = true
 	achievement_claimed.emit(monster_name, tier_index)
 
-	# Call PlayFab to grant Wyrm Sphere reward
+	# Grant reward item locally
+	var reward_bid = TIER_REWARDS[tier_index] if tier_index < TIER_REWARDS.size() else "Wyrm_Sphere"
+	var reward_name = TIER_REWARD_NAMES[tier_index] if tier_index < TIER_REWARD_NAMES.size() else "Wyrm Sphere"
+	var instance = ItemDatabase.create_instance_dict(reward_bid + "_Normal", "Normal")
+	GameManager.active_user_inventory.append(instance)
+	GameManager.inventory_changed.emit()
+	GameManager.sync_inventory_to_server()
+
+	# Floating feedback
+	GlobalUI.show_floating_text("+1 %s!" % reward_name, Color(0.4, 0.8, 1.0))
+
+	# Call PlayFab to verify and persist the claim
 	var args = {
 		"monsterName": monster_name,
 		"tierIndex": tier_index,
+		"rewardItemId": reward_bid,
 		"achievementData": to_save_dict()
 	}
 	PlayFabManager.client.execute_cloud_script("claimKillAchievement", args, _on_claim_result)
-	print("AchievementManager: Claimed tier %d for %s" % [tier_index, monster_name])
+	print("AchievementManager: Claimed tier %d for %s — reward: %s" % [tier_index, monster_name, reward_name])
 
 func _on_claim_result(result: Dictionary) -> void:
 	var fn_result = result.get("data", {}).get("FunctionResult", {})
 	if fn_result is Dictionary and fn_result.get("success", false):
-		print("AchievementManager: Claim verified, Wyrm Sphere granted")
+		print("AchievementManager: Claim verified on server")
 	else:
 		push_warning("AchievementManager: Claim verification failed")
 

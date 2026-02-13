@@ -16,7 +16,16 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guest"]
+bg_color = Color(0.75, 0.58, 0.12, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_input"]
+content_margin_left = 10.0
+content_margin_right = 10.0
 bg_color = Color(0.12, 0.12, 0.14, 0.9)
 border_width_left = 1
 border_width_top = 1
@@ -27,15 +36,6 @@ corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
-content_margin_left = 10
-content_margin_right = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_guest"]
-bg_color = Color(0.75, 0.58, 0.12, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_signin"]
 bg_color = Color(0.18, 0.18, 0.22, 1)
@@ -87,62 +87,62 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -5.0
-offset_right = -5.0
 offset_top = 30.0
+offset_right = -5.0
 offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Card" type="PanelContainer" parent="LoginPanel"]
+[node name="Card" type="PanelContainer" parent="LoginPanel" unique_id=1481391007]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="Margin" type="MarginContainer" parent="LoginPanel/Card"]
+[node name="Margin" type="MarginContainer" parent="LoginPanel/Card" unique_id=1280582341]
 layout_mode = 2
 theme_override_constants/margin_left = 18
 theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 18
 
-[node name="VBox" type="VBoxContainer" parent="LoginPanel/Card/Margin"]
+[node name="VBox" type="VBoxContainer" parent="LoginPanel/Card/Margin" unique_id=2097356171]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="SubtitleLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
+[node name="SubtitleLabel" type="Label" parent="LoginPanel/Card/Margin/VBox" unique_id=1266834076]
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 11
 text = "Welcome, adventurer"
 horizontal_alignment = 1
 
-[node name="GuestBtn" type="Button" parent="LoginPanel/Card/Margin/VBox"]
+[node name="GuestBtn" type="Button" parent="LoginPanel/Card/Margin/VBox" unique_id=264501986]
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_guest")
 text = "Play as Guest"
 
-[node name="SeparatorRow" type="HBoxContainer" parent="LoginPanel/Card/Margin/VBox"]
+[node name="SeparatorRow" type="HBoxContainer" parent="LoginPanel/Card/Margin/VBox" unique_id=28026544]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="LineLeft" type="HSeparator" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
+[node name="LineLeft" type="HSeparator" parent="LoginPanel/Card/Margin/VBox/SeparatorRow" unique_id=2087586811]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OrLabel" type="Label" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
+[node name="OrLabel" type="Label" parent="LoginPanel/Card/Margin/VBox/SeparatorRow" unique_id=1117310690]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
 theme_override_colors/font_color = Color(0.55, 0.55, 0.55, 1)
+theme_override_font_sizes/font_size = 10
 text = "or sign in"
 
-[node name="LineRight" type="HSeparator" parent="LoginPanel/Card/Margin/VBox/SeparatorRow"]
+[node name="LineRight" type="HSeparator" parent="LoginPanel/Card/Margin/VBox/SeparatorRow" unique_id=736563471]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="EmailInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox"]
+[node name="EmailInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox" unique_id=1584991104]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
@@ -153,7 +153,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_input")
 placeholder_text = "Email"
 caret_blink = true
 
-[node name="PasswordInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox"]
+[node name="PasswordInput" type="LineEdit" parent="LoginPanel/Card/Margin/VBox" unique_id=933763593]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.95, 0.95, 1)
@@ -165,11 +165,11 @@ placeholder_text = "Password"
 caret_blink = true
 secret = true
 
-[node name="ButtonRow" type="HBoxContainer" parent="LoginPanel/Card/Margin/VBox"]
+[node name="ButtonRow" type="HBoxContainer" parent="LoginPanel/Card/Margin/VBox" unique_id=226681997]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="SignInBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow"]
+[node name="SignInBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow" unique_id=316858034]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -177,7 +177,7 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_signin")
 text = "Sign In"
 
-[node name="RegisterBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow"]
+[node name="RegisterBtn" type="Button" parent="LoginPanel/Card/Margin/VBox/ButtonRow" unique_id=842115381]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -185,7 +185,7 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_register")
 text = "Register"
 
-[node name="StatusLabel" type="Label" parent="LoginPanel/Card/Margin/VBox"]
+[node name="StatusLabel" type="Label" parent="LoginPanel/Card/Margin/VBox" unique_id=33354293]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
