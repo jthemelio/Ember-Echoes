@@ -655,7 +655,7 @@ func _on_compose_ignis(tier_bid: String) -> void:
 		"ench": {},
 		"dura": 0
 	}
-	GameManager.active_user_inventory.append(instance)
+	GameManager.add_to_bag(instance)
 
 	compose_message.text = "Composed 3x %s into 1x %s!" % [
 		MATERIAL_DISPLAY_NAMES.get(tier_bid, tier_bid),
@@ -717,7 +717,7 @@ func _on_compress_scroll(single_bid: String, scroll_bid: String, mat_name: Strin
 		"ench": {},
 		"dura": 0
 	}
-	GameManager.active_user_inventory.append(instance)
+	GameManager.add_to_bag(instance)
 
 	convert_message.text = "Compressed 10 %ss into 1 %s Scroll!" % [mat_name, mat_name]
 	convert_message.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3))
@@ -741,7 +741,7 @@ func _on_expand_scroll(single_bid: String, scroll_bid: String, mat_name: String)
 			"ench": {},
 			"dura": 0
 		}
-		GameManager.active_user_inventory.append(instance)
+		GameManager.add_to_bag(instance)
 
 	convert_message.text = "Expanded 1 %s Scroll into 10 %ss!" % [mat_name, mat_name]
 	convert_message.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3))

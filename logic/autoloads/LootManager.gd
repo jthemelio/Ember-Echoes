@@ -109,7 +109,7 @@ func _roll_rare_materials() -> void:
 	if randf() < COMET_DROP_CHANCE:
 		var instance = ItemDatabase.create_instance_dict("Comet_Normal", "Normal")
 		instance["dura"] = 0
-		GameManager.active_user_inventory.append(instance)
+		GameManager.add_to_bag(instance)
 		_pending_items.append(instance.duplicate())
 		var item_data = ItemDatabase.resolve_instance(instance)
 		loot_dropped.emit(item_data)
@@ -120,7 +120,7 @@ func _roll_rare_materials() -> void:
 	if randf() < WYRM_SPHERE_DROP_CHANCE:
 		var instance = ItemDatabase.create_instance_dict("Wyrm_Sphere_Normal", "Normal")
 		instance["dura"] = 0
-		GameManager.active_user_inventory.append(instance)
+		GameManager.add_to_bag(instance)
 		_pending_items.append(instance.duplicate())
 		var item_data = ItemDatabase.resolve_instance(instance)
 		loot_dropped.emit(item_data)
@@ -173,7 +173,7 @@ func _roll_loot(mob_level: int) -> void:
 		instance_dict["dura"] = item_data.stats.get("MaxDura", 0)
 
 	# Step 7: Add to bag and pending report
-	GameManager.active_user_inventory.append(instance_dict)
+	GameManager.add_to_bag(instance_dict)
 	_pending_items.append(instance_dict.duplicate())
 	loot_dropped.emit(item_data)
 

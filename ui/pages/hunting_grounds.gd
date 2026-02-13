@@ -622,49 +622,43 @@ func _on_move_pressed() -> void:
 	if _selected_indices.is_empty():
 		return
 
-	var inv = GameManager.active_user_inventory
-	# Warehouse is items at index 40+. Max 40 warehouse slots.
-	var warehouse_count = max(0, inv.size() - 40)
-	var warehouse_space = 40 - warehouse_count
+	var bag = GameManager.active_user_inventory
+	var wh = GameManager.active_user_warehouse
+	var warehouse_space = GameManager.WAREHOUSE_MAX_SLOTS - wh.size()
 
 	if warehouse_space <= 0:
-		print("Warehouse is full (40/40)")
+		print("Warehouse is full (%d/%d)" % [wh.size(), GameManager.WAREHOUSE_MAX_SLOTS])
+		GlobalUI.show_floating_text("Warehouse is full!", Color.RED)
 		return
 
 	# Collect items to move (cap at available warehouse space)
+	# Sort descending so remove_at doesn't shift earlier indices
 	_selected_indices.sort()
+	_selected_indices.reverse()
 	var moved := 0
-	var indices_to_move: Array = []
 	for idx in _selected_indices:
 		if moved >= warehouse_space:
 			break
-		if idx >= inv.size() or idx >= 40:
-			continue  # Only move bag items (0-39)
-		indices_to_move.append(idx)
+		if idx >= bag.size():
+			continue
+		var item = bag[idx]
+		if item == null:
+			continue
+		# Remove from bag, add to warehouse
+		bag.remove_at(idx)
+		wh.append(item)
 		moved += 1
 
-	if indices_to_move.is_empty():
+	if moved == 0:
 		return
 
-	# Move items: null out bag slots (DON'T remove_at, which shifts warehouse items)
-	var items_to_move: Array = []
-	for idx in indices_to_move:
-		items_to_move.append(inv[idx])
-		inv[idx] = null  # Clear the bag slot, warehouse stays in place
-
-	# Ensure inventory has at least 40 entries (bag region) before warehouse
-	while inv.size() < 40:
-		inv.append(null)
-	# Append moved items to warehouse region (index 40+)
-	for item in items_to_move:
-		inv.append(item)
-
-	print("Moved %d items to warehouse" % items_to_move.size())
+	print("Moved %d items to warehouse" % moved)
 	GameManager.sync_inventory_to_server()
 
 	# Exit select mode
 	_on_cancel_select()
 	GameManager.inventory_changed.emit()
+	GameManager.warehouse_changed.emit()
 	_refresh_inventory_ui()
 
 func _set_slots_select_mode(enabled: bool) -> void:
@@ -711,11 +705,10 @@ func _on_slot_tapped(slot: PanelContainer) -> void:
 	move_bag_btn.text = "Move (%d)" % _selected_indices.size()
 
 func _refresh_inventory_ui() -> void:
-	var inv = GameManager.active_user_inventory
-	var bag_count = min(inv.size(), 40)
-	var warehouse_count = max(0, inv.size() - 40)
-	bag_title.text = "Main Bag (%d/40)" % bag_count
-	warehouse_title.text = "Warehouse (%d/40)" % warehouse_count
+	var bag_count = GameManager.active_user_inventory.size()
+	var wh_count = GameManager.active_user_warehouse.size()
+	bag_title.text = "Main Bag (%d/%d)" % [bag_count, GameManager.BAG_MAX_SLOTS]
+	warehouse_title.text = "Warehouse (%d/%d)" % [wh_count, GameManager.WAREHOUSE_MAX_SLOTS]
 
 	if bag_grid and bag_grid.is_inside_tree():
 		bag_grid.refresh_grid()

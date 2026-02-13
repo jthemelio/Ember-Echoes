@@ -128,7 +128,7 @@ func claim_tier(monster_name: String, tier_index: int) -> void:
 	var reward_bid = TIER_REWARDS[tier_index] if tier_index < TIER_REWARDS.size() else "Wyrm_Sphere"
 	var reward_name = TIER_REWARD_NAMES[tier_index] if tier_index < TIER_REWARD_NAMES.size() else "Wyrm Sphere"
 	var instance = ItemDatabase.create_instance_dict(reward_bid + "_Normal", "Normal")
-	GameManager.active_user_inventory.append(instance)
+	GameManager.add_to_bag(instance)
 	GameManager.inventory_changed.emit()
 	GameManager.sync_inventory_to_server()
 

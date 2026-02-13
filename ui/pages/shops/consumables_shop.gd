@@ -76,23 +76,100 @@ func _create_shop_slot(item: Dictionary) -> void:
 	var cd = item.get("CustomData", {})
 	var display_name = item.get("DisplayName", "Unknown")
 	var level_req = int(cd.get("LevelReq", 0))
-	var price = int(cd.get("Price", 0))
+	var base_price = int(cd.get("Price", 0))
 	var item_id = item.get("ItemId", "")
-	var amount = int(cd.get("Amount", 1))
-
-	var btn = Button.new()
-	btn.custom_minimum_size = Vector2(0, 48)
-	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	btn.clip_text = true
+	var base_amount = int(cd.get("Amount", 1))
 
 	var player_level = GameManager.active_character_level
+
+	# ── Container for the row: info + qty buttons + buy button ──
+	var row = VBoxContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 4)
+
+	# Item name + level label
+	var name_lbl = Label.new()
+	name_lbl.text = "%s (x%d)  —  Lv%d" % [display_name, base_amount, level_req]
+	name_lbl.add_theme_font_size_override("font_size", 13)
 	if player_level < level_req:
-		btn.modulate = Color(0.6, 0.6, 0.6, 1.0)
+		name_lbl.modulate = Color(0.6, 0.6, 0.6, 1.0)
+	row.add_child(name_lbl)
 
-	btn.text = "%s (x%d)\nLv%d - %sg" % [display_name, amount, level_req, GameManager.format_gold(price)]
-	btn.pressed.connect(_on_buy_pressed.bind(item_id, display_name, price, amount))
+	# Price + quantity row
+	var buy_row = HBoxContainer.new()
+	buy_row.add_theme_constant_override("separation", 6)
+	row.add_child(buy_row)
 
-	item_grid.add_child(btn)
+	# Price label (updates when qty changes)
+	var price_lbl = Label.new()
+	price_lbl.text = "%sg" % GameManager.format_gold(base_price)
+	price_lbl.add_theme_font_size_override("font_size", 13)
+	price_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	buy_row.add_child(price_lbl)
+
+	# Qty toggle buttons
+	var qty_1_btn = Button.new()
+	qty_1_btn.text = "x1"
+	qty_1_btn.custom_minimum_size = Vector2(44, 34)
+	buy_row.add_child(qty_1_btn)
+
+	var qty_5_btn = Button.new()
+	qty_5_btn.text = "x5"
+	qty_5_btn.custom_minimum_size = Vector2(44, 34)
+	buy_row.add_child(qty_5_btn)
+
+	# Buy button
+	var buy_btn = Button.new()
+	buy_btn.text = "Buy"
+	buy_btn.custom_minimum_size = Vector2(60, 34)
+	buy_row.add_child(buy_btn)
+
+	if player_level < level_req:
+		buy_btn.disabled = true
+		buy_row.modulate = Color(0.6, 0.6, 0.6, 1.0)
+
+	# Track selected quantity per slot (default: 1)
+	var state = {"qty": 1}
+
+	# Style the active qty button
+	var _style_qty = func():
+		var active_style = StyleBoxFlat.new()
+		active_style.bg_color = Color(0.76, 0.35, 0.24)
+		active_style.set_corner_radius_all(6)
+		active_style.content_margin_left = 6
+		active_style.content_margin_right = 6
+		active_style.content_margin_top = 4
+		active_style.content_margin_bottom = 4
+		if state["qty"] == 1:
+			qty_1_btn.add_theme_stylebox_override("normal", active_style)
+			qty_1_btn.add_theme_color_override("font_color", Color.WHITE)
+			qty_5_btn.remove_theme_stylebox_override("normal")
+			qty_5_btn.remove_theme_color_override("font_color")
+		else:
+			qty_5_btn.add_theme_stylebox_override("normal", active_style)
+			qty_5_btn.add_theme_color_override("font_color", Color.WHITE)
+			qty_1_btn.remove_theme_stylebox_override("normal")
+			qty_1_btn.remove_theme_color_override("font_color")
+		price_lbl.text = "%sg" % GameManager.format_gold(base_price * state["qty"])
+
+	qty_1_btn.pressed.connect(func():
+		state["qty"] = 1
+		_style_qty.call()
+	)
+	qty_5_btn.pressed.connect(func():
+		state["qty"] = 5
+		_style_qty.call()
+	)
+
+	# Set initial style
+	_style_qty.call()
+
+	buy_btn.pressed.connect(func():
+		var qty = state["qty"]
+		_on_buy_pressed(item_id, display_name, base_price * qty, base_amount * qty)
+	)
+
+	item_grid.add_child(row)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int, amount: int) -> void:
 	# Prevent rapid-fire purchases (causes PlayFab rate-limit / concurrent errors)
@@ -103,10 +180,11 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int, amount: 
 	var gold = GameManager.active_user_currencies.get("GD", 0)
 	if gold < price:
 		print("Consumables: Not enough gold for %s (need %d, have %d)" % [display_name, price, gold])
+		GlobalUI.show_floating_text("Not enough gold!", Color.RED)
 		return
 
 	_purchase_in_flight = true
-	print("Consumables: Purchasing %s for %d gold" % [display_name, price])
+	print("Consumables: Purchasing %s (x%d) for %d gold" % [display_name, amount, price])
 
 	PlayFabManager.client.execute_cloud_script("purchaseShopItem", {
 		"characterId": GameManager.active_character_id,
@@ -132,17 +210,17 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int, amount: 
 			_refresh_gold()
 			GlobalUI.show_floating_text("Purchased %s!" % display_name, Color.WHITE)
 
-			# Stack purchased arrows into inventory (5 packs per slot max)
+			# Stack purchased arrows into bag (5 packs per slot max)
 			var bid = ItemDatabase.extract_base_id(item_id)
 			var quality = "Normal"
 			var max_per_slot = ItemDatabase.get_max_stack_amount(bid, quality)  # 5 * base_amount
-			var remaining = amount  # arrows from this purchase (1 pack)
+			var remaining = amount
 
-			# Try to add to an existing slot of the same arrow type
+			# Try to add to an existing slot of the same arrow type in bag
 			for inv_item in GameManager.active_user_inventory:
 				if remaining <= 0:
 					break
-				if inv_item.get("bid", "") == bid and inv_item.get("q", "") == quality:
+				if inv_item is Dictionary and inv_item.get("bid", "") == bid and inv_item.get("q", "") == quality:
 					var current_amt = int(inv_item.get("amt", 0))
 					if current_amt < max_per_slot:
 						var space = max_per_slot - current_amt
@@ -150,12 +228,12 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int, amount: 
 						inv_item["amt"] = current_amt + add
 						remaining -= add
 
-			# If there's leftover, create new stack slot(s)
+			# If there's leftover, create new stack slot(s) in bag
 			while remaining > 0:
 				var stack_amt = mini(remaining, max_per_slot)
 				var stack = ItemDatabase.create_instance_dict(item_id, quality, stack_amt)
 				stack["dura"] = 0
-				GameManager.active_user_inventory.append(stack)
+				GameManager.add_to_bag(stack)
 				remaining -= stack_amt
 
 			GameManager.inventory_changed.emit()

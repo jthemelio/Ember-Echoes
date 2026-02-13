@@ -178,7 +178,7 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 			# Add the compact instance dict returned by CloudScript to local bag
 			var new_item = fn_result.get("item", {})
 			if new_item is Dictionary and new_item.has("uid"):
-				GameManager.active_user_inventory.append(new_item)
+				GameManager.add_to_bag(new_item)
 				GameManager.inventory_changed.emit()
 			else:
 				# Fallback: create locally if server didn't return the item
@@ -186,7 +186,7 @@ func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 				var item_data = ItemDatabase.resolve_instance(instance)
 				if instance.get("dura", -1) == -1:
 					instance["dura"] = item_data.stats.get("MaxDura", 0)
-				GameManager.active_user_inventory.append(instance)
+				GameManager.add_to_bag(instance)
 				GameManager.inventory_changed.emit()
 		else:
 			var error_msg = ""

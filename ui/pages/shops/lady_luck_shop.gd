@@ -287,7 +287,7 @@ func _process_reward(reward: Dictionary) -> void:
 			"dura": 0,
 			"gold": gold_amount,  # Gold amount stored for claiming
 		}
-		GameManager.active_user_inventory.append(bag_instance)
+		GameManager.add_to_bag(bag_instance)
 		GameManager.inventory_changed.emit()
 		GameManager.sync_inventory_to_server()
 		print("LadyLuck: Won %s (%d gold) — added to inventory" % [reward.get("name", ""), gold_amount])
@@ -317,7 +317,7 @@ func _process_reward(reward: Dictionary) -> void:
 		if item_data:
 			instance["dura"] = item_data.stats.get("MaxDura", 100)
 
-	GameManager.active_user_inventory.append(instance)
+	GameManager.add_to_bag(instance)
 	GameManager.inventory_changed.emit()
 	GameManager.sync_inventory_to_server()
 	print("LadyLuck: Won item %s (q:%s skt:%d)" % [reward.get("name", reward_id), quality, sockets])

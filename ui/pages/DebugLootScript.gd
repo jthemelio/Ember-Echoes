@@ -37,7 +37,7 @@ func _pressed():
 	
 	# Add a random item to the global inventory
 	var random_item = test_pool[randi() % test_pool.size()]
-	GameManager.active_user_inventory.append(random_item)
+	GameManager.add_to_bag(random_item)
 	
 	# Redraw the grid to show the new item
 	inventory_grid.refresh_grid()

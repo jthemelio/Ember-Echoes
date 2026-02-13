@@ -390,4 +390,4 @@ theme_override_constants/v_separation = 6
 columns = 5
 script = ExtResource("2_aqnn3")
 slot_count = 40
-inventory_offset = 40
+is_warehouse_grid = true

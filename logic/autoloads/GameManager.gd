@@ -3,6 +3,7 @@ extends Node
 signal character_stats_updated
 signal equipment_changed
 signal inventory_changed
+signal warehouse_changed
 signal changelog_updated          # Emitted when new changelog entries are detected
 
 var active_character_stats: Dictionary = {}
@@ -16,7 +17,12 @@ var _saved_current_xp: int = 0  # Loaded from PlayFab, passed to IdleCombatManag
 
 # ───── Internal Data Inventory (compact instance dicts) ─────
 # Each entry is: { "uid", "bid", "q", "plus", "skt", "ench", "dura" }
-var active_user_inventory: Array = []  # Inv_Bag contents
+var active_user_inventory: Array = []  # Bag contents (max 40 slots)
+
+# ───── Warehouse (separate from bag, account-wide bank) ─────
+var active_user_warehouse: Array = []  # Warehouse contents (max 40 slots)
+const BAG_MAX_SLOTS: int = 40
+const WAREHOUSE_MAX_SLOTS: int = 40
 
 # ───── Equipment System (8 slots) ─────
 # Values are compact instance dicts (or null if empty)
@@ -170,6 +176,23 @@ func start_game_with_character(data: Dictionary):
 			else:
 				active_user_inventory = []
 
+			# Parse Warehouse (separate field, or migrate from old combined array)
+			var wh_json = fn_result.get("warehouse", null)
+			if wh_json is Array:
+				active_user_warehouse = wh_json
+			else:
+				# Migration: old format stored everything in bag.
+				# Items at index 40+ are warehouse items.
+				active_user_warehouse = []
+				if active_user_inventory.size() > BAG_MAX_SLOTS:
+					active_user_warehouse = active_user_inventory.slice(BAG_MAX_SLOTS)
+					active_user_inventory = active_user_inventory.slice(0, BAG_MAX_SLOTS)
+					print("GameManager: Migrated %d items from old combined array to warehouse" % active_user_warehouse.size())
+
+			# Strip null padding from end of bag (cleanup from old null-padding hack)
+			while active_user_inventory.size() > 0 and active_user_inventory.back() == null:
+				active_user_inventory.pop_back()
+
 			# Parse Inv_Equipped
 			var eq_json = fn_result.get("equipped", {})
 			if eq_json is Dictionary:
@@ -183,13 +206,15 @@ func start_game_with_character(data: Dictionary):
 				for slot_name in equipped_items.keys():
 					equipped_items[slot_name] = null
 
-			print("GameManager: Inventory loaded. Bag: %d items, Equipped: %d slots" % [
+			print("GameManager: Inventory loaded. Bag: %d items, Warehouse: %d items, Equipped: %d slots" % [
 				active_user_inventory.size(),
+				active_user_warehouse.size(),
 				_count_equipped()
 			])
 		else:
 			print("GameManager: No inventory data found (new character?)")
 			active_user_inventory = []
+			active_user_warehouse = []
 			for slot_name in equipped_items.keys():
 				equipped_items[slot_name] = null
 
@@ -259,7 +284,7 @@ func _seed_starting_items() -> void:
 
 	# Grant a Normal Jacket as the starting armor
 	var jacket = ItemDatabase.create_instance_dict("Jacket_Normal", "Normal")
-	active_user_inventory.append(jacket)
+	add_to_bag(jacket)
 	print("GameManager: Seeded starting item — Jacket (Normal)")
 	sync_inventory_to_server()
 
@@ -301,6 +326,21 @@ func can_equip(item: ItemData) -> Dictionary:
 		return {"ok": false, "reason": "Requires %d Agility" % item.agi_req}
 
 	return {"ok": true, "slot": slot}
+
+# ───── Bag Helper: insert into first available bag slot ─────
+func add_to_bag(instance_dict) -> bool:
+	# Try to fill a null slot in the bag region first
+	for i in range(mini(active_user_inventory.size(), BAG_MAX_SLOTS)):
+		if active_user_inventory[i] == null:
+			active_user_inventory[i] = instance_dict
+			return true
+	# No null slots -- append if bag isn't full yet
+	if active_user_inventory.size() < BAG_MAX_SLOTS:
+		active_user_inventory.append(instance_dict)
+		return true
+	# Bag is full
+	push_warning("GameManager: Bag is full (%d/%d), cannot add item" % [active_user_inventory.size(), BAG_MAX_SLOTS])
+	return false
 
 func equip_item_by_uid(uid: String) -> bool:
 	# Find the compact dict in bag by uid
@@ -349,7 +389,7 @@ func equip_item_by_uid(uid: String) -> bool:
 		else:
 			# Different type or empty slot — swap
 			if old_equipped != null:
-				active_user_inventory.append(old_equipped)
+				add_to_bag(old_equipped)
 			var transfer = mini(equip_max, bag_amt)
 			var equip_dict = instance_dict.duplicate()
 			equip_dict["amt"] = transfer
@@ -371,7 +411,7 @@ func equip_item_by_uid(uid: String) -> bool:
 	# ── Standard (non-stackable) equip logic ──
 	# Move old equipped item back to bag (if any)
 	if old_equipped != null:
-		active_user_inventory.append(old_equipped)
+		add_to_bag(old_equipped)
 
 	# Equip new item and remove from bag
 	equipped_items[slot] = instance_dict
@@ -424,7 +464,7 @@ func unequip_slot(slot: String) -> ItemData:
 
 	# Move to bag
 	equipped_items[slot] = null
-	active_user_inventory.append(instance_dict)
+	add_to_bag(instance_dict)
 
 	var item_data = ItemDatabase.resolve_instance(instance_dict)
 	print("GameManager: Unequipped '%s' from slot '%s'" % [item_data.display_name, slot])
@@ -654,6 +694,7 @@ func sync_inventory_to_server() -> void:
 	PlayFabManager.client.execute_cloud_script("syncInventory", {
 		"characterId": active_character_id,
 		"bag": active_user_inventory,
+		"warehouse": active_user_warehouse,
 		"equipped": equipped_items,
 		"equippedSkill": SkillManager.equipped_skill_id,
 	}, func(result):
