@@ -15,6 +15,7 @@ signal mob_spawned                   # Emitted when a new mob spawns (timer or m
 signal zone_changed                  # Emitted after changing zone/creature
 signal zones_loaded                  # Emitted when zone data is loaded from PlayFab
 signal afk_rewards_ready(rewards: Dictionary)  # Emitted with offline rewards to display
+signal out_of_arrows                 # Emitted when Marksman runs out of arrows
 
 # ───── Constants ─────
 const TICK_INTERVAL: float = 0.1     # 100ms per tick
@@ -115,6 +116,9 @@ func _ready():
 	add_child(_progress_save_timer)
 	_progress_save_timer.start()
 
+	# Connect SkillManager signals for skill effects
+	SkillManager.skill_used.connect(_on_skill_used)
+
 	# Recalculate stats when equipment changes
 	GameManager.equipment_changed.connect(_on_equipment_changed)
 
@@ -197,11 +201,22 @@ func change_zone(zone_name: String, creature_name: String) -> void:
 	zone_changed.emit()
 	combat_tick_updated.emit()
 
+func _is_marksman_without_arrows() -> bool:
+	if GameManager.active_character_class != "Marksman":
+		return false
+	var offhand = GameManager.get_equipped_item_data("Offhand")
+	return offhand == null or offhand.item_type != "Arrow"
+
 func start_combat() -> void:
 	if combat_active:
 		return
 	if zones.is_empty():
 		push_warning("IdleCombatManager: No zones loaded, cannot start combat")
+		return
+	# Marksman cannot fight without arrows
+	if _is_marksman_without_arrows():
+		out_of_arrows.emit()
+		push_warning("IdleCombatManager: Marksman has no arrows equipped!")
 		return
 	# Load saved XP from PlayFab (only on first combat start for this session)
 	if current_xp == 0 and GameManager._saved_current_xp > 0:
@@ -214,12 +229,14 @@ func start_combat() -> void:
 	_attack_cooldown = attack_interval
 	tick_timer.start()
 	spawn_timer.start()
+	SkillManager.start_combat_processing()
 	combat_tick_updated.emit()
 
 func stop_combat() -> void:
 	combat_active = false
 	tick_timer.stop()
 	spawn_timer.stop()
+	SkillManager.stop_combat_processing()
 	combat_tick_updated.emit()
 
 func set_mode_fighting(fighting: bool) -> void:
@@ -349,11 +366,51 @@ func _refresh_player_stats() -> void:
 	_player_dodge = combat.get("TotalDodge", 0)
 	_player_accuracy = combat.get("Accuracy", 0)
 
+	# ─── Apply Passive Bonuses from SkillManager ───
+	var passive_bonuses = SkillManager.get_passive_bonuses(char_class, level)
+	# Damage bonus (applies to min/max atk)
+	if passive_bonuses.has("Damage"):
+		var pct = passive_bonuses["Damage"].get("percent", 0) / 100.0
+		var flat = passive_bonuses["Damage"].get("flat", 0)
+		_player_min_atk = int(_player_min_atk * (1.0 + pct)) + flat
+		_player_max_atk = int(_player_max_atk * (1.0 + pct)) + flat
+	# Defense bonus
+	if passive_bonuses.has("Defense"):
+		var pct = passive_bonuses["Defense"].get("percent", 0) / 100.0
+		var flat = passive_bonuses["Defense"].get("flat", 0)
+		_player_def = int(_player_def * (1.0 + pct)) + flat
+	# MaxHP bonus
+	if passive_bonuses.has("MaxHP"):
+		var pct = passive_bonuses["MaxHP"].get("percent", 0) / 100.0
+		var flat = passive_bonuses["MaxHP"].get("flat", 0)
+		player_max_hp = int(player_max_hp * (1.0 + pct)) + flat
+	# Magic Attack bonus
+	if passive_bonuses.has("M-Atk"):
+		var pct = passive_bonuses["M-Atk"].get("percent", 0) / 100.0
+		var flat = passive_bonuses["M-Atk"].get("flat", 0)
+		_player_m_atk = int(_player_m_atk * (1.0 + pct)) + flat
+	# Accuracy bonus
+	if passive_bonuses.has("Accuracy"):
+		var pct = passive_bonuses["Accuracy"].get("percent", 0) / 100.0
+		var flat = passive_bonuses["Accuracy"].get("flat", 0)
+		_player_accuracy = int(_player_accuracy * (1.0 + pct)) + flat
+	# Dodge bonus
+	if passive_bonuses.has("Dodge"):
+		var pct = passive_bonuses["Dodge"].get("percent", 0) / 100.0
+		var flat = passive_bonuses["Dodge"].get("flat", 0)
+		_player_dodge = int(_player_dodge * (1.0 + pct)) + flat
+
 	# Attack speed: derived from weapon Speed stat
-	# Weapons have Speed 0-12. Higher = faster.
-	# Formula: base 1.5s, reduced by weapon speed. Min 0.3s.
+	# Speed ranges from 0 to 256. Higher = faster.
+	# Formula: linear scale from 1.5s (speed 0) to 0.75s (speed 256).
 	var weapon_speed = GameManager.get_weapon_speed()
-	attack_interval = max(0.3, 1.5 - (weapon_speed * 0.1))
+	var speed_ratio = clampf(float(weapon_speed) / 256.0, 0.0, 1.0)
+	attack_interval = 1.5 - (speed_ratio * 0.75)  # 1.5s at 0, 0.75s at 256
+
+	# AttackSpeed passive bonus (reduces interval further)
+	if passive_bonuses.has("AttackSpeed"):
+		var pct = passive_bonuses["AttackSpeed"].get("percent", 0) / 100.0
+		attack_interval = maxf(0.75, attack_interval * (1.0 - pct))
 
 	# XP table — polynomial curve: 100 * level^2
 	xp_to_next_level = _xp_for_level(level)
@@ -454,21 +511,100 @@ func _player_attack() -> void:
 	if mob["hp"] <= 0:
 		_on_mob_killed(mob)
 
-func _consume_arrow() -> void:
+func _consume_arrow(count: int = 1) -> void:
 	var offhand_dict = GameManager.equipped_items.get("Offhand")
 	if offhand_dict == null:
 		return
 	var amt = int(offhand_dict.get("amt", 0))
-	if amt <= 1:
-		# Last arrow consumed — unequip
+	if amt <= count:
+		# Not enough arrows (or exact) — unequip
 		GameManager.equipped_items["Offhand"] = null
 		_arrow_atk_bonus = 0
 		GameManager.equipment_changed.emit()
 		GameManager.inventory_changed.emit()
 		GameManager.sync_inventory_to_server()
 		print("IdleCombatManager: Out of arrows!")
+		# Stop combat for Marksman when arrows run out
+		if GameManager.active_character_class == "Marksman":
+			stop_combat()
+			out_of_arrows.emit()
 	else:
-		offhand_dict["amt"] = amt - 1
+		offhand_dict["amt"] = amt - count
+
+# ═══════════════════════════════════════════
+# Skill Integration
+# ═══════════════════════════════════════════
+
+func _on_skill_used(skill: Dictionary) -> void:
+	"""Called when SkillManager fires a skill. Apply damage to mobs."""
+	if not combat_active or monster_queue.is_empty():
+		return
+
+	# Consume arrows if skill has an arrowCost (e.g. Multishot costs 3)
+	var arrow_cost = int(skill.get("arrowCost", 0))
+	if arrow_cost > 0 and _arrow_atk_bonus > 0:
+		var offhand_dict = GameManager.equipped_items.get("Offhand")
+		var arrows_left = int(offhand_dict.get("amt", 0)) if offhand_dict else 0
+		if arrows_left < arrow_cost:
+			# Not enough arrows to use this skill
+			return
+		_consume_arrow(arrow_cost)
+
+	var multiplier = skill.get("damageMultiplier", 1.0)
+	var is_aoe = skill.get("aoe", false)
+	var is_magic = skill.get("damageType", "physical") == "magic"
+
+	var bonus_min = _arrow_atk_bonus if _arrow_atk_bonus > 0 else 0
+	var bonus_max = bonus_min
+
+	if is_aoe:
+		# Hit all monsters in queue
+		var mobs_to_check: Array = monster_queue.duplicate()
+		for mob in mobs_to_check:
+			if mob["hp"] <= 0:
+				continue
+			var dmg: int
+			if is_magic:
+				dmg = StatCalculator.get_magic_hit(
+					_player_m_atk, mob.get("m_defense", 0), multiplier
+				)
+			else:
+				dmg = int(StatCalculator.get_physical_hit(
+					_player_min_atk + bonus_min, _player_max_atk + bonus_max,
+					_player_p_atk, mob.get("defense", 0), 0
+				) * multiplier)
+			var effective = min(dmg, mob["hp"])
+			mob["hp"] = max(0, mob["hp"] - dmg)
+			var dmg_xp = int(effective / DAMAGE_XP_DIVISOR)
+			if dmg_xp > 0:
+				current_xp += dmg_xp
+				xp_gained.emit(dmg_xp)
+			if mob["hp"] <= 0:
+				_on_mob_killed(mob)
+	else:
+		# Single target (first mob in queue)
+		var mob = monster_queue[0]
+		var dmg: int
+		if is_magic:
+			dmg = StatCalculator.get_magic_hit(
+				_player_m_atk, mob.get("m_defense", 0), multiplier
+			)
+		else:
+			dmg = int(StatCalculator.get_physical_hit(
+				_player_min_atk + bonus_min, _player_max_atk + bonus_max,
+				_player_p_atk, mob.get("defense", 0), 0
+			) * multiplier)
+		var effective = min(dmg, mob["hp"])
+		mob["hp"] = max(0, mob["hp"] - dmg)
+		var dmg_xp = int(effective / DAMAGE_XP_DIVISOR)
+		if dmg_xp > 0:
+			current_xp += dmg_xp
+			xp_gained.emit(dmg_xp)
+		if mob["hp"] <= 0:
+			_on_mob_killed(mob)
+
+	_check_level_up()
+	combat_tick_updated.emit()
 
 func _check_level_up() -> void:
 	## Processes any pending level-ups. Call after adding XP.

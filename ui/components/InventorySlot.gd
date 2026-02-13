@@ -24,6 +24,9 @@ var select_mode: bool = false
 var is_selected: bool = false
 signal slot_tapped(slot: PanelContainer)  # Emitted on left-click in select mode
 
+# --- Tooltip suppression (for Artisan picker, etc.) ---
+var suppress_tooltip: bool = false
+
 # Quality Colors based on your tiering system
 const QUALITY_COLORS = {
 	"Normal": Color.WHITE,
@@ -172,7 +175,7 @@ func _on_gui_input(event: InputEvent):
 				slot_tapped.emit(self)
 				return
 			# Single click/tap shows tooltip centered on screen with context
-			if item_data != null:
+			if item_data != null and not suppress_tooltip:
 				var ctx := ""
 				if item_data.item_id.begins_with("money_bag_"):
 					ctx = "money_bag"

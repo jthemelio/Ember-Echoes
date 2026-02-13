@@ -15,6 +15,26 @@ var quality_filter: String = ""
 func _ready():
 	# Clear editor placeholders and fill grid
 	refresh_grid()
+	# Keep slots square when the grid resizes (desktop responsive)
+	resized.connect(_enforce_square_slots)
+	call_deferred("_enforce_square_slots")
+
+func _enforce_square_slots() -> void:
+	if columns <= 0:
+		return
+	var grid_w := size.x
+	# Cap to content width minus card padding
+	var max_w := ScreenHelper.get_content_width() - 48.0
+	if grid_w <= 0.0 or grid_w > max_w:
+		grid_w = max_w
+	if grid_w <= 0.0:
+		return
+	var sep := get_theme_constant("h_separation")
+	var cell_w := (grid_w - sep * (columns - 1)) / float(columns)
+	if cell_w <= 0.0:
+		return
+	for slot in get_children():
+		slot.custom_minimum_size = Vector2(cell_w, cell_w)
 
 func refresh_grid():
 	# 1. Ensure we have exactly slot_count slots in the tree

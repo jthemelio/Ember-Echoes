@@ -115,11 +115,14 @@ layout_mode = 1
 visible = false
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.1
-anchor_top = 0.3
-anchor_right = 0.5
-anchor_bottom = 0.3
-offset_bottom = 378.0
+anchor_left = 0.2
+anchor_top = 1.0
+anchor_right = 0.2
+anchor_bottom = 1.0
+offset_left = -10.0
+offset_right = 190.0
+offset_top = -400.0
+offset_bottom = -78.0
 
 [node name="Margin" type="MarginContainer" parent="ShopPopup" unique_id=1613585730]
 layout_mode = 2
@@ -133,32 +136,32 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="ArmorerBtn" type="Button" parent="ShopPopup/Margin/VBox" unique_id=1480614519]
-custom_minimum_size = Vector2(0, 55)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Armorer"
 
 [node name="WeaponsmithBtn" type="Button" parent="ShopPopup/Margin/VBox" unique_id=1575487176]
-custom_minimum_size = Vector2(0, 55)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Weaponsmith"
 
 [node name="ConsumablesBtn" type="Button" parent="ShopPopup/Margin/VBox" unique_id=453602823]
-custom_minimum_size = Vector2(0, 55)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Consumables"
 
 [node name="ArtisanBtn" type="Button" parent="ShopPopup/Margin/VBox" unique_id=1867258451]
-custom_minimum_size = Vector2(0, 55)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Artisan"
 
 [node name="AuctionBtn" type="Button" parent="ShopPopup/Margin/VBox" unique_id=800121803]
-custom_minimum_size = Vector2(0, 55)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Auction"
 
 [node name="LadyLuckBtn" type="Button" parent="ShopPopup/Margin/VBox" unique_id=942519548]
-custom_minimum_size = Vector2(0, 55)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 text = "Lady Luck"
 

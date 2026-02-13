@@ -74,17 +74,18 @@ func _on_window_resized() -> void:
 	_adapt_layout()
 
 func _adapt_layout() -> void:
-	if not main_layout:
-		return
-	# Constrain MainLayout width by changing anchors (more robust than offsets)
-	main_layout.anchor_left = ScreenHelper.get_content_anchor_left()
-	main_layout.anchor_right = ScreenHelper.get_content_anchor_right()
-	# Reset offsets so anchors fully control positioning
-	main_layout.offset_left = 0
-	main_layout.offset_right = 0
+	# Page tabs: constrain to MAX_CONTENT_WIDTH and center on desktop.
+	# Background, NavBar, and overall layout stay full-width.
+	var max_w := ScreenHelper.MAX_CONTENT_WIDTH
 
-	# Reposition ShopPopup relative to content area on desktop
-	_adapt_shop_popup()
+	if ScreenHelper.is_desktop():
+		for child in page_container.get_children():
+			child.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			child.custom_minimum_size.x = max_w
+	else:
+		for child in page_container.get_children():
+			child.size_flags_horizontal = Control.SIZE_FILL
+			child.custom_minimum_size.x = 0
 
 # ═══════════════════════════════════════════════════
 #                  GLOBAL THEME
@@ -208,16 +209,7 @@ func _apply_game_theme() -> void:
 	shop_popup.add_theme_stylebox_override("panel", popup_style)
 
 func _adapt_shop_popup() -> void:
-	if not ScreenHelper.is_desktop():
-		return
-	# On desktop, position the shop popup relative to the constrained content area
-	var side = ScreenHelper.get_side_margin()
-	var vp_w = get_viewport_rect().size.x
-	# Convert content-relative anchors (10%-50%) to viewport-relative
-	var content_left = side
-	var content_w = ScreenHelper.get_content_width()
-	shop_popup.anchor_left = (content_left + content_w * 0.1) / vp_w
-	shop_popup.anchor_right = (content_left + content_w * 0.5) / vp_w
+	pass  # ShopPopup uses anchor-based positioning, works fine at any width
 
 func _show_tab(target_tab: Control):
 	# Hide popup when switching tabs

@@ -171,30 +171,20 @@ show_percentage = false
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="SummonLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+[node name="SkillBtn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(80, 32)
+layout_mode = 2
+text = "Skill"
+
+[node name="SummonQtyDropdown" type="OptionButton" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(60, 32)
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="SummonBtn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
+custom_minimum_size = Vector2(80, 32)
+layout_mode = 2
 text = "Summon"
-
-[node name="Summon1Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-text = "+1"
-
-[node name="Summon5Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-text = "+5"
-
-[node name="Summon10Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-text = "+10"
-
-[node name="Summon25Btn" type="Button" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
-custom_minimum_size = Vector2(36, 32)
-layout_mode = 2
-text = "+25"
 
 [node name="QueueCountLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow"]
 layout_mode = 2

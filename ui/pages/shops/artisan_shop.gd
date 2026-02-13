@@ -76,10 +76,10 @@ const MATERIAL_COLORS = {
 # ─── Quality Colors ───
 const QUALITY_COLORS = {
 	"Normal": Color.WHITE,
-	"Tempered": Color(0.0, 1.0, 0.0),
-	"Infused": Color(0.0, 0.5, 1.0),
-	"Brilliant": Color(0.6, 0.2, 0.8),
-	"Radiant": Color(1.0, 0.8, 0.0),
+	"Tempered": Color(0.910, 0.788, 0.608),   # Warm bronze
+	"Infused": Color(0.784, 0.816, 0.863),     # Silver
+	"Brilliant": Color(0.659, 0.847, 0.941),   # Baby blue
+	"Radiant": Color(0.941, 0.722, 0.478),     # Orange
 }
 
 # ─── Success Chance Tables ───
@@ -123,11 +123,31 @@ func _ready() -> void:
 	_refresh_ignis_compose()
 	_refresh_scroll_convert()
 
+	# Keep picker slots square
+	item_picker_grid.resized.connect(_enforce_square_picker_slots)
+	call_deferred("_enforce_square_picker_slots")
+
+func _enforce_square_picker_slots() -> void:
+	if item_picker_grid.columns <= 0:
+		return
+	var grid_w := item_picker_grid.size.x
+	var max_w := ScreenHelper.get_content_width() - 48.0
+	if grid_w <= 0.0 or grid_w > max_w:
+		grid_w = max_w
+	if grid_w <= 0.0:
+		return
+	var sep := item_picker_grid.get_theme_constant("h_separation")
+	var cell_w := (grid_w - sep * (item_picker_grid.columns - 1)) / float(item_picker_grid.columns)
+	if cell_w <= 0.0:
+		return
+	for slot in item_picker_grid.get_children():
+		slot.custom_minimum_size = Vector2(cell_w, cell_w)
+
 func _adapt_for_desktop() -> void:
 	if not ScreenHelper.is_desktop():
 		return
 	if item_picker_grid:
-		item_picker_grid.columns = ScreenHelper.grid_columns(5, 7)
+		item_picker_grid.columns = ScreenHelper.grid_columns(5, 6)
 	if material_grid:
 		material_grid.columns = ScreenHelper.grid_columns(4, 5)
 	if ignis_grid:
@@ -169,6 +189,7 @@ func _refresh_picker() -> void:
 
 func _create_picker_slot(item_data: ItemData, inst: Dictionary, source: String, bag_idx: int) -> PanelContainer:
 	var slot = InventorySlotScene.instantiate()
+	slot.suppress_tooltip = true  # Disable tooltip — clicking selects the item for upgrade
 	slot.call_deferred("set_item", item_data)
 
 	# Highlight selected
@@ -209,6 +230,9 @@ func _refresh_material_palette() -> void:
 		if count <= 0:
 			continue
 		var tile = _create_material_tile(mat_bid, count)
+		# Highlight the currently selected material
+		if mat_bid == _dragged_material_bid:
+			tile.modulate = Color(1.0, 1.0, 0.6, 1.0)
 		material_grid.add_child(tile)
 
 func _create_material_tile(mat_bid: String, count: int) -> PanelContainer:
@@ -250,9 +274,19 @@ func _create_material_tile(mat_bid: String, count: int) -> PanelContainer:
 	# Store the bid as metadata for drag-and-drop
 	tile.set_meta("material_bid", mat_bid)
 
-	# Enable dragging via script override
+	# Click to select (primary method — works on both desktop and mobile)
+	tile.gui_input.connect(_on_material_tile_clicked.bind(mat_bid))
+
+	# Enable dragging as an alternative method
 	tile.set_script(_MaterialTileDragScript)
 	return tile
+
+func _on_material_tile_clicked(event: InputEvent, mat_bid: String) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		_dragged_material_bid = mat_bid
+		_auto_mode = MATERIAL_MODE_MAP.get(mat_bid, UpgradeMode.NONE)
+		result_message.text = ""
+		_refresh_upgrade_panel()
 
 # ═══════════════════════════════════════════
 # Drag-and-Drop: Material Tile → Material Slot

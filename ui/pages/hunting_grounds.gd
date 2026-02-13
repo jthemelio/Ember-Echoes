@@ -22,11 +22,10 @@ extends MarginContainer
 @onready var hunt_progress_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/HuntProgressLabel
 @onready var spawn_timer_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SpawnTimerBar
 
-# Summon buttons
-@onready var summon_1_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon1Btn
-@onready var summon_5_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon5Btn
-@onready var summon_10_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon10Btn
-@onready var summon_25_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/Summon25Btn
+# Summon row (Skill + Qty dropdown + Summon btn)
+@onready var skill_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/SkillBtn
+@onready var summon_qty_dropdown: OptionButton = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/SummonQtyDropdown
+@onready var summon_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/SummonBtn
 @onready var queue_count_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/QueueCountLabel
 
 # Primary target
@@ -90,10 +89,13 @@ func _ready() -> void:
 	mining_btn.toggled.connect(_on_mining_toggled)
 	change_zone_btn.pressed.connect(_on_change_zone_pressed)
 	zone_dropdown.item_selected.connect(_on_zone_selected)
-	summon_1_btn.pressed.connect(_on_summon.bind(1))
-	summon_5_btn.pressed.connect(_on_summon.bind(5))
-	summon_10_btn.pressed.connect(_on_summon.bind(10))
-	summon_25_btn.pressed.connect(_on_summon.bind(25))
+	# Populate quantity dropdown
+	for qty in [1, 5, 10, 25, 50, 100]:
+		summon_qty_dropdown.add_item(str(qty))
+	summon_qty_dropdown.selected = 0  # Default to 1
+
+	summon_btn.pressed.connect(_on_summon_pressed)
+	skill_btn.pressed.connect(_on_skill_pressed)
 
 	# ── Connect IdleCombatManager signals ──
 	icm.combat_tick_updated.connect(_on_combat_tick)
@@ -104,6 +106,7 @@ func _ready() -> void:
 	icm.xp_gained.connect(_on_xp_gained)
 	icm.mob_spawned.connect(_on_mob_spawned)
 	icm.zone_changed.connect(_on_zone_changed)
+	icm.out_of_arrows.connect(_on_out_of_arrows)
 
 	# ── Connect LootManager for inventory refresh ──
 	var loot_mgr = get_node_or_null("/root/LootManager")
@@ -141,11 +144,11 @@ func _ready() -> void:
 func _adapt_for_desktop() -> void:
 	if not ScreenHelper.is_desktop():
 		return
-	# Inventory grids: 5 -> 7 columns on desktop
+	# Inventory grids: 5 -> 6 columns on desktop (800px content width)
 	if bag_grid:
-		bag_grid.columns = ScreenHelper.grid_columns(5, 7)
+		bag_grid.columns = ScreenHelper.grid_columns(5, 6)
 	if warehouse_grid:
-		warehouse_grid.columns = ScreenHelper.grid_columns(5, 7)
+		warehouse_grid.columns = ScreenHelper.grid_columns(5, 6)
 	# Queue grid: 2 -> 3 columns
 	if queue_grid:
 		queue_grid.columns = ScreenHelper.grid_columns(2, 3)
@@ -154,8 +157,8 @@ func _adapt_for_desktop() -> void:
 	for btn in [filter_all_btn, filter_normal_btn, filter_tempered_btn, filter_infused_btn, filter_brilliant_btn, filter_radiant_btn]:
 		if btn and btn.custom_minimum_size != Vector2.ZERO:
 			btn.custom_minimum_size = Vector2(btn.custom_minimum_size.x * s, btn.custom_minimum_size.y * s)
-	# Scale summon buttons
-	for btn in [summon_1_btn, summon_5_btn, summon_10_btn, summon_25_btn]:
+	# Scale summon row elements
+	for btn in [skill_btn, summon_btn]:
 		if btn:
 			btn.custom_minimum_size.y = ScreenHelper.scaled_min_height(btn.custom_minimum_size.y) if btn.custom_minimum_size.y > 0 else 0
 
@@ -201,8 +204,21 @@ func _on_zone_selected(index: int) -> void:
 	if creatures.size() > 0:
 		creature_dropdown.select(0)
 
-func _on_summon(count: int) -> void:
-	icm.summon_monsters(count)
+func _on_summon_pressed() -> void:
+	var idx = summon_qty_dropdown.selected
+	if idx < 0:
+		return
+	var qty_text = summon_qty_dropdown.get_item_text(idx)
+	var count = int(qty_text)
+	if count > 0:
+		icm.summon_monsters(count)
+
+func _on_skill_pressed() -> void:
+	var sm = get_node_or_null("/root/SkillManager")
+	if sm and sm.has_method("try_use_skill"):
+		sm.try_use_skill()
+	else:
+		GlobalUI.show_floating_text("No skill equipped", Color(0.8, 0.8, 0.8))
 
 func _on_change_zone_pressed() -> void:
 	var zone_name = zone_dropdown.get_item_text(zone_dropdown.selected)
@@ -235,6 +251,10 @@ func _on_player_respawned() -> void:
 	_refresh_combat_ui()
 	_restart_attack_bar_tween()
 	_restart_spawn_bar_tween()
+
+func _on_out_of_arrows() -> void:
+	GlobalUI.show_floating_text("Out of arrows!", Color(1, 0.3, 0.3))
+	_refresh_combat_ui()
 
 func _on_xp_gained(_amount: int) -> void:
 	_refresh_xp_ui()
@@ -295,6 +315,14 @@ func _refresh_all_ui() -> void:
 	_refresh_inventory_ui()
 
 func _refresh_combat_ui() -> void:
+	# Update skill button label
+	var equipped_skill = SkillManager.get_equipped_skill()
+	if equipped_skill.is_empty():
+		skill_btn.text = "Skill"
+		skill_btn.disabled = true
+	else:
+		skill_btn.text = equipped_skill.get("name", "Skill")
+		skill_btn.disabled = false
 
 	# Zone info
 	zone_info_label.text = "Currently fighting in %s" % icm.current_zone

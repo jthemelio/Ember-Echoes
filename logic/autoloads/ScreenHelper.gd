@@ -5,21 +5,28 @@ extends Node
 
 signal viewport_mode_changed(is_desktop: bool)
 
-## Viewport width threshold: anything above this is considered "desktop"
-const DESKTOP_THRESHOLD := 700.0
+## Physical window width threshold for desktop detection (pixels)
+const DESKTOP_THRESHOLD := 900
 
-## Maximum content width on desktop (keeps UI from stretching infinitely)
+## Maximum content width on desktop in virtual pixels (keeps UI from stretching)
 const MAX_CONTENT_WIDTH := 800.0
 
 ## UI scale factor applied on desktop (fonts, buttons, spacing)
-const DESKTOP_UI_SCALE := 1.25
+## At 800px content width (vs 450px mobile), we're already ~1.8x wider.
+## Keep scale at 1.0 so UI elements don't overflow the constrained area.
+const DESKTOP_UI_SCALE := 1.0
 
 var _was_desktop: bool = false
 
 func _ready() -> void:
 	get_tree().root.size_changed.connect(_on_viewport_resized)
-	# Evaluate once on startup
+	# Evaluate once on startup (deferred so window is fully set up)
+	call_deferred("_initial_check")
+
+func _initial_check() -> void:
 	_was_desktop = is_desktop()
+	print("ScreenHelper: window=%d  viewport=%d  is_desktop=%s" % [
+		DisplayServer.window_get_size().x, _vp_width(), str(_was_desktop)])
 
 func _on_viewport_resized() -> void:
 	var now_desktop = is_desktop()
@@ -27,16 +34,16 @@ func _on_viewport_resized() -> void:
 		_was_desktop = now_desktop
 		viewport_mode_changed.emit(now_desktop)
 
-## Gets the viewport size safely from a Node (not CanvasItem)
+## Returns the virtual viewport width (UI coordinate system)
 func _vp_width() -> float:
-	var vp = get_viewport()
-	if vp:
-		return vp.get_visible_rect().size.x
-	return 0.0
+	if get_tree() and get_tree().root:
+		return get_tree().root.size.x
+	return 450.0  # fallback to base project width
 
-## Returns true when the viewport is wide enough to be a desktop browser
+## Returns true when the window is wide enough to be a desktop browser
 func is_desktop() -> bool:
-	return _vp_width() > DESKTOP_THRESHOLD
+	# Use physical window size — always reliable, even during init
+	return DisplayServer.window_get_size().x > DESKTOP_THRESHOLD
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:
@@ -69,7 +76,7 @@ func get_content_width() -> float:
 func grid_columns(mobile_cols: int, desktop_cols: int) -> int:
 	return desktop_cols if is_desktop() else mobile_cols
 
-## Returns the anchor ratio for the left edge of centered content (0.0 on mobile)
+## (Deprecated — use get_side_margin() with offsets instead)
 func get_content_anchor_left() -> float:
 	if not is_desktop():
 		return 0.0
@@ -78,7 +85,6 @@ func get_content_anchor_left() -> float:
 		return 0.0
 	return get_side_margin() / vp_w
 
-## Returns the anchor ratio for the right edge of centered content (1.0 on mobile)
 func get_content_anchor_right() -> float:
 	if not is_desktop():
 		return 1.0

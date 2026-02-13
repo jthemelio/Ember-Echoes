@@ -117,7 +117,7 @@ func start_game_with_character(data: Dictionary):
 
 	# 3. Fetch Title Data (ZoneData, LootConfig, ItemCatalog, ChangeLog)
 	var title_request = GetTitleDataRequest.new()
-	title_request.Keys = ["ZoneData", "LootConfig", "ItemCatalog", "ChangeLog"]
+	title_request.Keys = ["ZoneData", "LootConfig", "ItemCatalog", "ChangeLog", "SkillCatalog"]
 	PlayFabManager.client.get_title_data(title_request, func(result):
 		var td = result.get("data", {}).get("Data", {})
 		print("GameManager: Title Data received. Keys: ", td.keys())
@@ -149,6 +149,9 @@ func start_game_with_character(data: Dictionary):
 			if cl_json is Array:
 				changelog_entries = cl_json
 				print("GameManager: ChangeLog loaded. %d entries" % cl_json.size())
+
+		# Parse SkillCatalog -> SkillManager
+		SkillManager.load_catalog_from_title_data(td)
 
 		_title_data_ready = true
 		_check_all_done()
@@ -189,6 +192,10 @@ func start_game_with_character(data: Dictionary):
 			active_user_inventory = []
 			for slot_name in equipped_items.keys():
 				equipped_items[slot_name] = null
+
+		# Load equipped skill from server data
+		if fn_result is Dictionary:
+			SkillManager.load_from_server(fn_result)
 
 		_inventory_ready = true
 		_check_all_done()
@@ -647,7 +654,8 @@ func sync_inventory_to_server() -> void:
 	PlayFabManager.client.execute_cloud_script("syncInventory", {
 		"characterId": active_character_id,
 		"bag": active_user_inventory,
-		"equipped": equipped_items
+		"equipped": equipped_items,
+		"equippedSkill": SkillManager.equipped_skill_id,
 	}, func(result):
 		var fn_result = result.get("data", {}).get("FunctionResult", {})
 		if fn_result is Dictionary and fn_result.get("success", false):

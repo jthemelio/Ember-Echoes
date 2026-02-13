@@ -1,0 +1,222 @@
+{
+  "Marksman": {
+    "skills": [
+      {
+        "id": "precise_shot",
+        "name": "Precise Shot",
+        "desc": "Deal 2x weapon damage to the current target.",
+        "unlockLevel": 10,
+        "cooldown": 8,
+        "damageMultiplier": 2.0,
+        "aoe": false
+      },
+      {
+        "id": "arrow_rain",
+        "name": "Arrow Rain",
+        "desc": "Hit all queued monsters for 1.5x weapon damage.",
+        "unlockLevel": 30,
+        "cooldown": 15,
+        "damageMultiplier": 1.5,
+        "aoe": true
+      },
+      {
+        "id": "eagle_eye",
+        "name": "Eagle Eye",
+        "desc": "Guaranteed critical for 3x weapon damage.",
+        "unlockLevel": 60,
+        "cooldown": 20,
+        "damageMultiplier": 3.0,
+        "aoe": false
+      }
+    ],
+    "passives": [
+      {
+        "id": "steady_aim",
+        "name": "Steady Aim",
+        "desc": "+10% Accuracy",
+        "unlockLevel": 5,
+        "effect": { "stat": "Accuracy", "type": "percent", "value": 10 }
+      },
+      {
+        "id": "swift_draw",
+        "name": "Swift Draw",
+        "desc": "+15% Attack Speed",
+        "unlockLevel": 20,
+        "effect": { "stat": "AttackSpeed", "type": "percent", "value": 15 }
+      },
+      {
+        "id": "hunters_mark",
+        "name": "Hunter's Mark",
+        "desc": "+20% Damage",
+        "unlockLevel": 45,
+        "effect": { "stat": "Damage", "type": "percent", "value": 20 }
+      }
+    ]
+  },
+  "Juggernaut": {
+    "skills": [
+      {
+        "id": "shield_bash",
+        "name": "Shield Bash",
+        "desc": "Slam the target for 1.8x damage and reduce their attack by 20% for 5s.",
+        "unlockLevel": 10,
+        "cooldown": 10,
+        "damageMultiplier": 1.8,
+        "aoe": false
+      },
+      {
+        "id": "war_cry",
+        "name": "War Cry",
+        "desc": "Boost your defense by 30% for 10 seconds.",
+        "unlockLevel": 30,
+        "cooldown": 20,
+        "damageMultiplier": 0.0,
+        "aoe": false,
+        "buff": { "stat": "Defense", "type": "percent", "value": 30, "duration": 10 }
+      },
+      {
+        "id": "earthshatter",
+        "name": "Earthshatter",
+        "desc": "Strike the ground for 2.5x damage to all queued monsters.",
+        "unlockLevel": 60,
+        "cooldown": 25,
+        "damageMultiplier": 2.5,
+        "aoe": true
+      }
+    ],
+    "passives": [
+      {
+        "id": "iron_skin",
+        "name": "Iron Skin",
+        "desc": "+15% Defense",
+        "unlockLevel": 5,
+        "effect": { "stat": "Defense", "type": "percent", "value": 15 }
+      },
+      {
+        "id": "fortitude",
+        "name": "Fortitude",
+        "desc": "+10% Max HP",
+        "unlockLevel": 20,
+        "effect": { "stat": "MaxHP", "type": "percent", "value": 10 }
+      },
+      {
+        "id": "unyielding",
+        "name": "Unyielding",
+        "desc": "+10% Damage",
+        "unlockLevel": 45,
+        "effect": { "stat": "Damage", "type": "percent", "value": 10 }
+      }
+    ]
+  },
+  "Wuxia": {
+    "skills": [
+      {
+        "id": "ember_bolt",
+        "name": "Ember Bolt",
+        "desc": "Hurl a bolt of fire for 2x magic damage.",
+        "unlockLevel": 10,
+        "cooldown": 8,
+        "damageMultiplier": 2.0,
+        "aoe": false,
+        "damageType": "magic"
+      },
+      {
+        "id": "spirit_wave",
+        "name": "Spirit Wave",
+        "desc": "Release a wave of spirit energy dealing 1.5x magic damage to all enemies.",
+        "unlockLevel": 30,
+        "cooldown": 15,
+        "damageMultiplier": 1.5,
+        "aoe": true,
+        "damageType": "magic"
+      },
+      {
+        "id": "celestial_fury",
+        "name": "Celestial Fury",
+        "desc": "Channel devastating arcane power for 3x magic damage.",
+        "unlockLevel": 60,
+        "cooldown": 22,
+        "damageMultiplier": 3.0,
+        "aoe": false,
+        "damageType": "magic"
+      }
+    ],
+    "passives": [
+      {
+        "id": "arcane_focus",
+        "name": "Arcane Focus",
+        "desc": "+10% Magic Attack",
+        "unlockLevel": 5,
+        "effect": { "stat": "M-Atk", "type": "percent", "value": 10 }
+      },
+      {
+        "id": "spirit_resonance",
+        "name": "Spirit Resonance",
+        "desc": "+15% Max HP",
+        "unlockLevel": 20,
+        "effect": { "stat": "MaxHP", "type": "percent", "value": 15 }
+      },
+      {
+        "id": "inner_flame",
+        "name": "Inner Flame",
+        "desc": "+20% Magic Damage",
+        "unlockLevel": 45,
+        "effect": { "stat": "Damage", "type": "percent", "value": 20 }
+      }
+    ]
+  },
+  "Twin-Soul": {
+    "skills": [
+      {
+        "id": "twin_strike",
+        "name": "Twin Strike",
+        "desc": "Strike twice in rapid succession for 1.2x damage each hit.",
+        "unlockLevel": 10,
+        "cooldown": 7,
+        "damageMultiplier": 2.4,
+        "aoe": false
+      },
+      {
+        "id": "blade_dance",
+        "name": "Blade Dance",
+        "desc": "Whirl through enemies, hitting all for 1.5x damage.",
+        "unlockLevel": 30,
+        "cooldown": 14,
+        "damageMultiplier": 1.5,
+        "aoe": true
+      },
+      {
+        "id": "soul_rend",
+        "name": "Soul Rend",
+        "desc": "Channel both blades into a devastating slash for 3x damage.",
+        "unlockLevel": 60,
+        "cooldown": 20,
+        "damageMultiplier": 3.0,
+        "aoe": false
+      }
+    ],
+    "passives": [
+      {
+        "id": "dual_mastery",
+        "name": "Dual Mastery",
+        "desc": "+10% Attack",
+        "unlockLevel": 5,
+        "effect": { "stat": "Damage", "type": "percent", "value": 10 }
+      },
+      {
+        "id": "evasive_footwork",
+        "name": "Evasive Footwork",
+        "desc": "+15% Dodge",
+        "unlockLevel": 20,
+        "effect": { "stat": "Dodge", "type": "percent", "value": 15 }
+      },
+      {
+        "id": "berserker_soul",
+        "name": "Berserker Soul",
+        "desc": "+15% Attack Speed",
+        "unlockLevel": 45,
+        "effect": { "stat": "AttackSpeed", "type": "percent", "value": 15 }
+      }
+    ]
+  }
+}

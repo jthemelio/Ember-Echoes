@@ -59,6 +59,7 @@ func _add_entry(entry: Dictionary) -> void:
 		var bullet = Label.new()
 		bullet.text = "  •  %s" % change_text
 		bullet.add_theme_font_size_override("font_size", 13)
+		bullet.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
 		bullet.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		content_vbox.add_child(bullet)
 

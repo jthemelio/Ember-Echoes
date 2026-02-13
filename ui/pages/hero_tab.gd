@@ -32,19 +32,18 @@ const SLOT_LABELS := {
 	"Backpack": "Pack",
 }
 
-# --- Currency & Material Labels ---
-@onready var gold_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Gold
-@onready var echo_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/EchoToken
-@onready var comet_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Comets
-@onready var wyrmsphere_label = $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/WyrmSphere
-@onready var ignis_labels = {
-	"I1": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis1,
-	"I2": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis2,
-	"I3": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis3,
-	"I4": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis4,
-	"I5": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis5,
-	"I6": $ScrollContent/ContentVBox/CurrenciesCard/Margin/VBox/VBoxContainer/Ignis6
-}
+# --- Sub-stats VBox (populated dynamically below SpiRow) ---
+@onready var stats_vbox = $ScrollContent/ContentVBox/StatsCard/Margin/VBox
+@onready var content_vbox = $ScrollContent/ContentVBox
+var _sub_stats_container: VBoxContainer = null
+
+# --- Skills / Passives Card (built dynamically) ---
+var _skills_card: PanelContainer = null
+var _skills_content_vbox: VBoxContainer = null
+var _skills_btn: Button = null
+var _passives_btn: Button = null
+var _skills_list_vbox: VBoxContainer = null
+var _showing_skills: bool = true  # true = Skills tab, false = Passives tab
 
 # UI elements for bulk submission
 @onready var points_box = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/HBoxContainer
@@ -71,6 +70,7 @@ func _ready():
 	
 	GameManager.character_stats_updated.connect(update_hero_ui)
 	GameManager.equipment_changed.connect(_refresh_equipment_slots)
+	GameManager.equipment_changed.connect(update_hero_ui)
 	
 	# Set equipment slot mode on each slot so right-click unequips
 	for slot_name in equip_slots:
@@ -81,6 +81,21 @@ func _ready():
 	# Keep equipment slots square when the grid fills available width
 	equipment_grid.resized.connect(_enforce_square_equip_slots)
 	call_deferred("_enforce_square_equip_slots")
+
+	# Create sub-stats container (inserted after SpiRow but before HBoxContainer)
+	_sub_stats_container = VBoxContainer.new()
+	_sub_stats_container.name = "SubStatsContainer"
+	_sub_stats_container.add_theme_constant_override("separation", 2)
+	# Insert after SpiRow (index 4 in VBox: HP=0,Str=1,Agi=2,Vit=3,Spi=4)
+	stats_vbox.add_child(_sub_stats_container)
+	stats_vbox.move_child(_sub_stats_container, spi_row.get_index() + 1)
+
+	# Build Skills/Passives card (replaces CurrenciesCard)
+	_build_skills_card()
+
+	# Connect SkillManager signals
+	SkillManager.skill_equipped_changed.connect(_refresh_skills_card)
+	SkillManager.skill_catalog_loaded.connect(_refresh_skills_card)
 
 	# Desktop responsive: adapt grid columns
 	_adapt_for_desktop()
@@ -107,11 +122,6 @@ func update_hero_ui():
 
 	# Refresh equipment slot visuals
 	_refresh_equipment_slots()
-
-	# Automated Currency Refresh
-	for child in get_tree().get_nodes_in_group("currency_slots"):
-		if child.has_method("update_display"):
-			child.update_display()
 	
 	# --- Existing Stat Logic ---
 	var base = StatCalculator.get_smart_allocated_stats(char_class, level)
@@ -145,6 +155,361 @@ func update_hero_ui():
 	if vit_row: vit_row.update_display("Vitality", total_vit, can_up, pending_stats["Vitality"] > 0)
 	if spi_row: spi_row.update_display("Spirit", total_spi, can_up, pending_stats["Spirit"] > 0)
 
+	# ─── Sub-Stats (Combat Details) ───
+	_refresh_sub_stats(totals_dict)
+
+# ─── Sub-Stats Section ───
+
+func _refresh_sub_stats(totals_dict: Dictionary) -> void:
+	if not _sub_stats_container:
+		return
+	# Clear previous sub-stat labels
+	for child in _sub_stats_container.get_children():
+		child.queue_free()
+
+	# ── Dark inner card for contrast ──
+	var inner_card = PanelContainer.new()
+	var card_style = StyleBoxFlat.new()
+	card_style.bg_color = Color(0.12, 0.11, 0.14, 0.95)
+	card_style.set_corner_radius_all(8)
+	card_style.content_margin_left = 14
+	card_style.content_margin_right = 14
+	card_style.content_margin_top = 12
+	card_style.content_margin_bottom = 12
+	inner_card.add_theme_stylebox_override("panel", card_style)
+	_sub_stats_container.add_child(inner_card)
+
+	var inner_vbox = VBoxContainer.new()
+	inner_vbox.add_theme_constant_override("separation", 6)
+	inner_card.add_child(inner_vbox)
+
+	# Heading
+	var heading = Label.new()
+	heading.text = "Combat Stats"
+	heading.add_theme_font_size_override("font_size", 15)
+	heading.add_theme_color_override("font_color", Color(0.85, 0.75, 0.55))
+	inner_vbox.add_child(heading)
+
+	# Thin gold separator line
+	var sep = HSeparator.new()
+	sep.add_theme_constant_override("separation", 4)
+	sep.add_theme_stylebox_override("separator", _make_separator_line(Color(0.55, 0.45, 0.25, 0.5)))
+	inner_vbox.add_child(sep)
+
+	# Get combat details from gear
+	var gear_data = GameManager.build_gear_data()
+	var combat = StatCalculator.calculate_combat_details(totals_dict, gear_data)
+
+	# Weapon min/max attack for display
+	var weapon = GameManager.get_equipped_item_data("Weapon")
+	var wep_min = 0
+	var wep_max = 0
+	if weapon:
+		wep_min = weapon.get_stat("MinAtk")
+		wep_max = weapon.get_stat("MaxAtk")
+
+	var weapon_speed = GameManager.get_weapon_speed()
+	var speed_ratio = clampf(float(weapon_speed) / 256.0, 0.0, 1.0)
+	var atk_interval = 1.5 - (speed_ratio * 0.75)
+
+	# Build rows: [label, value, highlight]
+	# highlight = true for key offensive/defensive stats
+	var rows: Array = [
+		["Attack", "%d – %d" % [wep_min + combat.get("P-Atk", 0), wep_max + combat.get("P-Atk", 0)] if weapon else "—", true],
+		["P-Atk Bonus", "+%d" % combat.get("P-Atk", 0), false],
+		["Defense", str(combat.get("TotalDef", 0)), true],
+		["P-Def Bonus", "+%d" % combat.get("P-Def", 0), false],
+		["Magic Atk", str(combat.get("M-Atk", 0)), true],
+		["Accuracy", str(combat.get("Accuracy", 0)), false],
+		["Dodge", str(combat.get("TotalDodge", 0)), false],
+		["Atk Speed", "%.2fs" % atk_interval, true],
+	]
+
+	for row_data in rows:
+		var hbox = HBoxContainer.new()
+		hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+		var lbl_name = Label.new()
+		lbl_name.text = row_data[0]
+		lbl_name.add_theme_font_size_override("font_size", 13)
+		lbl_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if row_data[2]:
+			lbl_name.add_theme_color_override("font_color", Color(0.82, 0.78, 0.72))
+		else:
+			lbl_name.add_theme_color_override("font_color", Color(0.55, 0.53, 0.50))
+		hbox.add_child(lbl_name)
+
+		var lbl_val = Label.new()
+		lbl_val.text = str(row_data[1])
+		lbl_val.add_theme_font_size_override("font_size", 13)
+		lbl_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		lbl_val.size_flags_horizontal = Control.SIZE_SHRINK_END
+		if row_data[2]:
+			lbl_val.add_theme_color_override("font_color", Color(0.95, 0.92, 0.85))
+		else:
+			lbl_val.add_theme_color_override("font_color", Color(0.65, 0.62, 0.58))
+		hbox.add_child(lbl_val)
+
+		inner_vbox.add_child(hbox)
+
+func _make_separator_line(color: Color) -> StyleBoxFlat:
+	var sb = StyleBoxFlat.new()
+	sb.bg_color = color
+	sb.content_margin_top = 1
+	sb.content_margin_bottom = 1
+	return sb
+
+# ═══════════════════════════════════════════
+# Skills / Passives Card
+# ═══════════════════════════════════════════
+
+func _build_skills_card() -> void:
+	_skills_card = PanelContainer.new()
+	_skills_card.name = "SkillsCard"
+	_skills_card.size_flags_horizontal = Control.SIZE_FILL
+	content_vbox.add_child(_skills_card)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 16)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_right", 16)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	_skills_card.add_child(margin)
+
+	_skills_content_vbox = VBoxContainer.new()
+	_skills_content_vbox.add_theme_constant_override("separation", 8)
+	margin.add_child(_skills_content_vbox)
+
+	# Title
+	var title_lbl = Label.new()
+	title_lbl.text = "Skills & Passives"
+	title_lbl.add_theme_font_size_override("font_size", 18)
+	title_lbl.add_theme_color_override("font_color", Color(0.85, 0.75, 0.55))
+	_skills_content_vbox.add_child(title_lbl)
+
+	# Toggle buttons row
+	var toggle_row = HBoxContainer.new()
+	toggle_row.add_theme_constant_override("separation", 8)
+	_skills_content_vbox.add_child(toggle_row)
+
+	_skills_btn = Button.new()
+	_skills_btn.text = "Skills"
+	_skills_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_skills_btn.pressed.connect(_on_toggle_skills)
+	toggle_row.add_child(_skills_btn)
+
+	_passives_btn = Button.new()
+	_passives_btn.text = "Passives"
+	_passives_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_passives_btn.pressed.connect(_on_toggle_passives)
+	toggle_row.add_child(_passives_btn)
+
+	# Content area
+	_skills_list_vbox = VBoxContainer.new()
+	_skills_list_vbox.add_theme_constant_override("separation", 6)
+	_skills_content_vbox.add_child(_skills_list_vbox)
+
+	_refresh_skills_card()
+
+func _on_toggle_skills() -> void:
+	_showing_skills = true
+	_refresh_skills_card()
+
+func _on_toggle_passives() -> void:
+	_showing_skills = false
+	_refresh_skills_card()
+
+func _refresh_skills_card() -> void:
+	if not _skills_list_vbox:
+		return
+	# Clear previous content
+	for child in _skills_list_vbox.get_children():
+		child.queue_free()
+
+	# Style toggle buttons (active = gold tint, inactive = default)
+	if _skills_btn:
+		var active_style = StyleBoxFlat.new()
+		active_style.bg_color = Color(0.35, 0.28, 0.15, 0.9)
+		active_style.border_color = Color(0.85, 0.75, 0.55)
+		active_style.set_border_width_all(1)
+		active_style.set_corner_radius_all(4)
+
+		var inactive_style = StyleBoxFlat.new()
+		inactive_style.bg_color = Color(0.15, 0.15, 0.18, 0.8)
+		inactive_style.border_color = Color(0.4, 0.4, 0.4)
+		inactive_style.set_border_width_all(1)
+		inactive_style.set_corner_radius_all(4)
+
+		_skills_btn.add_theme_stylebox_override("normal", active_style if _showing_skills else inactive_style)
+		_passives_btn.add_theme_stylebox_override("normal", inactive_style if _showing_skills else active_style)
+
+	var char_class = GameManager.active_character_class
+	var level = GameManager.active_character_level
+
+	if _showing_skills:
+		_populate_skills_list(char_class, level)
+	else:
+		_populate_passives_list(char_class, level)
+
+func _populate_skills_list(char_class: String, level: int) -> void:
+	var all_skills = SkillManager.get_skills_for_class(char_class)
+	if all_skills.is_empty():
+		var empty_lbl = Label.new()
+		empty_lbl.text = "No skills available for this class."
+		empty_lbl.add_theme_font_size_override("font_size", 12)
+		empty_lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+		_skills_list_vbox.add_child(empty_lbl)
+		return
+
+	for skill in all_skills:
+		var unlocked = level >= skill.get("unlockLevel", 999)
+		var is_equipped = SkillManager.equipped_skill_id == skill.get("id", "")
+		_create_skill_row(skill, unlocked, is_equipped)
+
+func _populate_passives_list(char_class: String, level: int) -> void:
+	var all_passives = SkillManager.get_passives_for_class(char_class)
+	if all_passives.is_empty():
+		var empty_lbl = Label.new()
+		empty_lbl.text = "No passives available for this class."
+		empty_lbl.add_theme_font_size_override("font_size", 12)
+		empty_lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+		_skills_list_vbox.add_child(empty_lbl)
+		return
+
+	for passive in all_passives:
+		var unlocked = level >= passive.get("unlockLevel", 999)
+		_create_passive_row(passive, unlocked)
+
+func _create_skill_row(skill: Dictionary, unlocked: bool, is_equipped: bool) -> void:
+	var card = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	if is_equipped:
+		style.bg_color = Color(0.2, 0.25, 0.15, 0.9)
+		style.border_color = Color(0.85, 0.75, 0.55)
+		style.set_border_width_all(2)
+	elif unlocked:
+		style.bg_color = Color(0.12, 0.12, 0.15, 0.8)
+		style.border_color = Color(0.4, 0.4, 0.45)
+		style.set_border_width_all(1)
+	else:
+		style.bg_color = Color(0.08, 0.08, 0.1, 0.6)
+		style.border_color = Color(0.25, 0.25, 0.28)
+		style.set_border_width_all(1)
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	card.add_theme_stylebox_override("panel", style)
+	_skills_list_vbox.add_child(card)
+
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 8)
+	card.add_child(hbox)
+
+	# Skill info (left side)
+	var info_vbox = VBoxContainer.new()
+	info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_vbox.add_theme_constant_override("separation", 2)
+	hbox.add_child(info_vbox)
+
+	var name_lbl = Label.new()
+	name_lbl.text = skill.get("name", "Unknown")
+	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.add_theme_color_override("font_color", Color(0.95, 0.95, 0.95) if unlocked else Color(0.5, 0.5, 0.5))
+	info_vbox.add_child(name_lbl)
+
+	var desc_lbl = Label.new()
+	desc_lbl.text = skill.get("desc", "")
+	desc_lbl.add_theme_font_size_override("font_size", 11)
+	desc_lbl.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7) if unlocked else Color(0.4, 0.4, 0.4))
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	info_vbox.add_child(desc_lbl)
+
+	var meta_lbl = Label.new()
+	meta_lbl.text = "CD: %ds  |  Lv. %d" % [int(skill.get("cooldown", 0)), skill.get("unlockLevel", 0)]
+	meta_lbl.add_theme_font_size_override("font_size", 10)
+	meta_lbl.add_theme_color_override("font_color", Color(0.55, 0.55, 0.55))
+	info_vbox.add_child(meta_lbl)
+
+	# Action button (right side)
+	if unlocked:
+		var btn = Button.new()
+		if is_equipped:
+			btn.text = "Unequip"
+			btn.pressed.connect(func(): SkillManager.unequip_skill(); _refresh_skills_card())
+		else:
+			btn.text = "Equip"
+			btn.pressed.connect(func(): SkillManager.equip_skill(skill.get("id", "")); _refresh_skills_card())
+		btn.custom_minimum_size = Vector2(70, 30)
+		hbox.add_child(btn)
+	else:
+		var lock_lbl = Label.new()
+		lock_lbl.text = "Locked"
+		lock_lbl.add_theme_font_size_override("font_size", 11)
+		lock_lbl.add_theme_color_override("font_color", Color(0.4, 0.35, 0.3))
+		lock_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		hbox.add_child(lock_lbl)
+
+func _create_passive_row(passive: Dictionary, unlocked: bool) -> void:
+	var card = PanelContainer.new()
+	var style = StyleBoxFlat.new()
+	if unlocked:
+		style.bg_color = Color(0.15, 0.2, 0.15, 0.8)
+		style.border_color = Color(0.5, 0.7, 0.4)
+		style.set_border_width_all(1)
+	else:
+		style.bg_color = Color(0.08, 0.08, 0.1, 0.6)
+		style.border_color = Color(0.25, 0.25, 0.28)
+		style.set_border_width_all(1)
+	style.set_corner_radius_all(6)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	card.add_theme_stylebox_override("panel", style)
+	_skills_list_vbox.add_child(card)
+
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 8)
+	card.add_child(hbox)
+
+	var info_vbox = VBoxContainer.new()
+	info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	info_vbox.add_theme_constant_override("separation", 2)
+	hbox.add_child(info_vbox)
+
+	var name_lbl = Label.new()
+	name_lbl.text = passive.get("name", "Unknown")
+	name_lbl.add_theme_font_size_override("font_size", 14)
+	name_lbl.add_theme_color_override("font_color", Color(0.95, 0.95, 0.95) if unlocked else Color(0.5, 0.5, 0.5))
+	info_vbox.add_child(name_lbl)
+
+	var desc_lbl = Label.new()
+	desc_lbl.text = passive.get("desc", "")
+	desc_lbl.add_theme_font_size_override("font_size", 11)
+	desc_lbl.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7) if unlocked else Color(0.4, 0.4, 0.4))
+	desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	info_vbox.add_child(desc_lbl)
+
+	var unlock_lbl = Label.new()
+	unlock_lbl.text = "Lv. %d" % passive.get("unlockLevel", 0)
+	unlock_lbl.add_theme_font_size_override("font_size", 10)
+	unlock_lbl.add_theme_color_override("font_color", Color(0.55, 0.55, 0.55))
+	info_vbox.add_child(unlock_lbl)
+
+	# Status indicator
+	var status_lbl = Label.new()
+	if unlocked:
+		status_lbl.text = "Active"
+		status_lbl.add_theme_color_override("font_color", Color(0.5, 0.8, 0.4))
+	else:
+		status_lbl.text = "Locked"
+		status_lbl.add_theme_color_override("font_color", Color(0.4, 0.35, 0.3))
+	status_lbl.add_theme_font_size_override("font_size", 11)
+	status_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hbox.add_child(status_lbl)
+
 # ─── Equipment Slot Population ───
 
 func _refresh_equipment_slots() -> void:
@@ -169,7 +534,14 @@ func _refresh_equipment_slots() -> void:
 func _enforce_square_equip_slots():
 	var cols: int = equipment_grid.columns
 	var h_sep: int = equipment_grid.get_theme_constant("h_separation")
-	var slot_w: float = (equipment_grid.size.x - h_sep * (cols - 1)) / float(cols)
+	var grid_w: float = equipment_grid.size.x
+	# Cap to content width minus card padding so we never size for the full viewport
+	var max_grid_w := ScreenHelper.get_content_width() - 48.0
+	if grid_w <= 0.0 or grid_w > max_grid_w:
+		grid_w = max_grid_w
+	if grid_w <= 0.0:
+		return
+	var slot_w: float = (grid_w - h_sep * (cols - 1)) / float(cols)
 	if slot_w <= 0.0:
 		return
 	for slot_name in equip_slots:

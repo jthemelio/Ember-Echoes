@@ -80,11 +80,13 @@ func _populate_shop() -> void:
 		_create_type_heading(type_name)
 		for item in groups[type_name]:
 			_create_shop_slot(item)
-		# Pad to fill the row if odd number of children so next heading starts on a new line
-		if item_grid.get_child_count() % 2 != 0:
-			var pad = Control.new()
-			pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			item_grid.add_child(pad)
+		# Pad to fill the row so next heading starts on a new line
+		var remainder = item_grid.get_child_count() % item_grid.columns
+		if remainder != 0:
+			for _p in range(item_grid.columns - remainder):
+				var pad = Control.new()
+				pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				item_grid.add_child(pad)
 
 func _create_type_heading(type_name: String) -> void:
 	var heading = Label.new()
@@ -94,9 +96,11 @@ func _create_type_heading(type_name: String) -> void:
 	heading.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	item_grid.add_child(heading)
-	var spacer = Control.new()
-	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	item_grid.add_child(spacer)
+	# Fill remaining columns in the row with spacers
+	for i in range(item_grid.columns - 1):
+		var spacer = Control.new()
+		spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		item_grid.add_child(spacer)
 
 func _create_shop_slot(item: Dictionary) -> void:
 	var cd = item.get("CustomData", {})

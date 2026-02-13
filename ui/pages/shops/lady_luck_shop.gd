@@ -45,8 +45,9 @@ var _chosen_index: int = -1
 func _adapt_for_desktop() -> void:
 	if not ScreenHelper.is_desktop():
 		return
+	# Lady Luck is always 3x3 (9 chests)
 	if chest_grid:
-		chest_grid.columns = ScreenHelper.grid_columns(3, 4)
+		chest_grid.columns = 3
 
 func _ready() -> void:
 	_adapt_for_desktop()
@@ -259,8 +260,18 @@ const MONEY_BAG_GOLD: Dictionary = {
 	"money_bag_9": 1000000,   "money_bag_10": 5000000,
 }
 
+# Map server reward IDs to correct inventory base IDs
+const REWARD_BID_MAP := {
+	"comet_stone": "Comet",
+	"wyrm_sphere_artifact": "Wyrm_Sphere",
+	"comet_scroll": "Comet_Scroll",
+	"wyrm_sphere_scroll": "Wyrm_Sphere_Scroll",
+}
+
 func _process_reward(reward: Dictionary) -> void:
 	var reward_id = reward.get("id", "")
+	# Normalize server reward IDs to match inventory/catalog base IDs
+	reward_id = REWARD_BID_MAP.get(reward_id, reward_id)
 
 	# All rewards are type:"item" now — handle by id category
 	if reward_id.begins_with("money_bag_"):
@@ -388,7 +399,11 @@ func _update_buttons() -> void:
 
 func _enforce_square_chests() -> void:
 	var grid_w = chest_grid.size.x
-	if grid_w <= 0:
+	# Cap to content width minus card padding
+	var max_w := ScreenHelper.get_content_width() - 48.0
+	if grid_w <= 0.0 or grid_w > max_w:
+		grid_w = max_w
+	if grid_w <= 0.0:
 		return
 	var cols = chest_grid.columns  # 3
 	var sep = chest_grid.get_theme_constant("h_separation")
