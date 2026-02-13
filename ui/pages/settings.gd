@@ -51,6 +51,7 @@ func _build_ui() -> void:
 	_add_account_card(content)
 	_add_appearance_card(content)
 	_add_updates_card(content)
+	_add_debug_card(content)  # DEBUG: Remove before release
 
 	# ── Changelog (hidden until "View Changelog" is pressed) ──
 	_changelog_container = VBoxContainer.new()
@@ -202,6 +203,34 @@ func _add_updates_card(parent: VBoxContainer) -> void:
 	_style_secondary_btn(view_btn)
 	view_btn.pressed.connect(_on_view_changelog)
 	vbox.add_child(view_btn)
+
+# ═══════════════════════════════════════════════════
+#          DEBUG — Remove before release
+# ═══════════════════════════════════════════════════
+
+func _add_debug_card(parent: VBoxContainer) -> void:
+	var card = _make_card()
+	parent.add_child(card)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	card.add_child(vbox)
+
+	vbox.add_child(_make_section_title("Debug / Testing"))
+
+	var comet_btn = Button.new()
+	comet_btn.text = "Test Comet Effect"
+	comet_btn.custom_minimum_size = Vector2(0, 40)
+	_style_secondary_btn(comet_btn)
+	comet_btn.pressed.connect(func(): GlobalUI.show_comet_effect("Comet"))
+	vbox.add_child(comet_btn)
+
+	var wyrm_btn = Button.new()
+	wyrm_btn.text = "Test Wyrm Sphere Effect"
+	wyrm_btn.custom_minimum_size = Vector2(0, 40)
+	_style_secondary_btn(wyrm_btn)
+	wyrm_btn.pressed.connect(func(): GlobalUI.show_comet_effect("Wyrm Sphere", true))
+	vbox.add_child(wyrm_btn)
 
 # ═══════════════════════════════════════════════════
 #               CARD / STYLE HELPERS

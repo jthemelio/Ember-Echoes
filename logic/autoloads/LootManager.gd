@@ -113,6 +113,7 @@ func _roll_rare_materials() -> void:
 		_pending_items.append(instance.duplicate())
 		var item_data = ItemDatabase.resolve_instance(instance)
 		loot_dropped.emit(item_data)
+		GlobalUI.show_comet_effect("Comet")
 		print("LootManager: Rare drop -- Comet!")
 
 	# Wyrm Sphere drop
@@ -123,6 +124,7 @@ func _roll_rare_materials() -> void:
 		_pending_items.append(instance.duplicate())
 		var item_data = ItemDatabase.resolve_instance(instance)
 		loot_dropped.emit(item_data)
+		GlobalUI.show_comet_effect("Wyrm Sphere", true)
 		print("LootManager: Rare drop -- Wyrm Sphere!")
 
 # ───── Loot Rolling Algorithm ─────

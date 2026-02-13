@@ -44,14 +44,10 @@ func _vp_width() -> float:
 
 ## Returns true when the window is wide enough to be a desktop browser
 func is_desktop() -> bool:
-	# Use the VIRTUAL viewport width — the only metric that's consistent
-	# across F5 editor, web exports, and mobile devices.
-	# With canvas_items + expand stretch mode:
-	#   - Mobile portrait (base 450x800): virtual width stays ~450  -> false
-	#   - Desktop/browser (wide window):  virtual width expands 1000+ -> true
-	# DisplayServer.window_get_size() is unreliable: it can return physical
-	# device pixels on mobile (1080+) which falsely triggers desktop mode.
-	return _vp_width() > DESKTOP_THRESHOLD
+	# Desktop layout temporarily disabled — forces mobile layout everywhere.
+	# Re-enable by uncommenting the line below when ready to revisit desktop support.
+	# return _vp_width() > DESKTOP_THRESHOLD
+	return false
 
 ## Returns 1.0 on mobile, DESKTOP_UI_SCALE on desktop
 func get_ui_scale() -> float:

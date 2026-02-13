@@ -40,3 +40,24 @@ func show_floating_text(msg: String, color: Color = Color.WHITE) -> void:
 	lbl.size = Vector2(200, 30)
 
 	get_tree().root.add_child(lbl)
+
+# ─── Comet Drop Screen Effect ───
+
+var _comet_effect_script: GDScript = null
+
+func _get_comet_script() -> GDScript:
+	if _comet_effect_script == null:
+		_comet_effect_script = load("res://ui/components/CometDropEffect.gd") as GDScript
+	return _comet_effect_script
+
+func show_comet_effect(item_name: String, is_wyrm: bool = false) -> void:
+	print("GlobalUI: show_comet_effect called for '%s' (wyrm=%s)" % [item_name, str(is_wyrm)])
+	var script = _get_comet_script()
+	if script == null:
+		push_warning("GlobalUI: CometDropEffect script not found!")
+		return
+	var overlay = ColorRect.new()
+	overlay.set_script(script)
+	overlay.setup(item_name, is_wyrm)
+	get_tree().root.add_child(overlay)
+	print("GlobalUI: Comet overlay added to root")
