@@ -56,9 +56,15 @@ const LIGHTNING_SETTINGS = {
 }
 
 func _ready():
+	# Keep the slot square: whenever the grid gives us a width, match the height
+	resized.connect(_maintain_square)
 	# Ensure the slot is empty and grayed out by default
 	if item_data == null:
 		set_item(null)
+
+func _maintain_square() -> void:
+	if size.x > 0 and abs(custom_minimum_size.y - size.x) > 1:
+		custom_minimum_size.y = size.x
 
 # --- Item Logic ---
 func set_item(data: ItemData):

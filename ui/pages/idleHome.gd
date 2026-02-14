@@ -200,22 +200,28 @@ func _apply_game_theme() -> void:
 	nav_style.content_margin_left = nav_pad
 	nav_style.content_margin_right = nav_pad
 	nav_bar.add_theme_stylebox_override("panel", nav_style)
-	# Scale navbar height and button font
-	nav_bar.custom_minimum_size.y = ScreenHelper.scaled_min_height(56)
-	var nav_font = ScreenHelper.scaled_font(12)
-	# Nav buttons: tighter horizontal padding so all 5 fit on narrow mobile screens
-	var nav_btn_normal = btn_normal.duplicate()
-	nav_btn_normal.content_margin_left = int(4 * s)
-	nav_btn_normal.content_margin_right = int(4 * s)
-	nav_btn_normal.content_margin_top = int(10 * s)
-	nav_btn_normal.content_margin_bottom = int(10 * s)
+	# Scale navbar: responsive height, font, and padding
+	var is_desktop = ScreenHelper.is_desktop()
+	var nav_h = 64 if is_desktop else 52
+	var nav_font_size = 14 if is_desktop else 12
+	var nav_pad_h = 12 if is_desktop else 4
+	var nav_pad_v = 10 if is_desktop else 8
+	nav_bar.custom_minimum_size.y = nav_h
+
+	var nav_btn_normal = StyleBoxFlat.new()
+	nav_btn_normal.bg_color = Color("#ECECEC")
+	nav_btn_normal.set_corner_radius_all(6)
+	nav_btn_normal.content_margin_left = nav_pad_h
+	nav_btn_normal.content_margin_right = nav_pad_h
+	nav_btn_normal.content_margin_top = nav_pad_v
+	nav_btn_normal.content_margin_bottom = nav_pad_v
 	var nav_btn_hover = nav_btn_normal.duplicate()
 	nav_btn_hover.bg_color = Color("#E0E0E0")
 	var nav_btn_pressed = nav_btn_normal.duplicate()
 	nav_btn_pressed.bg_color = Color("#D4D4D4")
 	for btn in $MainLayout/NavBar/NavButtons.get_children():
 		if btn is Button:
-			btn.add_theme_font_size_override("font_size", nav_font)
+			btn.add_theme_font_size_override("font_size", nav_font_size)
 			btn.add_theme_stylebox_override("normal", nav_btn_normal)
 			btn.add_theme_stylebox_override("hover", nav_btn_hover)
 			btn.add_theme_stylebox_override("pressed", nav_btn_pressed)

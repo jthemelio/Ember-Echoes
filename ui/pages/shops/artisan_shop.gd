@@ -236,40 +236,67 @@ func _refresh_material_palette() -> void:
 		material_grid.add_child(tile)
 
 func _create_material_tile(mat_bid: String, count: int) -> PanelContainer:
+	# Build the tile as an inventory-slot-style display
 	var tile = PanelContainer.new()
 	tile.mouse_filter = Control.MOUSE_FILTER_PASS
-	tile.custom_minimum_size = Vector2(72, 60)
+	tile.custom_minimum_size = Vector2(72, 72)
+	tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tile.size_flags_vertical = Control.SIZE_FILL
 
+	# Keep tile square when grid distributes width
+	tile.resized.connect(func(): 
+		if tile.size.x > 0 and abs(tile.custom_minimum_size.y - tile.size.x) > 1:
+			tile.custom_minimum_size.y = tile.size.x
+	)
+
+	# Background style with material color tint
+	var mat_color = MATERIAL_COLORS.get(mat_bid, Color(0.4, 0.4, 0.4))
 	var style = StyleBoxFlat.new()
-	style.bg_color = MATERIAL_COLORS.get(mat_bid, Color(0.4, 0.4, 0.4))
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 4
-	style.content_margin_right = 4
-	style.content_margin_top = 4
-	style.content_margin_bottom = 4
+	style.bg_color = Color(mat_color.r * 0.25, mat_color.g * 0.25, mat_color.b * 0.25, 1.0)
+	style.set_corner_radius_all(6)
+	style.border_color = mat_color
+	style.set_border_width_all(2)
 	tile.add_theme_stylebox_override("panel", style)
 
-	var vbox = VBoxContainer.new()
-	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Item icon (if available from VisualResolver)
+	var icon_tex = VisualResolver.load_icon(mat_bid)
+	if icon_tex:
+		var icon_rect = TextureRect.new()
+		icon_rect.texture = icon_tex
+		icon_rect.expand_mode = 1  # EXPAND_IGNORE_SIZE
+		icon_rect.stretch_mode = 5  # KEEP_ASPECT_CENTERED
+		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		icon_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+		tile.add_child(icon_rect)
+	else:
+		# No icon — show material name centered
+		var name_lbl = Label.new()
+		name_lbl.text = MATERIAL_DISPLAY_NAMES.get(mat_bid, mat_bid)
+		name_lbl.add_theme_font_size_override("font_size", 10)
+		name_lbl.add_theme_color_override("font_color", mat_color)
+		name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		name_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
+		tile.add_child(name_lbl)
 
-	var name_lbl = Label.new()
-	name_lbl.text = MATERIAL_DISPLAY_NAMES.get(mat_bid, mat_bid)
-	name_lbl.add_theme_font_size_override("font_size", 10)
-	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	vbox.add_child(name_lbl)
-
-	var count_lbl = Label.new()
-	count_lbl.text = "x%d" % count
-	count_lbl.add_theme_font_size_override("font_size", 11)
-	count_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	count_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 0.8))
-	vbox.add_child(count_lbl)
-
-	tile.add_child(vbox)
+	# Quantity label (bottom-right corner)
+	var qty_lbl = Label.new()
+	qty_lbl.text = "x%d" % count
+	qty_lbl.add_theme_font_size_override("font_size", 11)
+	qty_lbl.add_theme_color_override("font_color", Color.WHITE)
+	qty_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	qty_lbl.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	qty_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	qty_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var qty_margin = MarginContainer.new()
+	qty_margin.add_theme_constant_override("margin_right", 4)
+	qty_margin.add_theme_constant_override("margin_bottom", 2)
+	qty_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	qty_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	qty_margin.add_child(qty_lbl)
+	tile.add_child(qty_margin)
 
 	# Store the bid as metadata for drag-and-drop
 	tile.set_meta("material_bid", mat_bid)
@@ -287,6 +314,7 @@ func _on_material_tile_clicked(event: InputEvent, mat_bid: String) -> void:
 		_auto_mode = MATERIAL_MODE_MAP.get(mat_bid, UpgradeMode.NONE)
 		result_message.text = ""
 		_refresh_upgrade_panel()
+		_refresh_material_palette()  # Update visual selection highlight
 
 # ═══════════════════════════════════════════
 # Drag-and-Drop: Material Tile → Material Slot
