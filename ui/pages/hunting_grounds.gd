@@ -14,13 +14,12 @@ extends MarginContainer
 @onready var creature_dropdown: OptionButton = $ScrollContent/ContentVBox/ZonePanel/Margin/VBox/CreatureDropdown
 @onready var change_zone_btn: Button = $ScrollContent/ContentVBox/ZonePanel/Margin/VBox/ChangeZoneBtn
 
-# ─── Section 3: Combat Status ───
+# ─── Section 3: Combat Status (Player Card) ───
 @onready var zone_info_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/ZoneInfoLabel
+@onready var player_hp_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow/PlayerHPLabel
 @onready var player_hp_value: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow/PlayerHPValue
 @onready var player_hp_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPBar
 @onready var attack_speed_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/AttackSpeedBar
-@onready var hunt_progress_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/HuntProgressLabel
-@onready var spawn_timer_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SpawnTimerBar
 
 # Summon row (Skill + Qty dropdown + Summon btn)
 @onready var skill_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/SkillBtn
@@ -28,20 +27,24 @@ extends MarginContainer
 @onready var summon_btn: Button = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/SummonBtn
 @onready var queue_count_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/SummonRow/QueueCountLabel
 
-# Primary target
-@onready var mob_name_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow/MobNameLabel
-@onready var mob_hp_value: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow/MobHPValue
-@onready var mob_hp_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobHPBar
-@onready var queue_grid: GridContainer = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/QueueGrid
-
-# Level / XP
+# Level / XP (now below Summon row in player card)
 @onready var level_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/LevelRow/LevelLabel
 @onready var level_percent: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/LevelRow/LevelPercent
 @onready var xp_bar: ProgressBar = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/XPBar
 @onready var xp_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/XPLabel
 
+# ─── Section 3b: Hunt Status (Hunt Card) ───
+@onready var hunt_progress_label: Label = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/HuntProgressLabel
+@onready var spawn_timer_bar: ProgressBar = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/SpawnTimerBar
+
+# Primary target
+@onready var mob_name_label: Label = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/MobNameRow/MobNameLabel
+@onready var mob_hp_value: Label = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/MobNameRow/MobHPValue
+@onready var mob_hp_bar: ProgressBar = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/MobHPBar
+@onready var queue_grid: GridContainer = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/QueueGrid
+
 # Footer -- Monster kill tracker
-@onready var kill_tracker_label: Label = $ScrollContent/ContentVBox/CombatPanel/Margin/VBox/FooterRow/KillTrackerLabel
+@onready var kill_tracker_label: Label = $ScrollContent/ContentVBox/HuntPanel/Margin/VBox/FooterRow/KillTrackerLabel
 
 # ─── Section 4: Inventory ───
 @onready var bag_title: Label = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagTitle
@@ -146,6 +149,13 @@ func _ready() -> void:
 
 	# ── Desktop responsive: adapt grid columns and sizing ──
 	_adapt_for_desktop()
+
+	# ── Set character name on HP label ──
+	var char_name = GameManager.active_character_name
+	if char_name != "":
+		player_hp_label.text = char_name
+	else:
+		player_hp_label.text = "Hero"
 
 	# ── Initial UI sync ──
 	_refresh_all_ui()

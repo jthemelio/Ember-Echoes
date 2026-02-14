@@ -149,7 +149,7 @@ layout_mode = 2
 [node name="PlayerHPLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=1989231959]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Your HP"
+text = "Hero"
 
 [node name="PlayerHPValue" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/PlayerHPRow" unique_id=344129008]
 layout_mode = 2
@@ -192,50 +192,6 @@ layout_mode = 2
 horizontal_alignment = 2
 text = "Q:0/25"
 
-[node name="HuntProgressLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
-layout_mode = 2
-text = "Current Hunt (0/25)"
-
-[node name="SpawnTimerBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 4)
-layout_mode = 2
-max_value = 1.0
-show_percentage = false
-
-[node name="MobNameRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=334960670]
-layout_mode = 2
-
-[node name="MobNameLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=33905035]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Pheasant"
-
-[node name="MobHPValue" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/MobNameRow" unique_id=671874778]
-layout_mode = 2
-text = "0 / 0"
-horizontal_alignment = 2
-
-[node name="MobHPBar" type="ProgressBar" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1594029404]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-show_percentage = false
-
-[node name="QueueTitle" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Monster Queue"
-
-[node name="QueueGrid" type="GridContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/h_separation = 12
-theme_override_constants/v_separation = 6
-columns = 2
-
-[node name="Spacer" type="Control" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1073525221]
-custom_minimum_size = Vector2(0, 16)
-layout_mode = 2
-
 [node name="LevelRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1871786362]
 layout_mode = 2
 
@@ -260,10 +216,70 @@ layout_mode = 2
 text = "0 / 110 XP"
 horizontal_alignment = 1
 
-[node name="FooterRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox" unique_id=1480844000]
+[node name="HuntPanel" type="PanelContainer" parent="ScrollContent/ContentVBox"]
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/HuntPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/HuntPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HuntTitle" type="Label" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Hunt Status"
+
+[node name="HuntProgressLabel" type="Label" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox"]
+layout_mode = 2
+text = "Current Hunt (0/25)"
+
+[node name="SpawnTimerBar" type="ProgressBar" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+max_value = 1.0
+show_percentage = false
+
+[node name="MobNameRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox" unique_id=334960670]
 layout_mode = 2
 
-[node name="KillTrackerLabel" type="Label" parent="ScrollContent/ContentVBox/CombatPanel/Margin/VBox/FooterRow"]
+[node name="MobNameLabel" type="Label" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox/MobNameRow" unique_id=33905035]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pheasant"
+
+[node name="MobHPValue" type="Label" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox/MobNameRow" unique_id=671874778]
+layout_mode = 2
+text = "0 / 0"
+horizontal_alignment = 2
+
+[node name="MobHPBar" type="ProgressBar" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox" unique_id=1594029404]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+show_percentage = false
+
+[node name="QueueTitle" type="Label" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Monster Queue"
+
+[node name="QueueGrid" type="GridContainer" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="FooterRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox" unique_id=1480844000]
+layout_mode = 2
+
+[node name="KillTrackerLabel" type="Label" parent="ScrollContent/ContentVBox/HuntPanel/Margin/VBox/FooterRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Kills: 0 / 100  (Tier 1)"
