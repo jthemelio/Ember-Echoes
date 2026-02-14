@@ -102,6 +102,7 @@ func _populate_shop() -> void:
 			for _p in range(item_grid.columns - remainder):
 				var pad = Control.new()
 				pad.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 				item_grid.add_child(pad)
 
 func _create_type_heading(type_name: String) -> void:
@@ -116,6 +117,7 @@ func _create_type_heading(type_name: String) -> void:
 	for i in range(item_grid.columns - 1):
 		var spacer = Control.new()
 		spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		item_grid.add_child(spacer)
 
 func _create_shop_slot(item: Dictionary) -> void:
@@ -143,7 +145,7 @@ func _create_shop_slot(item: Dictionary) -> void:
 
 	# Overlay a small price label at the bottom
 	var price_label = Label.new()
-	price_label.text = "%sg" % GameManager.format_gold(price)
+	price_label.text = GameManager.format_gold(price)
 	price_label.add_theme_font_size_override("font_size", 9)
 	price_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.5))
 	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

@@ -63,11 +63,17 @@ func load_from_playfab(data: Variant) -> void:
 	monster_kills = data.get("monster_kills", {})
 	claimed_tiers = data.get("claimed_tiers", {})
 	pets_obtained = data.get("pets", {})
-	# Ensure arrays for claimed_tiers
+	# Ensure arrays for claimed_tiers + cast values to int (JSON may return floats)
 	for key in claimed_tiers:
 		if not (claimed_tiers[key] is Array):
 			claimed_tiers[key] = []
-	print("AchievementManager: Loaded %d monster kill records, %d pets" % [monster_kills.size(), pets_obtained.size()])
+		else:
+			var int_arr: Array = []
+			for v in claimed_tiers[key]:
+				int_arr.append(int(v))
+			claimed_tiers[key] = int_arr
+	print("AchievementManager: Loaded %d monster kill records, %d claimed tier sets, %d pets" % [
+		monster_kills.size(), claimed_tiers.size(), pets_obtained.size()])
 
 func to_save_dict() -> Dictionary:
 	return {
@@ -190,6 +196,15 @@ func get_all_monsters() -> Array:
 	return all_mobs
 
 # ───── Persistence ─────
+
+## Force an immediate save regardless of dirty flag (call before character switch / logout)
+func force_save() -> void:
+	_dirty = false
+	var args = {
+		"achievementData": to_save_dict()
+	}
+	PlayFabManager.client.execute_cloud_script("saveAchievements", args, _on_save_result)
+	print("AchievementManager: Force-saved to PlayFab")
 
 func _save_if_dirty() -> void:
 	if not _dirty:

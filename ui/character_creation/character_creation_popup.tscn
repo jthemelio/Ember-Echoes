@@ -166,12 +166,8 @@ text = ""
 alignment = 0
 
 [node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Juggernaut"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 2
 
@@ -198,12 +194,8 @@ text = ""
 alignment = 0
 
 [node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Wuxia"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 2
 
@@ -230,12 +222,8 @@ text = ""
 alignment = 0
 
 [node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Twin-Soul"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 2
 
@@ -262,12 +250,8 @@ text = ""
 alignment = 0
 
 [node name="Content" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer/Marksman"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 2
 

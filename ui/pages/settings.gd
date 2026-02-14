@@ -385,12 +385,20 @@ func _on_change_character() -> void:
 	if icm:
 		icm.stop_combat()
 	GameManager.sync_inventory_to_server()
+	# Force-save any dirty achievement data before switching
+	var ach_mgr = get_node_or_null("/root/AchievementManager")
+	if ach_mgr:
+		ach_mgr.force_save()
 	get_tree().change_scene_to_file("res://ui/character_creation/character_selection.tscn")
 
 func _on_logout() -> void:
 	var icm = get_node_or_null("/root/IdleCombatManager")
 	if icm:
 		icm.stop_combat()
+	# Force-save any dirty achievement data before logging out
+	var ach_mgr = get_node_or_null("/root/AchievementManager")
+	if ach_mgr:
+		ach_mgr.force_save()
 	PlayFabManager.forget_login()
 	get_tree().change_scene_to_file("res://ui/login/entry_page.tscn")
 

@@ -170,7 +170,9 @@ func _configure_lightning(quality: String):
 func _claim_money_bag() -> void:
 	if item_data == null or not item_data.item_id.begins_with("money_bag_"):
 		return
-	GameManager.claim_money_bag(item_data.instance_id)
+	var gold = GameManager.claim_money_bag(item_data.instance_id)
+	if gold > 0:
+		GlobalUI.show_floating_text("+%s" % GameManager.format_gold(gold), Color(1, 0.84, 0))
 
 # --- Input & Tooltip Signals ---
 func _on_gui_input(event: InputEvent):

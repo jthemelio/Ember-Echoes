@@ -600,7 +600,7 @@ func _on_sell_pressed() -> void:
 
 	# Floating feedback for sell
 	if gold_earned > 0:
-		GlobalUI.show_floating_text("+%sg" % GameManager.format_gold(gold_earned), Color(1, 0.84, 0))
+		GlobalUI.show_floating_text("+%s" % GameManager.format_gold(gold_earned), Color(1, 0.84, 0))
 	if echo_earned > 0:
 		GlobalUI.show_floating_text("+%d Echo" % echo_earned, Color(0.6, 0.4, 1.0))
 

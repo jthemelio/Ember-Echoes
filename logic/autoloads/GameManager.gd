@@ -288,6 +288,21 @@ func _seed_starting_items() -> void:
 	print("GameManager: Seeded starting item — Jacket (Normal)")
 	sync_inventory_to_server()
 
+	# Grant starting gold (1000) via CloudScript
+	var current_gold = int(active_user_currencies.get("GD", 0))
+	if current_gold <= 0:
+		active_user_currencies["GD"] = 1000
+		PlayFabManager.client.execute_cloud_script("grantStartingGold", {
+			"amount": 1000
+		}, func(result):
+			var fn = result.get("data", {}).get("FunctionResult", {})
+			if fn is Dictionary and fn.get("success", false):
+				print("GameManager: Starting gold granted (1000)")
+			else:
+				push_warning("GameManager: Starting gold grant failed — local fallback active")
+		)
+		print("GameManager: Seeded starting gold — 1000")
+
 # ───── Equipment API ─────
 
 func get_slot_for_item(item: ItemData) -> String:
@@ -434,7 +449,8 @@ func _cleanup_ghost_items() -> void:
 			active_user_inventory.remove_at(i)
 
 # Claim a money bag item from inventory by uid — awards gold and removes the entry
-func claim_money_bag(uid: String) -> bool:
+# Returns the gold amount claimed (0 if not found)
+func claim_money_bag(uid: String) -> int:
 	for i in range(active_user_inventory.size()):
 		var entry = active_user_inventory[i]
 		if entry is Dictionary and entry.get("uid", "") == uid:
@@ -443,10 +459,20 @@ func claim_money_bag(uid: String) -> bool:
 			active_user_inventory.remove_at(i)
 			inventory_changed.emit()
 			sync_inventory_to_server()
+			# Sync gold to server via CloudScript
+			PlayFabManager.client.execute_cloud_script("claimMoneyBag", {
+				"goldAmount": gold,
+			}, func(result):
+				var fn = result.get("data", {}).get("FunctionResult", {})
+				if fn is Dictionary and fn.get("success", false):
+					print("GameManager: Money bag gold synced to server (+%d)" % gold)
+				else:
+					push_warning("GameManager: Money bag gold sync failed — gold may be lost on refresh")
+			)
 			print("GameManager: Claimed money bag uid '%s': +%d gold" % [uid, gold])
-			return true
+			return gold
 	push_warning("GameManager: Could not find money bag uid '%s' in inventory" % uid)
-	return false
+	return 0
 
 # Legacy equip (from ItemData) -- resolves uid internally
 func equip_item(item: ItemData) -> bool:

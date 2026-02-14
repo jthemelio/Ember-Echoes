@@ -102,7 +102,7 @@ func _create_shop_slot(item: Dictionary) -> void:
 
 	# Price label (updates when qty changes)
 	var price_lbl = Label.new()
-	price_lbl.text = "%sg" % GameManager.format_gold(base_price)
+	price_lbl.text = GameManager.format_gold(base_price)
 	price_lbl.add_theme_font_size_override("font_size", 13)
 	price_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	buy_row.add_child(price_lbl)
@@ -150,7 +150,7 @@ func _create_shop_slot(item: Dictionary) -> void:
 			qty_5_btn.add_theme_color_override("font_color", Color.WHITE)
 			qty_1_btn.remove_theme_stylebox_override("normal")
 			qty_1_btn.remove_theme_color_override("font_color")
-		price_lbl.text = "%sg" % GameManager.format_gold(base_price * state["qty"])
+		price_lbl.text = GameManager.format_gold(base_price * state["qty"])
 
 	qty_1_btn.pressed.connect(func():
 		state["qty"] = 1

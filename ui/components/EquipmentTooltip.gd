@@ -100,7 +100,7 @@ func _configure_action_button(data: ItemData, context: String) -> void:
 			if entry is Dictionary and entry.get("uid", "") == data.instance_id:
 				gold = int(entry.get("gold", 0))
 				break
-		action_btn.text = "Claim (%sg)" % GameManager.format_gold(gold)
+		action_btn.text = "Claim (%s)" % GameManager.format_gold(gold)
 		action_btn.visible = true
 	elif context.begins_with("equipment:"):
 		action_btn.text = "Unequip"
@@ -115,15 +115,9 @@ func _on_action_pressed() -> void:
 		if ok:
 			GlobalUI.show_floating_text("%s equipped!" % _current_data.display_name, Color.WHITE)
 	elif _current_context == "money_bag":
-		# Grab gold amount before claiming (entry will be removed)
-		var gold := 0
-		for entry in GameManager.active_user_inventory:
-			if entry is Dictionary and entry.get("uid", "") == _current_data.instance_id:
-				gold = int(entry.get("gold", 0))
-				break
-		var ok = GameManager.claim_money_bag(_current_data.instance_id)
-		if ok:
-			GlobalUI.show_floating_text("+%sg" % GameManager.format_gold(gold), Color(1, 0.84, 0))
+		var gold = GameManager.claim_money_bag(_current_data.instance_id)
+		if gold > 0:
+			GlobalUI.show_floating_text("+%s" % GameManager.format_gold(gold), Color(1, 0.84, 0))
 	elif _current_context.begins_with("equipment:"):
 		var slot = _current_context.substr("equipment:".length())
 		GameManager.unequip_slot(slot)
