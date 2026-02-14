@@ -1,6 +1,8 @@
 # weaponsmith_shop.gd — Displays Normal quality weapons filtered by player class
 extends MarginContainer
 
+const InventorySlotScene = preload("res://ui/components/InventorySlot.tscn")
+
 @onready var gold_label: Label = $ScrollContent/ContentVBox/ShopHeader/Margin/VBox/GoldRow/GoldValue
 @onready var item_grid: GridContainer = $ScrollContent/ContentVBox/ShopHeader/Margin/VBox/ItemGrid
 
@@ -23,10 +25,8 @@ func _ready() -> void:
 	_populate_shop()
 
 func _adapt_for_desktop() -> void:
-	if not ScreenHelper.is_desktop():
-		return
 	if item_grid:
-		item_grid.columns = ScreenHelper.grid_columns(2, 3)
+		item_grid.columns = ScreenHelper.grid_columns(4, 5)
 
 func _refresh_gold() -> void:
 	var gold = int(GameManager.active_user_currencies.get("GD", 0))
@@ -111,23 +111,48 @@ func _create_shop_slot(item: Dictionary) -> void:
 	var item_type = cd.get("Type", "")
 	var amount = int(cd.get("Amount", 1))
 
-	var btn = Button.new()
-	btn.custom_minimum_size = Vector2(0, 48)
-	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	btn.clip_text = true
+	# Create an InventorySlot with the item resolved
+	var slot = InventorySlotScene.instantiate()
+	slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slot.size_flags_vertical = Control.SIZE_FILL
+	slot.suppress_tooltip = true  # We handle click ourselves
 
+	var inst_amount = amount if item_type == "Arrow" else 1
+	var instance = ItemDatabase.create_instance_dict(item_id, "Normal", inst_amount)
+	var item_data = ItemDatabase.resolve_instance(instance)
+	item_grid.add_child(slot)  # Must be in tree before set_item
+	slot.set_item(item_data)
+
+	# Dim if player can't use yet
 	var player_level = GameManager.active_character_level
 	if player_level < level_req:
-		btn.modulate = Color(0.6, 0.6, 0.6, 1.0)
+		slot.modulate = Color(0.6, 0.6, 0.6, 1.0)
 
+	# Overlay a small price label at the bottom
+	var price_label = Label.new()
+	price_label.text = "%sg" % GameManager.format_gold(price)
+	price_label.add_theme_font_size_override("font_size", 9)
+	price_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.5))
+	price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	price_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	price_label.anchors_preset = Control.PRESET_BOTTOM_WIDE
+	price_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	slot.add_child(price_label)
+
+	# Connect click for purchase
 	if item_type == "Arrow":
-		btn.text = "%s (x%d)\nLv%d - %sg" % [display_name, amount, level_req, GameManager.format_gold(price)]
-		btn.pressed.connect(_on_buy_arrow_pressed.bind(item_id, display_name, price, amount))
+		slot.gui_input.connect(_on_shop_slot_arrow_input.bind(item_id, display_name, price, amount))
 	else:
-		btn.text = "%s\nLv%d - %sg" % [display_name, level_req, GameManager.format_gold(price)]
-		btn.pressed.connect(_on_buy_pressed.bind(item_id, display_name, price))
+		slot.gui_input.connect(_on_shop_slot_input.bind(item_id, display_name, price))
 
-	item_grid.add_child(btn)
+func _on_shop_slot_input(event: InputEvent, item_id: String, display_name: String, price: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_on_buy_pressed(item_id, display_name, price)
+
+func _on_shop_slot_arrow_input(event: InputEvent, item_id: String, display_name: String, price: int, amount: int) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_on_buy_arrow_pressed(item_id, display_name, price, amount)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 	if _purchase_in_flight:

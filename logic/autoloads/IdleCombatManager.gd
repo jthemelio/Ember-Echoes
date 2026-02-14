@@ -30,6 +30,7 @@ const MOB_ATTACK_INTERVAL: float = 1.0  # Default: mobs attack once per second
 const DEATH_RESPAWN_TIME: float = 5.0 # Seconds before player respawns after death
 const AFK_MAX_SECONDS: int = 7200    # 2 hours max AFK reward
 const AFK_SAVE_PATH: String = "user://afk_timestamp.save"
+const MAX_LEVEL: int = 130
 
 # ───── XP Scaling ─────
 # Formula: XP_BASE * level ^ XP_EXPONENT
@@ -616,6 +617,9 @@ func _check_level_up() -> void:
 	## Processes any pending level-ups. Call after adding XP.
 	var leveled_up := false
 	while current_xp >= xp_to_next_level:
+		if GameManager.active_character_level >= MAX_LEVEL:
+			current_xp = 0
+			break
 		current_xp -= xp_to_next_level
 		GameManager.active_character_level += 1
 		leveled_up = true
@@ -748,6 +752,9 @@ func _simulate_offline(elapsed_seconds: int) -> Dictionary:
 	# Apply XP and level-ups (with attribute point awards)
 	current_xp += total_xp
 	while current_xp >= xp_to_next_level:
+		if GameManager.active_character_level >= MAX_LEVEL:
+			current_xp = 0
+			break
 		current_xp -= xp_to_next_level
 		GameManager.active_character_level += 1
 		# Award attribute points on offline level-up (5 per level, same as online)

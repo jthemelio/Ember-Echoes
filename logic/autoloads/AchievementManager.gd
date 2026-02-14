@@ -48,7 +48,18 @@ func _ready():
 
 # ───── Data Loading (from PlayFab) ─────
 
-func load_from_playfab(data: Dictionary) -> void:
+func load_from_playfab(data: Variant) -> void:
+	# Safety: if PlayFab stored it as a JSON string, parse it first
+	if data is String:
+		var parsed = JSON.parse_string(data)
+		if parsed is Dictionary:
+			data = parsed
+		else:
+			push_warning("AchievementManager: Failed to parse achievement data string")
+			return
+	if not (data is Dictionary):
+		push_warning("AchievementManager: Invalid achievement data type: %s" % typeof(data))
+		return
 	monster_kills = data.get("monster_kills", {})
 	claimed_tiers = data.get("claimed_tiers", {})
 	pets_obtained = data.get("pets", {})
@@ -185,7 +196,7 @@ func _save_if_dirty() -> void:
 		return
 	_dirty = false
 	var args = {
-		"achievementData": JSON.stringify(to_save_dict())
+		"achievementData": to_save_dict()
 	}
 	PlayFabManager.client.execute_cloud_script("saveAchievements", args, _on_save_result)
 

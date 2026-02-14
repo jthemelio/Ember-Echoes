@@ -58,6 +58,12 @@ func _ready() -> void:
 	for i in range(chest_grid.get_child_count()):
 		var chest = chest_grid.get_child(i)
 		chest.gui_input.connect(_on_chest_input.bind(i))
+		chest.mouse_entered.connect(_on_chest_hover.bind(i, true))
+		chest.mouse_exited.connect(_on_chest_hover.bind(i, false))
+		# Make "?" label bigger and bolder
+		var lbl = chest.get_child(0) as Label
+		if lbl:
+			lbl.add_theme_font_size_override("font_size", 24)
 
 	_set_phase(Phase.IDLE)
 	_fetch_status()
@@ -65,6 +71,11 @@ func _ready() -> void:
 	# Dynamic square chest sizing
 	call_deferred("_enforce_square_chests")
 	chest_grid.resized.connect(_enforce_square_chests)
+
+	# Style the balance and payment cards with borders
+	_style_card_panels()
+	# Style payment buttons
+	_style_payment_buttons()
 
 func _process(delta: float) -> void:
 	if not _status_loaded or _free_roll_available:
@@ -435,12 +446,97 @@ func _set_chests_ready() -> void:
 func _style_chest(chest: PanelContainer, color: Color) -> void:
 	var style = StyleBoxFlat.new()
 	style.bg_color = color
-	style.set_corner_radius_all(8)
+	style.set_corner_radius_all(10)
+	style.border_color = color.lightened(0.3)
+	style.set_border_width_all(2)
+	# Subtle shadow
+	style.shadow_color = Color(0, 0, 0, 0.25)
+	style.shadow_size = 4
+	style.shadow_offset = Vector2(0, 2)
 	style.content_margin_left = 4
 	style.content_margin_right = 4
 	style.content_margin_top = 4
 	style.content_margin_bottom = 4
 	chest.add_theme_stylebox_override("panel", style)
+
+func _on_chest_hover(chest_index: int, entered: bool) -> void:
+	if _phase != Phase.PICKING:
+		return
+	var chest = chest_grid.get_child(chest_index)
+	if entered:
+		var hover_color = CHEST_READY_COLOR.lightened(0.15)
+		_style_chest(chest, hover_color)
+		chest.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	else:
+		_style_chest(chest, CHEST_READY_COLOR)
+
+func _style_card_panels() -> void:
+	# Add subtle border/shadow to BalanceCard, ChestCard, PaymentCard
+	for card_path in ["ScrollContent/ContentVBox/BalanceCard",
+					   "ScrollContent/ContentVBox/ChestCard",
+					   "ScrollContent/ContentVBox/PaymentCard",
+					   "ScrollContent/ContentVBox/HeaderCard"]:
+		var card = get_node_or_null(card_path)
+		if card and card is PanelContainer:
+			var style = StyleBoxFlat.new()
+			style.bg_color = Color(0.14, 0.13, 0.16, 0.95)
+			style.set_corner_radius_all(10)
+			style.border_color = Color(0.35, 0.32, 0.42, 0.6)
+			style.set_border_width_all(1)
+			style.shadow_color = Color(0, 0, 0, 0.15)
+			style.shadow_size = 3
+			style.shadow_offset = Vector2(0, 2)
+			card.add_theme_stylebox_override("panel", style)
+
+func _style_payment_buttons() -> void:
+	# Free Roll: primary gold/green when available
+	var primary_normal = StyleBoxFlat.new()
+	primary_normal.bg_color = Color(0.25, 0.35, 0.18, 0.95)
+	primary_normal.border_color = Color(0.5, 0.7, 0.3)
+	primary_normal.set_border_width_all(2)
+	primary_normal.set_corner_radius_all(8)
+	primary_normal.content_margin_left = 12
+	primary_normal.content_margin_right = 12
+	primary_normal.content_margin_top = 10
+	primary_normal.content_margin_bottom = 10
+
+	var primary_hover = primary_normal.duplicate()
+	primary_hover.bg_color = Color(0.30, 0.42, 0.22, 0.95)
+
+	var primary_disabled = StyleBoxFlat.new()
+	primary_disabled.bg_color = Color(0.15, 0.15, 0.18, 0.7)
+	primary_disabled.border_color = Color(0.3, 0.3, 0.35, 0.5)
+	primary_disabled.set_border_width_all(1)
+	primary_disabled.set_corner_radius_all(8)
+	primary_disabled.content_margin_left = 12
+	primary_disabled.content_margin_right = 12
+	primary_disabled.content_margin_top = 10
+	primary_disabled.content_margin_bottom = 10
+
+	free_roll_btn.add_theme_stylebox_override("normal", primary_normal)
+	free_roll_btn.add_theme_stylebox_override("hover", primary_hover)
+	free_roll_btn.add_theme_stylebox_override("pressed", primary_hover)
+	free_roll_btn.add_theme_stylebox_override("disabled", primary_disabled)
+
+	# Secondary buttons (ticket & echo): muted
+	var secondary_normal = StyleBoxFlat.new()
+	secondary_normal.bg_color = Color(0.18, 0.17, 0.22, 0.9)
+	secondary_normal.border_color = Color(0.4, 0.38, 0.5, 0.6)
+	secondary_normal.set_border_width_all(1)
+	secondary_normal.set_corner_radius_all(8)
+	secondary_normal.content_margin_left = 12
+	secondary_normal.content_margin_right = 12
+	secondary_normal.content_margin_top = 10
+	secondary_normal.content_margin_bottom = 10
+
+	var secondary_hover = secondary_normal.duplicate()
+	secondary_hover.bg_color = Color(0.22, 0.21, 0.28, 0.9)
+
+	for btn in [ticket_btn, echo_btn]:
+		btn.add_theme_stylebox_override("normal", secondary_normal)
+		btn.add_theme_stylebox_override("hover", secondary_hover)
+		btn.add_theme_stylebox_override("pressed", secondary_hover)
+		btn.add_theme_stylebox_override("disabled", primary_disabled)
 
 # ─── Helpers ───
 

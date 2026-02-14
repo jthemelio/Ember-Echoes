@@ -45,10 +45,10 @@ void fragment() {
 
 	// Bright at edges, fading toward center
 	// As progress increases, the flash washes further inward
-	float wash_depth = 0.15 + progress * 0.85; // starts at edges, floods inward
+	float wash_depth = 0.08 + progress * 0.85; // starts tight at edges, floods inward
 	float edge_flash = smoothstep(wash_depth, 0.0, edge_dist);
-	// Also keep a softer full-screen component so it's not ONLY edges
-	float full_screen = 0.4;
+	// Subtle full-screen component so the center is nearly transparent
+	float full_screen = 0.05;
 	float spatial = mix(full_screen, 1.0, edge_flash);
 
 	total_flash *= spatial;

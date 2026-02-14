@@ -80,7 +80,7 @@ layout_mode = 2
 visible = false
 
 [node name="NavBar" type="PanelContainer" parent="MainLayout" unique_id=489164190]
-custom_minimum_size = Vector2(0, 70)
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_vertical = 8
 

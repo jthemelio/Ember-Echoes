@@ -40,6 +40,7 @@ func _build_ui() -> void:
 	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	scroll.scroll_vertical_custom_step = 40
 	add_child(scroll)
 
 	var content = VBoxContainer.new()

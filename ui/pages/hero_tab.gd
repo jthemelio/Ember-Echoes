@@ -6,6 +6,8 @@ extends MarginContainer
 @onready var vit_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/VitRow
 @onready var spi_row = $ScrollContent/ContentVBox/StatsCard/Margin/VBox/SpiRow
 @onready var name_label = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/CharName
+@onready var level_label = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/HBoxContainer/LevelLabel
+@onready var class_label = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/HBoxContainer/ClassLabel
 @onready var equipment_grid = $ScrollContent/ContentVBox/ProfileCard/Margin/VBox/Equipment
 
 # ─── Equipment Slots (InventorySlot instances) ───
@@ -119,6 +121,10 @@ func update_hero_ui():
 	
 	if name_label:
 		name_label.text = GameManager.active_character_name
+	if level_label:
+		level_label.text = "Level %d" % level
+	if class_label:
+		class_label.text = char_class
 
 	# Refresh equipment slot visuals
 	_refresh_equipment_slots()

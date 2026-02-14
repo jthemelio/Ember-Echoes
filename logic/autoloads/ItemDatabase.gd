@@ -92,7 +92,8 @@ func resolve_instance(instance: Dictionary) -> ItemData:
 
 	# ── Instance-specific data (from the compact dict) ──
 	item.plus_level = int(instance.get("plus", 0))
-	item.current_dura = int(instance.get("dura", item.stats.get("MaxDura", 0)))
+	var raw_dura = int(instance.get("dura", -1))
+	item.current_dura = raw_dura if raw_dura >= 0 else int(item.stats.get("MaxDura", 0))
 	item.sockets = instance.get("skt", []).size()
 	item.socket_gems = instance.get("skt", [])
 	item.enchantments = instance.get("ench", {})
