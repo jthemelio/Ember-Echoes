@@ -200,12 +200,25 @@ func _apply_game_theme() -> void:
 	nav_style.content_margin_left = nav_pad
 	nav_style.content_margin_right = nav_pad
 	nav_bar.add_theme_stylebox_override("panel", nav_style)
-	# Scale navbar height and button font for desktop
-	nav_bar.custom_minimum_size.y = ScreenHelper.scaled_min_height(70)
-	var nav_font = ScreenHelper.scaled_font(13)
+	# Scale navbar height and button font
+	nav_bar.custom_minimum_size.y = ScreenHelper.scaled_min_height(56)
+	var nav_font = ScreenHelper.scaled_font(12)
+	# Nav buttons: tighter horizontal padding so all 5 fit on narrow mobile screens
+	var nav_btn_normal = btn_normal.duplicate()
+	nav_btn_normal.content_margin_left = int(4 * s)
+	nav_btn_normal.content_margin_right = int(4 * s)
+	nav_btn_normal.content_margin_top = int(10 * s)
+	nav_btn_normal.content_margin_bottom = int(10 * s)
+	var nav_btn_hover = nav_btn_normal.duplicate()
+	nav_btn_hover.bg_color = Color("#E0E0E0")
+	var nav_btn_pressed = nav_btn_normal.duplicate()
+	nav_btn_pressed.bg_color = Color("#D4D4D4")
 	for btn in $MainLayout/NavBar/NavButtons.get_children():
 		if btn is Button:
 			btn.add_theme_font_size_override("font_size", nav_font)
+			btn.add_theme_stylebox_override("normal", nav_btn_normal)
+			btn.add_theme_stylebox_override("hover", nav_btn_hover)
+			btn.add_theme_stylebox_override("pressed", nav_btn_pressed)
 
 	# ── Style ShopPopup with more prominent shadow ──
 	var popup_style = card_style.duplicate()
