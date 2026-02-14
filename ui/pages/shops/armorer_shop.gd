@@ -155,12 +155,18 @@ func _create_shop_slot(item: Dictionary) -> void:
 	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	slot.add_child(price_label)
 
-	# Connect click for purchase
-	slot.gui_input.connect(_on_shop_slot_input.bind(item_id, display_name, price))
+	# Connect click to show tooltip with Buy button
+	slot.gui_input.connect(_on_shop_slot_input.bind(slot, item_data, item_id, display_name, price))
 
-func _on_shop_slot_input(event: InputEvent, item_id: String, display_name: String, price: int) -> void:
+func _on_shop_slot_input(event: InputEvent, slot: Control, data: ItemData, item_id: String, display_name: String, price: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_on_buy_pressed(item_id, display_name, price)
+		if data == null:
+			return
+		# Set the buy callback on the tooltip, then show it
+		var tooltip = GlobalUI.equipment_tooltip
+		if tooltip:
+			tooltip._shop_buy_callback = Callable(self, "_on_buy_pressed").bind(item_id, display_name, price)
+		GlobalUI.show_tooltip(data, "shop:%d" % price)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 	if _purchase_in_flight:

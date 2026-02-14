@@ -36,22 +36,23 @@ mouse_filter = 1
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/HeaderCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
+theme_override_constants/margin_top = 14
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_bottom = 14
 
 [node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/HeaderCard/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="TitleLabel" type="Label" parent="ScrollContent/ContentVBox/HeaderCard/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 20
 text = "Lady Luck"
 
 [node name="DescLabel" type="Label" parent="ScrollContent/ContentVBox/HeaderCard/Margin/VBox"]
 layout_mode = 2
-text = "Test your fortune! Pay first, then pick a chest to claim your prize. All 9 chests will reveal what could have been yours!"
+theme_override_font_sizes/font_size = 11
+text = "Pay first, then pick a chest to claim your prize!"
 autowrap_mode = 2
 
 [node name="BalanceCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
@@ -61,199 +62,201 @@ mouse_filter = 1
 [node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/BalanceCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin"]
+[node name="HBox" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 16
 
-[node name="TicketRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox"]
-layout_mode = 2
-
-[node name="TicketLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TicketRow"]
+[node name="TicketCol" type="VBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="TicketLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox/TicketCol"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
 text = "Lottery Tickets"
+horizontal_alignment = 1
 
-[node name="TicketValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TicketRow"]
+[node name="TicketValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox/TicketCol"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "0"
-horizontal_alignment = 2
+horizontal_alignment = 1
 
-[node name="EchoRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox"]
-layout_mode = 2
-
-[node name="EchoLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/EchoRow"]
+[node name="EchoCol" type="VBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="EchoLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox/EchoCol"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
 text = "Echo Points"
+horizontal_alignment = 1
 
-[node name="EchoValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/EchoRow"]
+[node name="EchoValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox/EchoCol"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "0"
-horizontal_alignment = 2
+horizontal_alignment = 1
 
-[node name="TimerRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox"]
-layout_mode = 2
-
-[node name="TimerLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TimerRow"]
+[node name="TimerCol" type="VBoxContainer" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Free Roll"
 
-[node name="TimerValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TimerRow"]
+[node name="TimerLabel" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox/TimerCol"]
 layout_mode = 2
-text = "Loading..."
-horizontal_alignment = 2
+theme_override_font_sizes/font_size = 10
+text = "Free Roll"
+horizontal_alignment = 1
 
-[node name="ChestCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
+[node name="TimerValue" type="Label" parent="ScrollContent/ContentVBox/BalanceCard/Margin/HBox/TimerCol"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Loading..."
+horizontal_alignment = 1
+
+[node name="GameCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
 layout_mode = 2
 mouse_filter = 1
 
-[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/ChestCard"]
+[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/GameCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
+theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
-[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/GameCard/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="ChestLabel" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox"]
+[node name="PaymentRow" type="HBoxContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="FreeRollBtn" type="Button" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/PaymentRow"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Free Roll"
+
+[node name="TicketBtn" type="Button" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/PaymentRow"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "1 Ticket"
+
+[node name="EchoBtn" type="Button" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/PaymentRow"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "50 Echo"
+
+[node name="ChestLabel" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
 text = "Pay to reveal 9 chests"
 horizontal_alignment = 1
 
-[node name="ChestGrid" type="GridContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox"]
+[node name="ChestGrid" type="GridContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 3
 
-[node name="Chest1" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest1" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest1"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest1"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest2" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest2" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest2"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest2"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest3" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest3" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest3"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest3"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest4" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest4" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest4"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest4"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest5" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest5" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest5"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest5"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest6" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest6" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest6"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest6"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest7" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest7" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest7"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest7"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest8" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest8" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest8"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest8"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
 
-[node name="Chest9" type="PanelContainer" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid"]
+[node name="Chest9" type="PanelContainer" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid/Chest9"]
+[node name="Label" type="Label" parent="ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid/Chest9"]
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 text = "?"
-
-[node name="PaymentCard" type="PanelContainer" parent="ScrollContent/ContentVBox"]
-layout_mode = 2
-mouse_filter = 1
-
-[node name="Margin" type="MarginContainer" parent="ScrollContent/ContentVBox/PaymentCard"]
-layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 12
-
-[node name="VBox" type="VBoxContainer" parent="ScrollContent/ContentVBox/PaymentCard/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="FreeRollBtn" type="Button" parent="ScrollContent/ContentVBox/PaymentCard/Margin/VBox"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-disabled = true
-text = "Free Roll (Loading...)"
-
-[node name="TicketBtn" type="Button" parent="ScrollContent/ContentVBox/PaymentCard/Margin/VBox"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-disabled = true
-text = "Use Lottery Ticket (1 LT)"
-
-[node name="EchoBtn" type="Button" parent="ScrollContent/ContentVBox/PaymentCard/Margin/VBox"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-disabled = true
-text = "Use Echo Points (50 ET)"

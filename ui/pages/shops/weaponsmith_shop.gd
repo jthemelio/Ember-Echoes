@@ -142,19 +142,20 @@ func _create_shop_slot(item: Dictionary) -> void:
 	price_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	slot.add_child(price_label)
 
-	# Connect click for purchase
+	# Connect click to show tooltip with Buy button
 	if item_type == "Arrow":
-		slot.gui_input.connect(_on_shop_slot_arrow_input.bind(item_id, display_name, price, amount))
+		slot.gui_input.connect(_on_shop_slot_input.bind(slot, item_data, item_id, display_name, price, Callable(self, "_on_buy_arrow_pressed").bind(item_id, display_name, price, amount)))
 	else:
-		slot.gui_input.connect(_on_shop_slot_input.bind(item_id, display_name, price))
+		slot.gui_input.connect(_on_shop_slot_input.bind(slot, item_data, item_id, display_name, price, Callable(self, "_on_buy_pressed").bind(item_id, display_name, price)))
 
-func _on_shop_slot_input(event: InputEvent, item_id: String, display_name: String, price: int) -> void:
+func _on_shop_slot_input(event: InputEvent, slot: Control, data: ItemData, item_id: String, display_name: String, price: int, buy_callback: Callable) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_on_buy_pressed(item_id, display_name, price)
-
-func _on_shop_slot_arrow_input(event: InputEvent, item_id: String, display_name: String, price: int, amount: int) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_on_buy_arrow_pressed(item_id, display_name, price, amount)
+		if data == null:
+			return
+		var tooltip = GlobalUI.equipment_tooltip
+		if tooltip:
+			tooltip._shop_buy_callback = buy_callback
+		GlobalUI.show_tooltip(data, "shop:%d" % price)
 
 func _on_buy_pressed(item_id: String, display_name: String, price: int) -> void:
 	if _purchase_in_flight:

@@ -104,7 +104,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 0.6)
+color = Color(0, 0, 0, 0.88)
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=681745285]
 layout_mode = 1
@@ -157,8 +157,9 @@ text = "Choose a class"
 horizontal_alignment = 1
 
 [node name="Juggernaut" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1808440773]
-custom_minimum_size = Vector2(0, 0)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+clip_contents = true
 theme_override_styles/normal = SubResource("StyleBoxFlat_class")
 theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
@@ -185,8 +186,9 @@ text = "Unyielding frontline defender. Absorbs punishment with unmatched resilie
 autowrap_mode = 2
 
 [node name="Wuxia" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=2101523104]
-custom_minimum_size = Vector2(0, 0)
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
+clip_contents = true
 theme_override_styles/normal = SubResource("StyleBoxFlat_class")
 theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
@@ -213,8 +215,9 @@ text = "Arcane caster who commands elemental forces. At level 40, choose the pat
 autowrap_mode = 2
 
 [node name="Twin-Soul" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=1081925869]
-custom_minimum_size = Vector2(0, 0)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
+clip_contents = true
 theme_override_styles/normal = SubResource("StyleBoxFlat_class")
 theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")
@@ -241,8 +244,9 @@ text = "Dual-wielding warrior who strikes with relentless fury, overwhelming foe
 autowrap_mode = 2
 
 [node name="Marksman" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBoxContainer" unique_id=726013934]
-custom_minimum_size = Vector2(0, 0)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+clip_contents = true
 theme_override_styles/normal = SubResource("StyleBoxFlat_class")
 theme_override_styles/hover = SubResource("StyleBoxFlat_class_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_class_pressed")

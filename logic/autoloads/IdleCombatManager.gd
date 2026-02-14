@@ -130,6 +130,9 @@ func _on_progress_save_timer() -> void:
 func _on_equipment_changed() -> void:
 	_refresh_player_stats()
 	combat_tick_updated.emit()
+	# Auto-restart combat if fighting mode is on but combat was stopped (e.g. arrow re-equip)
+	if is_fighting_mode and not combat_active:
+		start_combat()
 
 # ───── Zone Data Loading ─────
 
@@ -258,6 +261,9 @@ func summon_monsters(count: int) -> void:
 	for i in range(to_add):
 		_spawn_mob_to_queue()
 	combat_tick_updated.emit()
+	# Auto-start combat if fighting mode is on but combat hadn't started yet
+	if is_fighting_mode and not combat_active:
+		start_combat()
 
 # ───── Primary target (first in queue) ─────
 

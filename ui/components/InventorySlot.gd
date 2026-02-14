@@ -86,13 +86,25 @@ func set_item(data: ItemData):
 		add_theme_stylebox_override("panel", empty_style)
 		return
 
-	# 1. Configure quality border glow
-	_configure_border(data.quality)
+	# 1. Configure quality border glow (skip for money bags and plain consumables)
+	var _is_plain = data.item_id.begins_with("money_bag_") or data.item_id.begins_with("ignis_")
+	if _is_plain:
+		border_glow.visible = false
+		lightning.visible = false
+	else:
+		_configure_border(data.quality)
+		_configure_lightning(data.quality)
 
 	# Set panel background per quality tier:
+	# Plain items (money bags, ignis): neutral dark with no effects
 	# Normal: soft grey, Non-Normal: dark so lightning/glow effects pop
 	self_modulate = Color.WHITE
-	if data.quality == "Normal":
+	if _is_plain:
+		var plain_style = StyleBoxFlat.new()
+		plain_style.bg_color = Color(0.14, 0.14, 0.16, 1.0)
+		plain_style.set_corner_radius_all(6)
+		add_theme_stylebox_override("panel", plain_style)
+	elif data.quality == "Normal":
 		var normal_style = StyleBoxFlat.new()
 		normal_style.bg_color = Color(0.88, 0.87, 0.85, 1.0)
 		normal_style.set_corner_radius_all(6)
@@ -102,15 +114,11 @@ func set_item(data: ItemData):
 		dark_style.bg_color = Color(0.10, 0.10, 0.12, 1.0)
 		dark_style.set_corner_radius_all(6)
 		add_theme_stylebox_override("panel", dark_style)
-	
+
 	# 2. Update Icon via VisualResolver
 	icon.texture = VisualResolver.load_icon(data.item_id)
 	if icon.texture == null:
-		# Fallback to a generic placeholder icon
 		icon.texture = VisualResolver.load_icon("placeholder_" + data.item_type.to_lower())
-
-	# 2b. Configure lightning effect behind the icon
-	_configure_lightning(data.quality)
 
 	# 3. Update Labels (Level and Quantity)
 	count_label.text = "+" + str(data.plus_level) if data.plus_level > 0 else ""

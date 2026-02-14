@@ -13,6 +13,9 @@ var _backdrop: ColorRect = null
 var _current_data: ItemData = null
 var _current_context: String = ""
 
+# Shop purchase callback (set by shop scripts when context is "shop:...")
+var _shop_buy_callback: Callable = Callable()
+
 func _ready():
 	GlobalUI.equipment_tooltip = self
 	visible = false
@@ -94,16 +97,24 @@ func _configure_action_button(data: ItemData, context: String) -> void:
 			action_btn.text = "Equip"
 			action_btn.visible = true
 	elif context == "money_bag":
-		# Find the gold amount from the inventory dict
+		# Find the gold amount from the inventory/warehouse dict
 		var gold := 0
-		for entry in GameManager.active_user_inventory:
-			if entry is Dictionary and entry.get("uid", "") == data.instance_id:
-				gold = int(entry.get("gold", 0))
+		for source in [GameManager.active_user_inventory, GameManager.active_user_warehouse]:
+			for entry in source:
+				if entry is Dictionary and entry.get("uid", "") == data.instance_id:
+					gold = int(entry.get("gold", 0))
+					break
+			if gold > 0:
 				break
 		action_btn.text = "Claim (%s)" % GameManager.format_gold(gold)
 		action_btn.visible = true
 	elif context.begins_with("equipment:"):
 		action_btn.text = "Unequip"
+		action_btn.visible = true
+	elif context.begins_with("shop:"):
+		# Format: "shop:price"
+		var price_str = context.substr("shop:".length())
+		action_btn.text = "Buy (%s)" % GameManager.format_gold(int(price_str))
 		action_btn.visible = true
 
 func _on_action_pressed() -> void:
@@ -122,6 +133,10 @@ func _on_action_pressed() -> void:
 		var slot = _current_context.substr("equipment:".length())
 		GameManager.unequip_slot(slot)
 		GlobalUI.show_floating_text("%s unequipped!" % _current_data.display_name, Color.WHITE)
+	elif _current_context.begins_with("shop:"):
+		if _shop_buy_callback.is_valid():
+			_shop_buy_callback.call()
+			_shop_buy_callback = Callable()
 
 	dismiss()
 

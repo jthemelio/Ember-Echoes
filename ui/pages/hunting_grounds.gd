@@ -55,6 +55,9 @@ extends MarginContainer
 @onready var move_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/MoveBagBtn
 @onready var cancel_bag_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/BagButtonRow/CancelBagBtn
 
+# Warehouse buttons
+@onready var select_warehouse_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/SelectWarehouseBtn
+
 # Quality filter buttons
 @onready var filter_all_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterAllBtn
 @onready var filter_normal_btn: Button = $ScrollContent/ContentVBox/InventoryPanel/Margin/VBox/QualityFilterRow/FilterNormalBtn
@@ -66,6 +69,10 @@ extends MarginContainer
 # Select/sell state
 var _select_mode: bool = false
 var _selected_indices: Array = []  # Bag indices of selected items
+
+# Warehouse select state
+var _wh_select_mode: bool = false
+var _wh_selected_indices: Array = []
 
 # Colors for rare mobs
 const RARE_COLOR := Color(1.0, 0.84, 0.0)   # Gold
@@ -121,6 +128,10 @@ func _ready() -> void:
 	sell_bag_btn.pressed.connect(_on_sell_pressed)
 	move_bag_btn.pressed.connect(_on_move_pressed)
 	cancel_bag_btn.pressed.connect(_on_cancel_select)
+
+	# ── Warehouse select button ──
+	if select_warehouse_btn:
+		select_warehouse_btn.pressed.connect(_on_wh_select_pressed)
 
 	# Quality filter buttons -- colored blocks matching the tier border colors
 	_setup_filter_button(filter_all_btn, "", Color.WHITE)
@@ -714,3 +725,123 @@ func _refresh_inventory_ui() -> void:
 		bag_grid.refresh_grid()
 	if warehouse_grid and warehouse_grid.is_inside_tree():
 		warehouse_grid.refresh_grid()
+
+# ─── Warehouse Select / Retrieve Mode ───
+
+var _wh_retrieve_btn: Button = null
+var _wh_cancel_btn: Button = null
+
+func _on_wh_select_pressed() -> void:
+	_wh_select_mode = true
+	_wh_selected_indices.clear()
+	select_warehouse_btn.text = "Retrieve (0)"
+
+	# Dynamically add Cancel button if not already present
+	if _wh_cancel_btn == null:
+		_wh_cancel_btn = Button.new()
+		_wh_cancel_btn.text = "Cancel"
+		_wh_cancel_btn.custom_minimum_size = Vector2(0, 36)
+		_wh_cancel_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		_wh_cancel_btn.pressed.connect(_on_wh_cancel)
+		select_warehouse_btn.get_parent().add_child(_wh_cancel_btn)
+		select_warehouse_btn.get_parent().move_child(_wh_cancel_btn, select_warehouse_btn.get_index() + 1)
+	_wh_cancel_btn.visible = true
+
+	# Switch the select button to act as Retrieve
+	select_warehouse_btn.pressed.disconnect(_on_wh_select_pressed)
+	select_warehouse_btn.pressed.connect(_on_wh_retrieve_pressed)
+
+	_set_warehouse_slots_select_mode(true)
+
+func _on_wh_cancel() -> void:
+	_wh_select_mode = false
+	_wh_selected_indices.clear()
+	select_warehouse_btn.text = "Select Items"
+	if _wh_cancel_btn:
+		_wh_cancel_btn.visible = false
+
+	# Restore button to select mode
+	if select_warehouse_btn.pressed.is_connected(_on_wh_retrieve_pressed):
+		select_warehouse_btn.pressed.disconnect(_on_wh_retrieve_pressed)
+	if not select_warehouse_btn.pressed.is_connected(_on_wh_select_pressed):
+		select_warehouse_btn.pressed.connect(_on_wh_select_pressed)
+
+	_set_warehouse_slots_select_mode(false)
+	_clear_wh_selection_highlights()
+
+func _on_wh_retrieve_pressed() -> void:
+	if _wh_selected_indices.is_empty():
+		return
+
+	var wh = GameManager.active_user_warehouse
+	var bag = GameManager.active_user_inventory
+	var bag_space = GameManager.BAG_MAX_SLOTS - bag.size()
+
+	if bag_space <= 0:
+		GlobalUI.show_floating_text("Bag is full!", Color.RED)
+		return
+
+	_wh_selected_indices.sort()
+	_wh_selected_indices.reverse()
+	var moved := 0
+	for idx in _wh_selected_indices:
+		if moved >= bag_space:
+			break
+		if idx >= wh.size():
+			continue
+		var item = wh[idx]
+		if item == null:
+			continue
+		wh.remove_at(idx)
+		bag.append(item)
+		moved += 1
+
+	if moved == 0:
+		return
+
+	print("Retrieved %d items from warehouse" % moved)
+	GlobalUI.show_floating_text("Retrieved %d items" % moved, Color.WHITE)
+	GameManager.sync_inventory_to_server()
+
+	_on_wh_cancel()
+	GameManager.inventory_changed.emit()
+	GameManager.warehouse_changed.emit()
+	_refresh_inventory_ui()
+
+func _set_warehouse_slots_select_mode(enabled: bool) -> void:
+	if not warehouse_grid:
+		return
+	var all_slots = warehouse_grid.get_children()
+	for i in range(all_slots.size()):
+		var slot = all_slots[i]
+		slot.select_mode = enabled
+		slot.is_selected = false
+		slot.modulate = Color(1.0, 1.0, 1.0, 1.0)
+		if enabled and not slot.slot_tapped.is_connected(_on_wh_slot_tapped):
+			slot.slot_tapped.connect(_on_wh_slot_tapped)
+
+func _clear_wh_selection_highlights() -> void:
+	if not warehouse_grid:
+		return
+	for slot in warehouse_grid.get_children():
+		slot.is_selected = false
+		slot.modulate = Color(1.0, 1.0, 1.0, 1.0)
+
+func _on_wh_slot_tapped(slot: PanelContainer) -> void:
+	if not _wh_select_mode:
+		return
+	var all_slots = warehouse_grid.get_children()
+	var slot_index = all_slots.find(slot)
+	if slot_index < 0 or slot.item_data == null:
+		return
+
+	if _wh_selected_indices.has(slot_index):
+		_wh_selected_indices.erase(slot_index)
+		slot.is_selected = false
+		slot.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	else:
+		_wh_selected_indices.append(slot_index)
+		slot.is_selected = true
+		slot.modulate = Color(1.0, 1.0, 0.5, 1.0)
+
+	select_warehouse_btn.text = "Retrieve (%d)" % _wh_selected_indices.size()

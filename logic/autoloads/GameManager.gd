@@ -448,30 +448,33 @@ func _cleanup_ghost_items() -> void:
 			push_warning("GameManager: Removing ghost item at index %d: %s" % [i, str(e)])
 			active_user_inventory.remove_at(i)
 
-# Claim a money bag item from inventory by uid — awards gold and removes the entry
+# Claim a money bag item from inventory or warehouse by uid — awards gold and removes the entry
 # Returns the gold amount claimed (0 if not found)
 func claim_money_bag(uid: String) -> int:
-	for i in range(active_user_inventory.size()):
-		var entry = active_user_inventory[i]
-		if entry is Dictionary and entry.get("uid", "") == uid:
-			var gold = int(entry.get("gold", 0))
-			active_user_currencies["GD"] = int(active_user_currencies.get("GD", 0)) + gold
-			active_user_inventory.remove_at(i)
-			inventory_changed.emit()
-			sync_inventory_to_server()
-			# Sync gold to server via CloudScript
-			PlayFabManager.client.execute_cloud_script("claimMoneyBag", {
-				"goldAmount": gold,
-			}, func(result):
-				var fn = result.get("data", {}).get("FunctionResult", {})
-				if fn is Dictionary and fn.get("success", false):
-					print("GameManager: Money bag gold synced to server (+%d)" % gold)
-				else:
-					push_warning("GameManager: Money bag gold sync failed — gold may be lost on refresh")
-			)
-			print("GameManager: Claimed money bag uid '%s': +%d gold" % [uid, gold])
-			return gold
-	push_warning("GameManager: Could not find money bag uid '%s' in inventory" % uid)
+	# Search bag first, then warehouse
+	for source in [active_user_inventory, active_user_warehouse]:
+		for i in range(source.size()):
+			var entry = source[i]
+			if entry is Dictionary and entry.get("uid", "") == uid:
+				var gold = int(entry.get("gold", 0))
+				active_user_currencies["GD"] = int(active_user_currencies.get("GD", 0)) + gold
+				source.remove_at(i)
+				inventory_changed.emit()
+				warehouse_changed.emit()
+				sync_inventory_to_server()
+				# Sync gold to server via CloudScript
+				PlayFabManager.client.execute_cloud_script("claimMoneyBag", {
+					"goldAmount": gold,
+				}, func(result):
+					var fn = result.get("data", {}).get("FunctionResult", {})
+					if fn is Dictionary and fn.get("success", false):
+						print("GameManager: Money bag gold synced to server (+%d)" % gold)
+					else:
+						push_warning("GameManager: Money bag gold sync failed — gold may be lost on refresh")
+				)
+				print("GameManager: Claimed money bag uid '%s': +%d gold" % [uid, gold])
+				return gold
+	push_warning("GameManager: Could not find money bag uid '%s' in inventory or warehouse" % uid)
 	return 0
 
 # Legacy equip (from ItemData) -- resolves uid internally

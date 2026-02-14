@@ -18,14 +18,14 @@ enum Phase { IDLE, PAYING, PICKING, REVEALING, DONE }
 var _phase: int = Phase.IDLE
 
 # ─── UI References ───
-@onready var ticket_value: Label = $ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TicketRow/TicketValue
-@onready var echo_value: Label = $ScrollContent/ContentVBox/BalanceCard/Margin/VBox/EchoRow/EchoValue
-@onready var timer_value: Label = $ScrollContent/ContentVBox/BalanceCard/Margin/VBox/TimerRow/TimerValue
-@onready var chest_grid: GridContainer = $ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestGrid
-@onready var chest_label: Label = $ScrollContent/ContentVBox/ChestCard/Margin/VBox/ChestLabel
-@onready var free_roll_btn: Button = $ScrollContent/ContentVBox/PaymentCard/Margin/VBox/FreeRollBtn
-@onready var ticket_btn: Button = $ScrollContent/ContentVBox/PaymentCard/Margin/VBox/TicketBtn
-@onready var echo_btn: Button = $ScrollContent/ContentVBox/PaymentCard/Margin/VBox/EchoBtn
+@onready var ticket_value: Label = $ScrollContent/ContentVBox/BalanceCard/Margin/HBox/TicketCol/TicketValue
+@onready var echo_value: Label = $ScrollContent/ContentVBox/BalanceCard/Margin/HBox/EchoCol/EchoValue
+@onready var timer_value: Label = $ScrollContent/ContentVBox/BalanceCard/Margin/HBox/TimerCol/TimerValue
+@onready var chest_grid: GridContainer = $ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestGrid
+@onready var chest_label: Label = $ScrollContent/ContentVBox/GameCard/Margin/VBox/ChestLabel
+@onready var free_roll_btn: Button = $ScrollContent/ContentVBox/GameCard/Margin/VBox/PaymentRow/FreeRollBtn
+@onready var ticket_btn: Button = $ScrollContent/ContentVBox/GameCard/Margin/VBox/PaymentRow/TicketBtn
+@onready var echo_btn: Button = $ScrollContent/ContentVBox/GameCard/Margin/VBox/PaymentRow/EchoBtn
 const RewardPopupScene = preload("res://ui/components/LadyLuckRewardPopup.tscn")
 var _reward_popup = null
 
@@ -398,13 +398,13 @@ func _update_buttons() -> void:
 	var can_pay = _phase == Phase.IDLE and _status_loaded
 
 	free_roll_btn.disabled = not (can_pay and _free_roll_available)
-	free_roll_btn.text = "Free Roll" if _free_roll_available else "Free Roll (Cooldown)"
+	free_roll_btn.text = "Free Roll" if _free_roll_available else "Cooldown"
 
 	ticket_btn.disabled = not (can_pay and _lt_balance > 0)
-	ticket_btn.text = "Use Lottery Ticket (1 LT)" if _lt_balance > 0 else "No Lottery Tickets"
+	ticket_btn.text = "1 Ticket" if _lt_balance > 0 else "No Tickets"
 
 	echo_btn.disabled = not (can_pay and _et_balance >= ECHO_COST)
-	echo_btn.text = "Use Echo Points (%d ET)" % ECHO_COST
+	echo_btn.text = "%d Echo" % ECHO_COST
 
 # ─── Square Chest Sizing ───
 
@@ -471,10 +471,9 @@ func _on_chest_hover(chest_index: int, entered: bool) -> void:
 		_style_chest(chest, CHEST_READY_COLOR)
 
 func _style_card_panels() -> void:
-	# Add subtle border/shadow to BalanceCard, ChestCard, PaymentCard
+	# Add subtle border/shadow to all cards
 	for card_path in ["ScrollContent/ContentVBox/BalanceCard",
-					   "ScrollContent/ContentVBox/ChestCard",
-					   "ScrollContent/ContentVBox/PaymentCard",
+					   "ScrollContent/ContentVBox/GameCard",
 					   "ScrollContent/ContentVBox/HeaderCard"]:
 		var card = get_node_or_null(card_path)
 		if card and card is PanelContainer:
