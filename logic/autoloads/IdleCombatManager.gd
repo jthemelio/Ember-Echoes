@@ -72,6 +72,7 @@ var combat_active: bool = false
 var is_fighting_mode: bool = true  # true = Fighting, false = Mining
 var is_dead: bool = false          # true during death respawn cooldown
 var _death_timer: float = 0.0      # Counts down to 0 during death
+var _respawn_grace: bool = false   # true = next spawn guaranteed non-rare
 
 # ───── Timers ─────
 var tick_timer: Timer = null
@@ -289,12 +290,16 @@ func _spawn_mob_to_queue() -> void:
 	if template.is_empty():
 		return
 
-	# Check for achievement-based rare bonus
-	var rare_chance = RARE_CHANCE
-	var ach_mgr = get_node_or_null("/root/AchievementManager")
-	if ach_mgr:
-		rare_chance += ach_mgr.get_rare_bonus(template.get("name", ""))
-	var is_rare = randf() < rare_chance
+	# Check for achievement-based rare bonus (skip if respawn grace active)
+	var is_rare := false
+	if _respawn_grace:
+		_respawn_grace = false  # Consume the grace — next spawn can be rare again
+	else:
+		var rare_chance = RARE_CHANCE
+		var ach_mgr = get_node_or_null("/root/AchievementManager")
+		if ach_mgr:
+			rare_chance += ach_mgr.get_rare_bonus(template.get("name", ""))
+		is_rare = randf() < rare_chance
 	var is_boss = template.get("isBoss", false)
 	var mult = RARE_STAT_MULT if is_rare else 1.0
 
@@ -486,6 +491,7 @@ func _on_tick() -> void:
 		total_deaths += 1
 		is_dead = true
 		_death_timer = DEATH_RESPAWN_TIME
+		_respawn_grace = true  # Next spawn after respawn is guaranteed non-rare
 		monster_queue.clear()  # Clear all enemies on death
 		spawn_timer.stop()     # Stop spawning during death
 		player_died.emit()
