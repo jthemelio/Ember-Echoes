@@ -11,7 +11,7 @@ signal batch_verified(result: Dictionary) # Emitted when PlayFab confirms a batc
 
 # ───── Configuration (loaded from PlayFab LootConfig) ─────
 var global_item_chance: float = 0.02
-var gold_multiplier: int = 8
+var gold_multiplier: int = 2
 var level_range: int = 5
 var quality_chances: Dictionary = {
 	"Normal": 0.80,

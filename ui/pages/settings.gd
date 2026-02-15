@@ -20,6 +20,13 @@ var _changelog_container: VBoxContainer
 var _changelog_vbox: VBoxContainer
 var _logged_in_label: Label
 
+# ── Sprite preview ──
+var _sprite_rect: TextureRect
+var _sprite_atlas: AtlasTexture
+var _sprite_frame: int = 0
+var _sprite_timer: Timer
+var _sprite_frame_count: int = 4  # walk frames in top row
+
 func _ready() -> void:
 	add_theme_constant_override("margin_left", 16)
 	add_theme_constant_override("margin_right", 16)
@@ -53,6 +60,7 @@ func _build_ui() -> void:
 	_add_appearance_card(content)
 	_add_updates_card(content)
 	_add_debug_card(content)  # DEBUG: Remove before release
+	_add_sprite_preview_card(content)  # DEBUG: Sprite sheet preview
 
 	# ── Changelog (hidden until "View Changelog" is pressed) ──
 	_changelog_container = VBoxContainer.new()
@@ -232,6 +240,80 @@ func _add_debug_card(parent: VBoxContainer) -> void:
 	_style_secondary_btn(wyrm_btn)
 	wyrm_btn.pressed.connect(func(): GlobalUI.show_comet_effect("Wyrm Sphere", true))
 	vbox.add_child(wyrm_btn)
+
+func _add_sprite_preview_card(parent: VBoxContainer) -> void:
+	var card = _make_card()
+	parent.add_child(card)
+
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+	card.add_child(vbox)
+
+	vbox.add_child(_make_section_title("Sprite Preview"))
+
+	var desc = Label.new()
+	desc.text = "Peacock walk cycle (4 frames from sprite sheet)"
+	desc.add_theme_font_size_override("font_size", 12)
+	desc.add_theme_color_override("font_color", SUBTITLE_COLOR)
+	vbox.add_child(desc)
+
+	# Load the sprite sheet texture
+	var sheet_tex = load("res://assets/mobs/peacock_sheet.png") as Texture2D
+	if sheet_tex == null:
+		var err_lbl = Label.new()
+		err_lbl.text = "Could not load peacock_sheet.png"
+		err_lbl.add_theme_color_override("font_color", Color.RED)
+		vbox.add_child(err_lbl)
+		return
+
+	# Calculate frame size: 4 columns, 2 rows
+	var sheet_w = sheet_tex.get_width()
+	var sheet_h = sheet_tex.get_height()
+	var frame_w = sheet_w / 4.0
+	var frame_h = sheet_h / 2.0
+
+	# Create AtlasTexture for frame slicing
+	_sprite_atlas = AtlasTexture.new()
+	_sprite_atlas.atlas = sheet_tex
+	_sprite_atlas.region = Rect2(0, 0, frame_w, frame_h)
+
+	# Center the sprite in a box with a dark background
+	var bg_panel = PanelContainer.new()
+	var bg_style = StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.12, 0.12, 0.14)
+	bg_style.set_corner_radius_all(8)
+	bg_style.content_margin_left = 16
+	bg_style.content_margin_right = 16
+	bg_style.content_margin_top = 16
+	bg_style.content_margin_bottom = 16
+	bg_panel.add_theme_stylebox_override("panel", bg_style)
+	vbox.add_child(bg_panel)
+
+	var center = CenterContainer.new()
+	bg_panel.add_child(center)
+
+	_sprite_rect = TextureRect.new()
+	_sprite_rect.texture = _sprite_atlas
+	_sprite_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_sprite_rect.custom_minimum_size = Vector2(128, 128)
+	_sprite_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	center.add_child(_sprite_rect)
+
+	# Animation timer — cycle walk frames at 6 FPS
+	_sprite_timer = Timer.new()
+	_sprite_timer.wait_time = 1.0 / 6.0
+	_sprite_timer.one_shot = false
+	_sprite_timer.timeout.connect(_on_sprite_timer)
+	add_child(_sprite_timer)
+	_sprite_timer.start()
+
+func _on_sprite_timer() -> void:
+	if _sprite_atlas == null:
+		return
+	_sprite_frame = (_sprite_frame + 1) % _sprite_frame_count
+	var frame_w = _sprite_atlas.atlas.get_width() / 4.0
+	var frame_h = _sprite_atlas.atlas.get_height() / 2.0
+	_sprite_atlas.region = Rect2(_sprite_frame * frame_w, 0, frame_w, frame_h)
 
 # ═══════════════════════════════════════════════════
 #               CARD / STYLE HELPERS
