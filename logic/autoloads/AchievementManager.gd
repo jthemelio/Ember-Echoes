@@ -9,7 +9,7 @@ signal pet_obtained(pet_name: String)
 
 # ───── Kill Tier Thresholds ─────
 const KILL_TIERS := [100, 500, 1000, 2000, 5000]
-const RARE_BONUS_PER_TIER := [0.01, 0.02, 0.03, 0.05, 0.08]  # +1%, +2%, +3%, +5%, +8% rare spawn bonus
+const RARE_BONUS_PER_TIER := [0.01, 0.01, 0.01, 0.01, 0.01]  # +1% rare spawn bonus per tier
 
 # Reward item per tier: first two tiers give Comets, remaining give Wyrm Spheres
 const TIER_REWARDS := ["Comet", "Comet", "Wyrm_Sphere", "Wyrm_Sphere", "Wyrm_Sphere"]
