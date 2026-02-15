@@ -99,6 +99,78 @@ func get_magic_hit(m_atk: int, m_def: int, skill_mult: float = 1.0) -> int:
 
 # --- END COMBAT LOGIC ---
 
+## Classes that never allocate Spirit and front-load Agility to meet blade Dex reqs.
+const MELEE_CLASSES := ["Twin-Soul", "Juggernaut"]
+const MELEE_AGI_CAP := 28  # Highest Dex req on any blade
+
+## Returns a Dictionary mapping stat names to point counts for a single level-up.
+## `current_total_stats` is the character's current combined stats (class_base + invested).
+## For Twin-Soul / Juggernaut: pumps Agility until MELEE_AGI_CAP, then Str/Vit only.
+## For other classes: distributes proportionally based on the class growth curve.
+func get_level_up_allocation(char_class: String, points: int = 5, current_total_stats: Dictionary = {}) -> Dictionary:
+	# ── Melee priority path (Twin-Soul & Juggernaut) ──
+	if char_class in MELEE_CLASSES:
+		var current_agi = int(current_total_stats.get("Agility", 0))
+		var alloc = {"Strength": 0, "Agility": 0, "Vitality": 0, "Spirit": 0}
+		var pts_left = points
+
+		# Phase 1: Agility until cap
+		if current_agi < MELEE_AGI_CAP:
+			var agi_needed = MELEE_AGI_CAP - current_agi
+			var agi_pts = mini(pts_left, agi_needed)
+			alloc["Agility"] = agi_pts
+			pts_left -= agi_pts
+
+		# Phase 2: remaining points split between Str and Vit (no Spirit)
+		if pts_left > 0:
+			var str_share = ceili(pts_left / 2.0)  # Str gets the extra if odd
+			alloc["Strength"] += str_share
+			alloc["Vitality"] += pts_left - str_share
+
+		return alloc
+
+	# ── Default growth-ratio path (all other classes) ──
+	var start = class_data.get(char_class, {"Str": 0, "Agi": 0, "Vit": 0, "Spi": 0})
+	var target = promotion_reqs.get(char_class, {"Str": 0, "Agi": 0, "Vit": 0, "Spi": 0})
+
+	# Calculate growth weight for each stat
+	var growths: Dictionary = {}
+	var total_growth: float = 0.0
+	for full_name in stat_map.keys():
+		var short_key = stat_map[full_name]
+		var g = max(0, target.get(short_key, 0) - start.get(short_key, 0))
+		growths[full_name] = g
+		total_growth += g
+
+	# Fallback: equal-ish distribution if data is missing / all zeros
+	if total_growth == 0:
+		return {"Strength": 2, "Agility": 1, "Vitality": 1, "Spirit": 1}
+
+	# Largest-remainder method for fair integer rounding
+	var alloc: Dictionary = {}
+	var remainders: Dictionary = {}
+	var allocated_total: int = 0
+	for stat_name in growths.keys():
+		var exact = (growths[stat_name] / total_growth) * points
+		alloc[stat_name] = int(exact)
+		remainders[stat_name] = exact - int(exact)
+		allocated_total += int(exact)
+
+	# Give leftover points to the stats with the highest fractional remainders
+	var remaining = points - allocated_total
+	while remaining > 0:
+		var best_stat := ""
+		var best_rem := -1.0
+		for stat_name in remainders.keys():
+			if remainders[stat_name] > best_rem:
+				best_rem = remainders[stat_name]
+				best_stat = stat_name
+		alloc[best_stat] += 1
+		remainders[best_stat] = -1.0  # consumed
+		remaining -= 1
+
+	return alloc
+
 func get_smart_allocated_stats(char_class: String, level: int) -> Dictionary:
 	# This handles auto-growth for the CURRENT life (Level 15 to 120)
 	var cap = 110 if char_class in ["Wuxia", "Spiritmender"] else 120

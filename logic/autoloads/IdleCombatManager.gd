@@ -227,9 +227,43 @@ func start_combat() -> void:
 		out_of_arrows.emit()
 		push_warning("IdleCombatManager: Marksman has no arrows equipped!")
 		return
+	# Retroactive fix: auto-allocate any banked AvailableAttributePoints from before
+	# the auto-allocation system was added (pre-awakening characters only)
+	var banked = int(GameManager.active_character_stats.get("AvailableAttributePoints", 0))
+	if banked > 0 and GameManager.active_character_awakening == 0:
+		var class_base = StatCalculator.get_smart_allocated_stats(
+			GameManager.active_character_class, GameManager.active_character_level)
+		var rounds = banked / 5  # Each level-up gave 5 points
+		for i in range(rounds):
+			# Recompute totals each round so Agility-cap logic works correctly
+			var total_now := {}
+			for s in ["Strength", "Agility", "Vitality", "Spirit"]:
+				total_now[s] = int(class_base.get(s, 0)) + int(GameManager.active_character_stats.get(s, 0))
+			var alloc = StatCalculator.get_level_up_allocation(
+				GameManager.active_character_class, 5, total_now)
+			for stat_name in alloc.keys():
+				GameManager.active_character_stats[stat_name] = \
+					GameManager.active_character_stats.get(stat_name, 0) + alloc[stat_name]
+		# Allocate any leftover points (not a multiple of 5) using the same ratios
+		var leftover = banked % 5
+		if leftover > 0:
+			var total_now := {}
+			for s in ["Strength", "Agility", "Vitality", "Spirit"]:
+				total_now[s] = int(class_base.get(s, 0)) + int(GameManager.active_character_stats.get(s, 0))
+			var alloc = StatCalculator.get_level_up_allocation(
+				GameManager.active_character_class, leftover, total_now)
+			for stat_name in alloc.keys():
+				GameManager.active_character_stats[stat_name] = \
+					GameManager.active_character_stats.get(stat_name, 0) + alloc[stat_name]
+		GameManager.active_character_stats["AvailableAttributePoints"] = 0
+		print("IdleCombatManager: Retroactively auto-allocated %d banked attribute points" % banked)
+		GameManager.character_stats_updated.emit()
+		_refresh_player_stats()
+
 	# Load saved XP from PlayFab (only on first combat start for this session)
 	if current_xp == 0 and GameManager._saved_current_xp > 0:
 		current_xp = GameManager._saved_current_xp
+		_check_level_up()  # Process any pending level-ups from saved XP
 	if monster_queue.is_empty():
 		_spawn_mob_to_queue()
 	combat_active = true
@@ -635,9 +669,17 @@ func _check_level_up() -> void:
 		current_xp -= xp_to_next_level
 		GameManager.active_character_level += 1
 		leveled_up = true
-		# Award attribute points on level-up (5 per level)
-		GameManager.active_character_stats["AvailableAttributePoints"] = \
-			GameManager.active_character_stats.get("AvailableAttributePoints", 0) + 5
+		# Auto-allocate 5 attribute points based on class growth ratios
+		var class_base = StatCalculator.get_smart_allocated_stats(
+			GameManager.active_character_class, GameManager.active_character_level)
+		var total_now := {}
+		for s in ["Strength", "Agility", "Vitality", "Spirit"]:
+			total_now[s] = int(class_base.get(s, 0)) + int(GameManager.active_character_stats.get(s, 0))
+		var alloc = StatCalculator.get_level_up_allocation(
+			GameManager.active_character_class, 5, total_now)
+		for stat_name in alloc.keys():
+			GameManager.active_character_stats[stat_name] = \
+				GameManager.active_character_stats.get(stat_name, 0) + alloc[stat_name]
 		_refresh_player_stats()
 		GameManager.character_stats_updated.emit()
 	if leveled_up:
@@ -769,9 +811,17 @@ func _simulate_offline(elapsed_seconds: int) -> Dictionary:
 			break
 		current_xp -= xp_to_next_level
 		GameManager.active_character_level += 1
-		# Award attribute points on offline level-up (5 per level, same as online)
-		GameManager.active_character_stats["AvailableAttributePoints"] = \
-			GameManager.active_character_stats.get("AvailableAttributePoints", 0) + 5
+		# Auto-allocate 5 attribute points on offline level-up (same as online)
+		var off_base = StatCalculator.get_smart_allocated_stats(
+			GameManager.active_character_class, GameManager.active_character_level)
+		var off_total := {}
+		for s in ["Strength", "Agility", "Vitality", "Spirit"]:
+			off_total[s] = int(off_base.get(s, 0)) + int(GameManager.active_character_stats.get(s, 0))
+		var alloc = StatCalculator.get_level_up_allocation(
+			GameManager.active_character_class, 5, off_total)
+		for stat_name in alloc.keys():
+			GameManager.active_character_stats[stat_name] = \
+				GameManager.active_character_stats.get(stat_name, 0) + alloc[stat_name]
 		xp_to_next_level = _xp_for_level(GameManager.active_character_level)
 
 	self.total_kills += total_kills  # stat tracking (use self. to avoid shadowing local var)

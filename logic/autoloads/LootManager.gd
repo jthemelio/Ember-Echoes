@@ -22,8 +22,10 @@ var quality_chances: Dictionary = {
 }
 
 # ───── Item catalog (loaded from PlayFab ItemCatalog) ─────
-# Combined flat array of all catalog entries (armor[] + weapons[])
+# _all_items: droppable items only (armor + weapons) — used by _roll_loot()
+# _full_catalog: every item including misc — used by shops (consumables, etc.)
 var _all_items: Array = []
+var _full_catalog: Array = []
 
 # ───── Heartbeat ─────
 const HEARTBEAT_INTERVAL: float = 10.0  # Seconds between batch reports
@@ -58,11 +60,16 @@ func load_loot_config(config: Dictionary) -> void:
 
 func load_item_catalog(catalog: Dictionary) -> void:
 	_all_items.clear()
+	_full_catalog.clear()
 	# Only armor and weapons drop from mobs — misc contains Lady Luck / shop-only items
 	for category_key in ["armor", "weapons"]:
 		var items = catalog.get(category_key, [])
 		_all_items.append_array(items)
-	print("LootManager: Catalog loaded (%d droppable items)" % _all_items.size())
+	# Full catalog includes misc (arrows, consumables, etc.) for shop UIs
+	for category_key in ["armor", "weapons", "misc"]:
+		var items = catalog.get(category_key, [])
+		_full_catalog.append_array(items)
+	print("LootManager: Catalog loaded (%d droppable, %d total)" % [_all_items.size(), _full_catalog.size()])
 
 	# Start heartbeat once we have data
 	if not _heartbeat_timer.is_stopped():

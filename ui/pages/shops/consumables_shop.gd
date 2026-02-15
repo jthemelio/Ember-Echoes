@@ -49,8 +49,8 @@ func _populate_shop() -> void:
 		item_grid.add_child(lbl)
 		return
 
-	# Filter catalog: Normal quality, matching consumable types
-	for item in loot_mgr._all_items:
+	# Filter full catalog (includes misc): Normal quality, matching consumable types
+	for item in loot_mgr._full_catalog:
 		var cd = item.get("CustomData", {})
 		var quality = cd.get("Quality", "")
 		var item_type = cd.get("Type", "")
